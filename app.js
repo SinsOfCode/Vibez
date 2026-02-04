@@ -1,231 +1,261 @@
-// ==========================================
-// APP.JS - FULL SOCIAL APP WITH REAL USERS
-// ==========================================
+// ------------------ FIREBASE SETUP ------------------
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import {
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword,
+  createUserWithEmailAndPassword, signOut
+} from "firebase/auth";
+import {
+  getFirestore, collection, addDoc, getDocs, query, where,
+  doc, updateDoc, onSnapshot, orderBy, limit
+} from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-// 🔐 FIREBASE CONFIG - REPLACE WITH YOUR INFO
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "XXXXXXX",
-  appId: "XXXXXXX"
+  apiKey: "AIzaSyDsqaoDlN8-XyHCsGrhaHQkMQBiEwmgk8o",
+  authDomain: "vibez-7c71e.firebaseapp.com",
+  projectId: "vibez-7c71e",
+  storageBucket: "vibez-7c71e.firebasestorage.app",
+  messagingSenderId: "544032234117",
+  appId: "1:544032234117:web:9200a924e920c99221e7ec",
+  measurementId: "G-DQ4GMVLTL7"
 };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-// ==========================================
-// GLOBALS
-// ==========================================
+// ------------------ AUTH ------------------
+export async function register(email, password, username) {
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+  await addDoc(collection(db, "users"), {
+    uid: user.uid,
+    email,
+    username,
+    createdAt: new Date(),
+  });
+  return user;
+}
+
+export async function login(email, password) {
+  const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  return userCredential.user;
+}
+
+export function logout() {
+  return signOut(auth);
+}
+
+// Monitor auth state
 let currentUser = null;
-
-// ==========================================
-// AUTH STATE LISTENER
-// ==========================================
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    const userDoc = await db.collection("users").doc(user.uid).get();
-    currentUser = { uid: user.uid, ...userDoc.data() };
-    showMainApp();
-    subscribeFeed();
-  } else {
-    showAuthScreen();
-  }
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  if (user) renderUI();
+  else renderLogin();
 });
 
-// ==========================================
-// AUTH FUNCTIONS
-// ==========================================
-async function signup() {
-  const email = signupEmail.value.trim();
-  const password = signupPassword.value;
-  const username = signupUsername.value.trim();
-
-  if (!email || !password || !username) return showToast("Fill all fields");
-
-  const cred = await auth.createUserWithEmailAndPassword(email, password);
-  await db.collection("users").doc(cred.user.uid).set({
-    username,
-    email,
-    photoURL: `https://ui-avatars.com/api/?name=${username}`,
-    bio: "",
-    followers: [],
-    following: [],
-    posts: 0,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-}
-
-async function login() {
-  const email = loginEmail.value.trim();
-  const password = loginPassword.value;
-  if (!email || !password) return showToast("Fill all fields");
-
-  await auth.signInWithEmailAndPassword(email, password);
-}
-
-function logout() {
-  auth.signOut();
-}
-
-// ==========================================
-// CREATE POST
-// ==========================================
-async function createPost() {
-  const caption = postCaption.value.trim();
-  if (!caption) return showToast("Write something");
-
-  const postRef = await db.collection("posts").add({
-    userId: currentUser.uid,
-    username: currentUser.username,
-    userPhoto: currentUser.photoURL,
-    caption,
-    likes: 0,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  // increment user's post count
-  await db.collection("users").doc(currentUser.uid).update({
-    posts: firebase.firestore.FieldValue.increment(1)
-  });
-
-  postCaption.value = "";
-}
-
-// ==========================================
-// REAL-TIME FEED SUBSCRIPTION
-// ==========================================
-function subscribeFeed() {
-  db.collection("posts").orderBy("createdAt", "desc").limit(50)
-    .onSnapshot(snapshot => {
-      postsContainer.innerHTML = "";
-      snapshot.forEach(doc => renderPost({ id: doc.id, ...doc.data() }));
-    });
-}
-
-// ==========================================
-// RENDER POST
-// ==========================================
-function renderPost(post) {
-  const div = document.createElement("article");
-  div.className = "bg-card rounded-xl p-4 mb-4";
-  div.innerHTML = `
-    <div class="flex items-center gap-3 mb-2">
-      <img src="${post.userPhoto}" class="w-10 h-10 rounded-full">
-      <b>${post.username}</b>
-      ${post.userId !== currentUser.uid ? `<button onclick="toggleFollow('${post.userId}')">Follow</button>` : ''}
-    </div>
-    <p class="mb-3">${escapeHtml(post.caption)}</p>
-    <div class="flex gap-4 items-center">
-      <button onclick="toggleLike('${post.id}')">❤️</button>
-      <span id="likes-${post.id}">${post.likes}</span>
-      <button onclick="openComments('${post.id}')">💬</button>
-    </div>
-    <div id="comments-${post.id}" class="mt-3 hidden"></div>
-  `;
-  postsContainer.appendChild(div);
-}
-
-// ==========================================
-// LIKES
-// ==========================================
-async function toggleLike(postId) {
-  const postRef = db.collection("posts").doc(postId);
-  const likeRef = postRef.collection("likes").doc(currentUser.uid);
-  const doc = await likeRef.get();
-
-  if (doc.exists) {
-    await likeRef.delete();
-    await postRef.update({ likes: firebase.firestore.FieldValue.increment(-1) });
-  } else {
-    await likeRef.set({ likedAt: Date.now() });
-    await postRef.update({ likes: firebase.firestore.FieldValue.increment(1) });
+// ------------------ POSTS ------------------
+export async function createPost(content, imageFile) {
+  if (!currentUser) return;
+  let imageUrl = "";
+  if (imageFile) {
+    const storageRef = ref(storage, `posts/${currentUser.uid}/${Date.now()}_${imageFile.name}`);
+    await uploadBytes(storageRef, imageFile);
+    imageUrl = await getDownloadURL(storageRef);
   }
+  await addDoc(collection(db, "posts"), {
+    uid: currentUser.uid,
+    content,
+    imageUrl,
+    likes: [],
+    comments: [],
+    createdAt: new Date(),
+  });
 }
 
-// ==========================================
-// COMMENTS
-// ==========================================
-async function openComments(postId) {
-  const box = document.getElementById(`comments-${postId}`);
-  box.classList.toggle("hidden");
-  box.innerHTML = `
-    <input id="comment-input-${postId}" placeholder="Write a comment..." class="w-full p-2 bg-transparent border rounded mb-2">
-    <button onclick="addComment('${postId}')">Post</button>
-    <div id="comment-list-${postId}" class="mt-2"></div>
+export function onPostsUpdate(callback) {
+  const postsRef = collection(db, "posts");
+  return onSnapshot(postsRef, snapshot => {
+    const posts = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
+    callback(posts);
+  });
+}
+
+export async function likePost(postId) {
+  if (!currentUser) return;
+  const postRef = doc(db, "posts", postId);
+  const postSnap = await getDocs(query(collection(db, "posts"), where("id", "==", postId)));
+  const postData = postSnap.docs[0].data();
+  const uid = currentUser.uid;
+  const updatedLikes = postData.likes.includes(uid)
+    ? postData.likes.filter(u => u !== uid)
+    : [...postData.likes, uid];
+  await updateDoc(postRef, { likes: updatedLikes });
+}
+
+export async function commentPost(postId, text) {
+  if (!currentUser) return;
+  const postRef = doc(db, "posts", postId);
+  const postSnap = await getDocs(query(collection(db, "posts"), where("id", "==", postId)));
+  const postData = postSnap.docs[0].data();
+  await updateDoc(postRef, {
+    comments: [...postData.comments, { uid: currentUser.uid, text, createdAt: new Date() }]
+  });
+}
+
+// ------------------ SUGGESTED USERS ------------------
+export async function getSuggestedUsers(limitCount = 5) {
+  if (!currentUser) return [];
+  const q = query(collection(db, "users"), where("uid", "!=", currentUser.uid), limit(limitCount));
+  const querySnap = await getDocs(q);
+  return querySnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+// ------------------ SEARCH ------------------
+export async function searchUsersByName(username) {
+  const q = query(collection(db, "users"), where("username", "==", username));
+  const querySnap = await getDocs(q);
+  return querySnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+// ------------------ MESSAGING ------------------
+export async function sendMessage(receiverUid, text) {
+  if (!currentUser) return;
+  await addDoc(collection(db, "messages"), {
+    senderUid: currentUser.uid,
+    receiverUid,
+    text,
+    createdAt: new Date(),
+  });
+}
+
+export function onMessagesUpdate(user1, user2, callback) {
+  const messagesRef = collection(db, "messages");
+  const q = query(messagesRef, orderBy("createdAt"));
+  return onSnapshot(q, snapshot => {
+    const messages = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(msg =>
+        (msg.senderUid === user1 && msg.receiverUid === user2) ||
+        (msg.senderUid === user2 && msg.receiverUid === user1)
+      );
+    callback(messages);
+  });
+}
+
+// ------------------ CAMERA / PROFILE PICS ------------------
+export async function uploadProfilePicture(file) {
+  if (!currentUser) return "";
+  const storageRef = ref(storage, `profile_pics/${currentUser.uid}`);
+  await uploadBytes(storageRef, file);
+  return await getDownloadURL(storageRef);
+}
+
+// ------------------ REAL-TIME ACTION TRACKING ------------------
+export function trackUserActions(callback) {
+  if (!currentUser) return;
+  const postsRef = collection(db, "posts");
+  const messagesRef = collection(db, "messages");
+  const userRef = doc(db, "users", currentUser.uid);
+
+  const unsubscribePosts = onSnapshot(postsRef, snapshot => {
+    const posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback({ type: "posts", data: posts });
+  });
+
+  const unsubscribeMessages = onSnapshot(messagesRef, snapshot => {
+    const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback({ type: "messages", data: messages });
+  });
+
+  const unsubscribeUser = onSnapshot(userRef, docSnap => {
+    callback({ type: "user", data: { id: docSnap.id, ...docSnap.data() } });
+  });
+
+  return () => {
+    unsubscribePosts();
+    unsubscribeMessages();
+    unsubscribeUser();
+  };
+}
+
+// ------------------ UI RENDER FUNCTIONS ------------------
+function renderLogin() {
+  document.body.innerHTML = `
+    <div class="login-container">
+      <h2>Login</h2>
+      <input id="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Password" />
+      <button id="loginBtn">Login</button>
+    </div>
+  `;
+  document.getElementById("loginBtn").onclick = async () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    await login(email, password);
+  };
+}
+
+async function renderUI() {
+  document.body.innerHTML = `
+    <div class="app-container">
+      <h2>Vibez</h2>
+      <div id="suggestedUsers"></div>
+      <div id="postForm">
+        <textarea id="postContent" placeholder="What's up?"></textarea>
+        <input type="file" id="postImage" />
+        <button id="postBtn">Post</button>
+      </div>
+      <div id="posts"></div>
+      <div id="messages"></div>
+      <div>
+        <button id="logoutBtn">Logout</button>
+      </div>
+    </div>
   `;
 
-  const snap = await db.collection("posts").doc(postId).collection("comments").orderBy("createdAt").get();
-  snap.forEach(doc => {
-    const c = doc.data();
-    document.getElementById(`comment-list-${postId}`).innerHTML += `<div class="text-sm"><b>${c.username}</b> ${escapeHtml(c.text)}</div>`;
+  document.getElementById("logoutBtn").onclick = logout;
+  document.getElementById("postBtn").onclick = async () => {
+    const content = document.getElementById("postContent").value;
+    const imageFile = document.getElementById("postImage").files[0];
+    await createPost(content, imageFile);
+    document.getElementById("postContent").value = "";
+    document.getElementById("postImage").value = "";
+  };
+
+  // Render suggested users
+  const suggested = await getSuggestedUsers();
+  const suggestedDiv = document.getElementById("suggestedUsers");
+  suggestedDiv.innerHTML = "<h3>Suggested Users</h3>" + suggested.map(u =>
+    `<div>${u.username}</div>`
+  ).join("");
+
+  // Real-time posts rendering
+  onPostsUpdate(posts => {
+    const postsDiv = document.getElementById("posts");
+    postsDiv.innerHTML = posts.map(p =>
+      `<div class="post">
+        <p>${p.content}</p>
+        ${p.imageUrl ? `<img src="${p.imageUrl}" width="200"/>` : ""}
+        <p>Likes: ${p.likes.length}</p>
+        <button onclick="likePost('${p.id}')">Like</button>
+        <div>
+          <input id="comment-${p.id}" placeholder="Comment..." />
+          <button onclick="commentPost('${p.id}', document.getElementById('comment-${p.id}').value)">Comment</button>
+        </div>
+        <div>Comments: ${p.comments.map(c => c.text).join(", ")}</div>
+      </div>`
+    ).join("");
   });
 }
 
-async function addComment(postId) {
-  const input = document.getElementById(`comment-input-${postId}`);
-  if (!input.value.trim()) return;
-
-  await db.collection("posts").doc(postId).collection("comments").add({
-    userId: currentUser.uid,
-    username: currentUser.username,
-    text: input.value,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  openComments(postId);
-}
-
-// ==========================================
-// FOLLOW / UNFOLLOW
-// ==========================================
-async function toggleFollow(targetUserId) {
-  const userRef = db.collection("users").doc(currentUser.uid);
-  const targetRef = db.collection("users").doc(targetUserId);
-
-  const userDoc = await userRef.get();
-  const following = userDoc.data().following || [];
-
-  if (following.includes(targetUserId)) {
-    // Unfollow
-    await userRef.update({
-      following: firebase.firestore.FieldValue.arrayRemove(targetUserId)
-    });
-    await targetRef.update({
-      followers: firebase.firestore.FieldValue.arrayRemove(currentUser.uid)
-    });
-  } else {
-    // Follow
-    await userRef.update({
-      following: firebase.firestore.FieldValue.arrayUnion(targetUserId)
-    });
-    await targetRef.update({
-      followers: firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
-    });
-  }
-}
-
-// ==========================================
-// UI HELPERS
-// ==========================================
-function showAuthScreen() {
-  authScreen.classList.remove("hidden");
-  mainApp.classList.add("hidden");
-}
-
-function showMainApp() {
-  authScreen.classList.add("hidden");
-  mainApp.classList.remove("hidden");
-}
-
-function showToast(msg) {
-  alert(msg);
-}
-
-function escapeHtml(text) {
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
-}
+// Make functions global for UI buttons
+window.likePost = likePost;
+window.commentPost = commentPost;
