@@ -1,0 +1,27 @@
+<script type="module">
+  import { db } from "./js/firebase.js";
+  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  async function loadRules() {
+    const titleEl = document.getElementById("rulesTitle");
+    const contentEl = document.getElementById("rulesContent");
+
+    try {
+      const snap = await getDoc(doc(db, "settings", "rules"));
+      if (snap.exists()) {
+        const data = snap.data();
+        titleEl.textContent = data.title || "Rules";
+        contentEl.innerHTML = data.content || "<p>No rules found.</p>";
+      } else {
+        titleEl.textContent = "Rules";
+        contentEl.innerHTML = "<p>No rules found.</p>";
+      }
+    } catch (e) {
+      titleEl.textContent = "Rules";
+      contentEl.innerHTML = "<p>Failed to load rules.</p>";
+      console.error(e);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", loadRules);
+</script>
