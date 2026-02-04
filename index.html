@@ -1,8 +1,424 @@
-#include <stdio.h>  // Standard input-output header
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VIBE</title>
+    
+    <!-- PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-black text-white overflow-hidden theme-purple" id="app-body">
 
-int main() {
-    // Print "Hello, World!" to the console
-    printf("Hello, World!\n");
+    <!-- ==================== SPLASH SCREEN ==================== -->
+    <div id="splash" class="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center">
+        <div class="text-center">
+            <h1 class="text-8xl font-black mb-2"><span class="text-white">V</span><span class="theme-text">B</span></h1>
+            <p class="text-gray-500 text-sm tracking-widest uppercase mt-4 animate-pulse">VIBE</p>
+        </div>
+        <div class="absolute bottom-10 w-full px-8">
+            <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-transparent via-purple-500 to-transparent w-1/2 animate-pulse"></div>
+            </div>
+        </div>
+    </div>
 
-    return 0; // Indicate successful program termination
-}
+    <!-- ==================== AUTH SCREEN ==================== -->
+    <div id="auth-screen" class="hidden fixed inset-0 bg-black z-50 overflow-y-auto">
+        <div class="min-h-screen flex flex-col items-center justify-center px-6 py-12">
+            <div class="text-center mb-12">
+                <h1 class="text-6xl font-black mb-2"><span class="text-white">V</span><span class="theme-text">B</span></h1>
+                <p class="text-gray-400 text-sm">Private Social</p>
+            </div>
+            
+            <!-- Toggle -->
+            <div class="flex bg-gray-900 rounded-full p-1 mb-8 w-full max-w-xs">
+                <button onclick="auth.toggleMode('login')" id="login-toggle" class="flex-1 py-2 rounded-full text-sm font-semibold transition bg-purple-600 text-white">Log In</button>
+                <button onclick="auth.toggleMode('signup')" id="signup-toggle" class="flex-1 py-2 rounded-full text-sm font-semibold transition text-gray-400">Sign Up</button>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="login-form" onsubmit="auth.handleLogin(event)" class="w-full max-w-md space-y-4">
+                <input type="email" id="login-email" placeholder="Email" class="w-full bg-gray-900 border border-gray-800 rounded-2xl px-4 py-4 text-white focus:outline-none focus:border-purple-500" required>
+                <div class="relative">
+                    <input type="password" id="login-password" placeholder="Password" class="w-full bg-gray-900 border border-gray-800 rounded-2xl px-4 py-4 text-white focus:outline-none focus:border-purple-500" required>
+                    <button type="button" onclick="auth.togglePassword('login')" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">
+                        <i class="fas fa-eye" id="login-eye"></i>
+                    </button>
+                </div>
+                <div id="login-error" class="text-red-500 text-sm text-center hidden"></div>
+                <button type="submit" id="login-btn" class="w-full bg-purple-600 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2">
+                    <span>Log In</span>
+                    <div class="loading-spinner hidden"></div>
+                </button>
+            </form>
+            
+            <!-- Signup Form -->
+            <form id="signup-form" onsubmit="auth.handleSignup(event)" class="hidden w-full max-w-md space-y-4">
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500">@</span>
+                    <input type="text" id="signup-username" placeholder="Username" maxlength="20" class="w-full bg-gray-900 border border-gray-800 rounded-2xl pl-10 pr-4 py-4 text-white focus:outline-none focus:border-purple-500" required oninput="auth.checkUsername(this.value)">
+                    <span id="username-status" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs"></span>
+                </div>
+                <input type="email" id="signup-email" placeholder="Email" class="w-full bg-gray-900 border border-gray-800 rounded-2xl px-4 py-4 text-white focus:outline-none focus:border-purple-500" required>
+                <div class="relative">
+                    <input type="password" id="signup-password" placeholder="Password (6+ chars)" minlength="6" class="w-full bg-gray-900 border border-gray-800 rounded-2xl px-4 py-4 text-white focus:outline-none focus:border-purple-500" required>
+                    <button type="button" onclick="auth.togglePassword('signup')" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">
+                        <i class="fas fa-eye" id="signup-eye"></i>
+                    </button>
+                </div>
+                <div id="signup-error" class="text-red-500 text-sm text-center hidden"></div>
+                <button type="submit" id="signup-btn" class="w-full bg-purple-600 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2">
+                    <span>Create Account</span>
+                    <div class="loading-spinner hidden"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN APP ==================== -->
+    <div id="main-app" class="hidden h-screen flex flex-col bg-black">
+        
+        <!-- Header -->
+        <header id="top-nav" class="fixed top-0 left-0 right-0 z-40 bg-black/95 backdrop-blur-xl border-b border-gray-800 transition-transform duration-300">
+            <div class="flex items-center justify-between px-4 py-3">
+                <button onclick="app.toggleSidebar()" class="p-2 hover:bg-gray-900 rounded-full"><i class="fas fa-bars text-xl"></i></button>
+                <h1 class="text-2xl font-black"><span class="text-white">V</span><span class="theme-text">B</span></h1>
+                <div class="flex items-center gap-3">
+                    <button onclick="nav.openMessages()" class="p-2 hover:bg-gray-900 rounded-full relative">
+                        <i class="fas fa-paper-plane text-xl"></i>
+                        <span id="msg-badge" class="absolute -top-1 -right-1 bg-purple-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+                    </button>
+                    <button onclick="camera.open()" class="p-2 hover:bg-gray-900 rounded-full"><i class="fas fa-plus-square text-xl text-purple-500"></i></button>
+                </div>
+            </div>
+            
+            <!-- Stories -->
+            <div id="stories-container" class="flex gap-4 overflow-x-auto hide-scrollbar px-4 pb-3 border-b border-gray-800">
+                <div class="flex-shrink-0 flex flex-col items-center gap-1 cursor-pointer" onclick="story.add()">
+                    <div class="relative">
+                        <div class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center border-2 border-dashed border-gray-600" id="my-story-ring">
+                            <img id="my-story-img" class="w-full h-full rounded-full object-cover hidden">
+                            <i class="fas fa-plus text-gray-400" id="my-story-icon"></i>
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center border-2 border-black"><i class="fas fa-camera text-xs"></i></div>
+                    </div>
+                    <span class="text-xs text-gray-400">Your Story</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <main id="content-area" class="flex-1 overflow-y-auto hide-scrollbar pt-36 pb-20 bg-black">
+            
+            <!-- HOME FEED -->
+            <div id="feed-view" class="min-h-full">
+                <div id="posts-container" class="space-y-6 pb-6"></div>
+                <div id="feed-empty" class="hidden flex flex-col items-center justify-center py-20 text-gray-500">
+                    <i class="fas fa-camera text-6xl mb-4 opacity-30"></i>
+                    <p class="text-lg font-semibold">No posts yet</p>
+                    <button onclick="camera.open()" class="mt-6 px-6 py-3 bg-purple-600 rounded-full font-semibold">Create Post</button>
+                </div>
+            </div>
+
+            <!-- EXPLORE -->
+            <div id="explore-view" class="hidden min-h-full p-4">
+                <div class="sticky top-0 bg-black/95 backdrop-blur-xl z-10 pb-4">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                        <input type="text" id="search-input" placeholder="Search users..." class="w-full bg-gray-900 border border-gray-800 rounded-full py-3 pl-12 pr-4 text-white" oninput="explore.search(this.value)">
+                    </div>
+                </div>
+                <div id="search-results" class="space-y-3 mt-4"></div>
+            </div>
+
+            <!-- ACTIVITY -->
+            <div id="activity-view" class="hidden min-h-full p-4">
+                <h2 class="text-2xl font-bold mb-6">Activity</h2>
+                <div id="activity-list" class="space-y-4"></div>
+            </div>
+
+            <!-- PROFILE -->
+            <div id="profile-view" class="hidden min-h-full pb-24">
+                <div class="relative">
+                    <div class="h-32 bg-gradient-to-r from-gray-900 to-black"></div>
+                    <div class="px-4 -mt-16">
+                        <div class="flex justify-between items-end mb-4">
+                            <div class="relative">
+                                <div class="w-32 h-32 rounded-full p-1 bg-black">
+                                    <img id="profile-avatar-large" src="" class="w-full h-full rounded-full object-cover bg-gray-800">
+                                </div>
+                                <button onclick="camera.changePFP()" class="absolute bottom-0 right-0 w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center border-4 border-black"><i class="fas fa-camera text-white"></i></button>
+                            </div>
+                            <div class="flex gap-2 mb-4">
+                                <button onclick="profile.edit()" class="px-6 py-2 bg-gray-900 border border-gray-700 rounded-full font-semibold text-sm">Edit Profile</button>
+                                <button onclick="app.toggleSidebar()" class="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center"><i class="fas fa-cog"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex items-center gap-2 mb-1">
+                                <h2 id="profile-name" class="text-2xl font-bold">User</h2>
+                                <span id="profile-badge" class="hidden text-purple-500"><i class="fas fa-check-circle"></i></span>
+                            </div>
+                            <p id="profile-username" class="text-gray-500 text-sm mb-2">@username</p>
+                            <p id="profile-bio" class="text-sm mb-3 text-gray-300">No bio yet</p>
+                            
+                            <div class="flex items-center gap-6 text-sm mb-4 text-gray-400">
+                                <span><strong class="text-white" id="profile-posts">0</strong> posts</span>
+                                <span><strong class="text-white" id="profile-friends">0</strong> friends</span>
+                                <span class="flex items-center gap-1"><div class="w-2 h-2 bg-green-500 rounded-full"></div> <span id="profile-status">Active now</span></span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex border-b border-gray-800">
+                            <button onclick="profile.switchTab('posts')" class="profile-tab flex-1 py-3 text-center font-semibold border-b-2 border-purple-500 text-white" data-tab="posts"><i class="fas fa-th"></i></button>
+                            <button onclick="profile.switchTab('saved')" class="profile-tab flex-1 py-3 text-center font-semibold border-b-2 border-transparent text-gray-500" data-tab="saved"><i class="fas fa-bookmark"></i></button>
+                            <button onclick="profile.switchTab('close')" class="profile-tab flex-1 py-3 text-center font-semibold border-b-2 border-transparent text-gray-500" data-tab="close"><i class="fas fa-star text-green-400"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div id="profile-grid" class="grid grid-cols-3 gap-1 mt-1"></div>
+            </div>
+        </main>
+
+        <!-- Bottom Nav -->
+        <nav class="glass-nav fixed bottom-0 left-0 right-0 z-40">
+            <div class="flex justify-around items-center py-2">
+                <button onclick="nav.switch('home')" class="nav-btn active flex flex-col items-center gap-1 w-16 py-1 text-purple-500" data-tab="home"><i class="fas fa-home text-2xl"></i><span class="text-[10px]">Home</span></button>
+                <button onclick="nav.switch('explore')" class="nav-btn flex flex-col items-center gap-1 w-16 py-1 text-gray-500" data-tab="explore"><i class="fas fa-compass text-2xl"></i><span class="text-[10px]">Explore</span></button>
+                <button onclick="camera.open()" class="flex flex-col items-center -mt-6"><div class="w-14 h-14 bg-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30"><i class="fas fa-plus text-2xl text-white"></i></div></button>
+                <button onclick="nav.switch('activity')" class="nav-btn flex flex-col items-center gap-1 w-16 py-1 text-gray-500" data-tab="activity"><i class="fas fa-heart text-2xl"></i><span class="text-[10px]">Activity</span></button>
+                <button onclick="nav.switch('profile')" class="nav-btn flex flex-col items-center gap-1 w-16 py-1 text-gray-500" data-tab="profile"><img id="nav-profile-img" src="" class="w-7 h-7 rounded-full object-cover"></button>
+            </div>
+        </nav>
+
+        <!-- ==================== MODALS ==================== -->
+        
+        <!-- Create Post -->
+        <div id="create-modal" class="hidden fixed inset-0 bg-black z-50 flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-gray-800">
+                <button onclick="camera.close()" class="text-gray-400"><i class="fas fa-times text-xl"></i></button>
+                <span class="font-bold text-lg" id="create-title">New Post</span>
+                <button onclick="camera.nextStep()" id="create-next" class="text-purple-500 font-semibold" disabled>Next</button>
+            </div>
+            
+            <div id="create-step-1" class="flex-1 flex flex-col">
+                <div class="flex-1 flex items-center justify-center p-8 bg-gray-900">
+                    <div id="create-preview-area" class="w-full max-w-md aspect-square bg-black rounded-2xl flex items-center justify-center relative overflow-hidden border-2 border-dashed border-gray-700">
+                        <div id="create-placeholder" class="text-center text-gray-500"><i class="fas fa-image text-6xl mb-4"></i><p>Tap to select photo/video</p><p class="text-xs mt-2 text-gray-600">Max 2 min</p></div>
+                        <img id="create-preview-img" class="hidden w-full h-full object-cover">
+                        <video id="create-preview-video" class="hidden w-full h-full object-cover" loop playsinline></video>
+                        <input type="file" accept="image/*,video/*" id="create-file-input" class="hidden" onchange="camera.handleFile(event)">
+                    </div>
+                </div>
+                <div class="p-4 space-y-3">
+                    <button onclick="document.getElementById('create-file-input').click()" class="w-full bg-gray-800 py-4 rounded-2xl font-semibold"><i class="fas fa-images mr-2"></i>Gallery</button>
+                </div>
+            </div>
+            
+            <div id="create-step-2" class="hidden flex-1 flex flex-col">
+                <div class="flex-1 bg-black relative">
+                    <img id="edit-preview-img" class="w-full h-full object-contain bg-gray-900">
+                    <video id="edit-preview-video" class="hidden w-full h-full object-contain bg-gray-900" controls></video>
+                </div>
+                <div class="p-4 space-y-4 border-t border-gray-800">
+                    <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+                        <button onclick="camera.setPrivacy('public')" class="privacy-btn flex-shrink-0 px-4 py-2 bg-purple-600 rounded-full text-sm font-semibold" data-privacy="public"><i class="fas fa-globe mr-1"></i>Public</button>
+                        <button onclick="camera.setPrivacy('friends')" class="privacy-btn flex-shrink-0 px-4 py-2 bg-gray-800 rounded-full text-sm font-semibold" data-privacy="friends"><i class="fas fa-user-friends mr-1"></i>Friends</button>
+                        <button onclick="camera.setPrivacy('close')" class="privacy-btn flex-shrink-0 px-4 py-2 bg-gray-800 rounded-full text-sm font-semibold" data-privacy="close"><i class="fas fa-star mr-1"></i>Close Friends</button>
+                        <button onclick="camera.setPrivacy('private')" class="privacy-btn flex-shrink-0 px-4 py-2 bg-gray-800 rounded-full text-sm font-semibold" data-privacy="private"><i class="fas fa-lock mr-1"></i>Private</button>
+                    </div>
+                    <textarea id="create-caption" placeholder="Write a caption..." maxlength="500" class="w-full bg-gray-900 border border-gray-800 rounded-2xl p-4 text-white resize-none h-24"></textarea>
+                    <div class="flex justify-between text-xs text-gray-500">
+                        <span id="caption-count">0/500</span>
+                        <button onclick="camera.toggleComments()" id="comments-toggle"><i class="fas fa-comment"></i> Comments On</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments -->
+        <div id="comments-modal" class="hidden fixed inset-0 z-50 bg-black/80" onclick="comments.close(event)">
+            <div class="absolute bottom-0 left-0 right-0 bg-gray-900 rounded-t-3xl max-h-[85vh] flex flex-col slide-up" onclick="event.stopPropagation()">
+                <div class="drag-indicator mt-3"></div>
+                <div class="p-4 border-b border-gray-800 flex justify-between items-center">
+                    <h3 class="font-bold text-lg">Comments <span class="text-gray-500 text-sm" id="comments-count">(0)</span></h3>
+                    <button onclick="comments.close()" class="text-gray-400"><i class="fas fa-times text-xl"></i></button>
+                </div>
+                <div class="flex-1 overflow-y-auto p-4 space-y-4" id="comments-list"></div>
+                <div class="p-4 border-t border-gray-800 bg-gray-900">
+                    <div class="flex gap-3">
+                        <img id="comment-avatar" src="" class="w-8 h-8 rounded-full mt-1">
+                        <div class="flex-1 relative">
+                            <textarea id="comment-input" placeholder="Add a comment..." class="w-full bg-gray-800 rounded-2xl py-3 px-4 pr-12 text-sm resize-none" rows="1" oninput="this.style.height='';this.style.height=this.scrollHeight+'px'"></textarea>
+                            <button onclick="comments.post()" class="absolute right-2 bottom-2 text-purple-500 font-semibold p-2">Post</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div id="messages-view" class="hidden fixed inset-0 bg-black z-50 flex flex-col">
+            <div class="p-4 border-b border-gray-800 flex items-center gap-4 bg-black/95 backdrop-blur-xl">
+                <button onclick="nav.closeMessages()" class="p-2 hover:bg-gray-900 rounded-full"><i class="fas fa-arrow-left text-xl"></i></button>
+                <h2 class="text-xl font-bold">Messages</h2>
+                <button onclick="messages.newChat()" class="ml-auto p-2 hover:bg-gray-900 rounded-full"><i class="fas fa-edit text-xl"></i></button>
+            </div>
+            <div class="flex border-b border-gray-800">
+                <button onclick="messages.switchTab('all')" class="msg-tab flex-1 py-3 text-center font-semibold border-b-2 border-purple-500 text-white" data-tab="all">All</button>
+                <button onclick="messages.switchTab('groups')" class="msg-tab flex-1 py-3 text-center font-semibold border-b-2 border-transparent text-gray-500" data-tab="groups">Groups</button>
+                <button onclick="messages.switchTab('requests')" class="msg-tab flex-1 py-3 text-center font-semibold border-b-2 border-transparent text-gray-500" data-tab="requests">Requests</button>
+            </div>
+            <div class="flex-1 overflow-y-auto" id="messages-list"></div>
+        </div>
+
+        <!-- Chat -->
+        <div id="chat-view" class="hidden fixed inset-0 bg-black z-[60] flex flex-col">
+            <div class="p-4 border-b border-gray-800 flex items-center gap-3 bg-black/95 backdrop-blur-xl">
+                <button onclick="chat.close()" class="p-2 hover:bg-gray-900 rounded-full"><i class="fas fa-arrow-left text-xl"></i></button>
+                <img id="chat-avatar" src="" class="w-10 h-10 rounded-full">
+                <div class="flex-1 min-w-0">
+                    <h3 id="chat-name" class="font-bold truncate">Name</h3>
+                    <p id="chat-status" class="text-xs text-gray-400 truncate">Active now</p>
+                </div>
+                <button onclick="chat.info()" class="p-2 hover:bg-gray-900 rounded-full"><i class="fas fa-info-circle text-xl"></i></button>
+            </div>
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
+            <div class="p-4 border-t border-gray-800 bg-gray-900">
+                <div class="flex gap-2">
+                    <button onclick="chat.showAttachments()" class="p-3 text-gray-400"><i class="fas fa-plus-circle text-xl"></i></button>
+                    <input type="text" id="chat-input" placeholder="Message..." class="flex-1 bg-gray-800 rounded-full py-3 px-5 text-white" onkeypress="chat.handleKeyPress(event)">
+                    <button onclick="chat.send()" class="p-3 text-purple-500"><i class="fas fa-paper-plane text-xl"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div id="sidebar" class="hidden fixed inset-0 z-50">
+            <div class="absolute inset-0 bg-black/60" onclick="app.toggleSidebar()"></div>
+            <div class="absolute left-0 top-0 bottom-0 w-80 bg-gray-900 border-r border-gray-800 transform -translate-x-full transition-transform duration-300" id="sidebar-content">
+                <div class="p-6 space-y-6 h-full overflow-y-auto">
+                    <div class="flex items-center gap-4 pb-6 border-b border-gray-800">
+                        <img id="sidebar-avatar" src="" class="w-14 h-14 rounded-full">
+                        <div>
+                            <h3 id="sidebar-name" class="font-bold">Name</h3>
+                            <p id="sidebar-username" class="text-sm text-gray-500">@username</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <button onclick="settings.open()" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-800 transition text-left"><i class="fas fa-cog text-xl text-gray-400"></i><div><p class="font-semibold">Settings</p><p class="text-xs text-gray-500">Theme, notifications, privacy</p></div></button>
+                        <button onclick="saved.open()" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-800 transition text-left"><i class="fas fa-bookmark text-xl text-gray-400"></i><span class="font-semibold">Saved</span></button>
+                        <button onclick="closeFriends.open()" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-800 transition text-left"><i class="fas fa-star text-xl text-green-400"></i><span class="font-semibold">Close Friends</span></button>
+                        <button onclick="blocked.open()" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-800 transition text-left"><i class="fas fa-ban text-xl text-red-400"></i><span class="font-semibold">Blocked Users</span></button>
+                    </div>
+                    
+                    <!-- Admin -->
+                    <div id="admin-section" class="hidden space-y-2 pt-6 border-t border-gray-800">
+                        <p class="text-xs text-purple-500 font-bold uppercase tracking-wider mb-2">Admin Panel</p>
+                        <button onclick="admin.users()" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-800 transition text-left text-purple-500"><i class="fas fa-users-cog text-xl"></i><span class="font-semibold">All Users</span></button>
+                        <button onclick="admin.reports()" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-800 transition text-left text-purple-500"><i class="fas fa-exclamation-triangle text-xl"></i><span class="font-semibold">Reports</span></button>
+                    </div>
+                    
+                    <div class="pt-6 border-t border-gray-800">
+                        <button onclick="auth.logout()" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-red-500/20 transition text-left text-red-400"><i class="fas fa-sign-out-alt text-xl"></i><span class="font-semibold">Log Out</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-modal" class="hidden fixed inset-0 bg-black z-50">
+            <div class="h-full flex flex-col">
+                <div class="p-4 border-b border-gray-800 flex items-center gap-4">
+                    <button onclick="settings.close()" class="p-2 hover:bg-gray-900 rounded-full"><i class="fas fa-arrow-left text-xl"></i></button>
+                    <h2 class="text-xl font-bold">Settings</h2>
+                </div>
+                <div class="flex-1 overflow-y-auto p-4 space-y-6">
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Appearance</h3>
+                        <div class="p-4 bg-gray-900 rounded-2xl">
+                            <p class="mb-3 font-semibold">Theme Color</p>
+                            <div class="flex gap-3 flex-wrap">
+                                <button onclick="settings.setTheme('purple')" class="w-10 h-10 rounded-full bg-purple-500 ring-2 ring-white ring-offset-2 ring-offset-black"></button>
+                                <button onclick="settings.setTheme('blue')" class="w-10 h-10 rounded-full bg-blue-500"></button>
+                                <button onclick="settings.setTheme('red')" class="w-10 h-10 rounded-full bg-red-500"></button>
+                                <button onclick="settings.setTheme('green')" class="w-10 h-10 rounded-full bg-green-500"></button>
+                                <button onclick="settings.setTheme('pink')" class="w-10 h-10 rounded-full bg-pink-500"></button>
+                                <button onclick="settings.setTheme('yellow')" class="w-10 h-10 rounded-full bg-yellow-500"></button>
+                                <button onclick="settings.setTheme('orange')" class="w-10 h-10 rounded-full bg-orange-500"></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Notifications</h3>
+                        <div class="space-y-3" id="notif-settings">
+                            <label class="flex items-center justify-between p-4 bg-gray-900 rounded-2xl cursor-pointer"><span>Push Notifications</span><input type="checkbox" id="notif-push" checked onchange="settings.saveNotif('push', this.checked)" class="w-5 h-5 accent-purple-500"></label>
+                            <label class="flex items-center justify-between p-4 bg-gray-900 rounded-2xl cursor-pointer"><span>Likes</span><input type="checkbox" id="notif-likes" checked onchange="settings.saveNotif('likes', this.checked)" class="w-5 h-5 accent-purple-500"></label>
+                            <label class="flex items-center justify-between p-4 bg-gray-900 rounded-2xl cursor-pointer"><span>Comments</span><input type="checkbox" id="notif-comments" checked onchange="settings.saveNotif('comments', this.checked)" class="w-5 h-5 accent-purple-500"></label>
+                            <label class="flex items-center justify-between p-4 bg-gray-900 rounded-2xl cursor-pointer"><span>Messages</span><input type="checkbox" id="notif-messages" checked onchange="settings.saveNotif('messages', this.checked)" class="w-5 h-5 accent-purple-500"></label>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Account</h3>
+                        <div class="space-y-3">
+                            <button onclick="settings.changePassword()" class="w-full p-4 bg-gray-900 rounded-2xl text-left">Change Password</button>
+                            <button onclick="settings.changeUsername()" class="w-full p-4 bg-gray-900 rounded-2xl text-left">Change Username <span id="username-changes-left" class="text-xs text-gray-500 float-right">3 left</span></button>
+                            <button onclick="settings.downloadData()" class="w-full p-4 bg-gray-900 rounded-2xl text-left text-red-500">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast-container" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-[100] pointer-events-none space-y-2"></div>
+        
+        <!-- Loading -->
+        <div id="loading-overlay" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center">
+            <div class="text-center">
+                <div class="loading-spinner w-12 h-12 mb-4"></div>
+                <p class="text-gray-400" id="loading-text">Loading...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script src="js/firebase.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/feed.js"></script>
+    <script src="js/camera.js"></script>
+    <script src="js/comments.js"></script>
+    <script src="js/stories.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/friends.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/admin.js"></script>
+
+</body>
+</html>
