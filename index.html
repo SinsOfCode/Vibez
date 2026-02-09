@@ -12,181 +12,53 @@
             --secondary: #ff0000;
             --accent: #ffd93d;
             --bg: #0a0a1a;
-            --rose-red: #c41e3a;
-            --rose-pink: #ff69b4;
-        }
-        
-        html {
-            scroll-behavior: smooth;
         }
         
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg);
             color: white;
-            overflow-x: hidden;
+            min-height: 100vh;
+            overflow: hidden;
         }
         
-        /* Cursor Trail Only (NO laggy circle) */
-        .cursor-trail {
+        /* Cursor Trail */
+        .trail {
             position: fixed;
             pointer-events: none;
-            z-index: 99998;
-            font-size: 16px;
-            animation: trailFade 0.8s forwards;
+            z-index: 9999;
+            font-size: 14px;
+            animation: fade 0.6s forwards;
         }
         
-        @keyframes trailFade {
-            0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0.5); }
+        @keyframes fade {
+            to { opacity: 0; transform: scale(0.5); }
         }
         
-        /* Loading Screen */
+        /* Loading */
         .loader {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 10000;
-            transition: opacity 0.8s, visibility 0.8s;
+            transition: opacity 0.5s;
         }
         
-        .loader.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
+        .loader.hidden { opacity: 0; pointer-events: none; }
         
-        .loader-heart {
-            font-size: 5rem;
-            animation: loaderPulse 1.5s infinite;
-        }
+        .loader-heart { font-size: 4rem; animation: pulse 1s infinite; }
         
-        @keyframes loaderPulse {
+        @keyframes pulse {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.3); }
+            50% { transform: scale(1.2); }
         }
         
-        .loader-text {
-            margin-top: 1rem;
-            font-size: 1.5rem;
-            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmer 2s linear infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% center; }
-            100% { background-position: 200% center; }
-        }
-        
-        /* CSS Art Flowers */
-        .flower-container {
-            position: fixed;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .rose-bush {
-            position: absolute;
-            width: 200px;
-            height: 300px;
-        }
-        
-        .rose {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            animation: roseSway 4s ease-in-out infinite;
-        }
-        
-        @keyframes roseSway {
-            0%, 100% { transform: rotate(-5deg); }
-            50% { transform: rotate(5deg); }
-        }
-        
-        .rose-center {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: radial-gradient(circle, #8b0000, #c41e3a);
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 3;
-            box-shadow: 0 0 10px rgba(196, 30, 58, 0.8);
-        }
-        
-        .petal {
-            position: absolute;
-            border-radius: 50% 50% 50% 0;
-            transform-origin: bottom left;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-        
-        .petal-1 { width: 30px; height: 30px; background: linear-gradient(135deg, #ff1493, #c41e3a); transform: rotate(0deg); top: 15px; left: 30px; }
-        .petal-2 { width: 28px; height: 28px; background: linear-gradient(135deg, #ff69b4, #c41e3a); transform: rotate(72deg); top: 5px; left: 25px; }
-        .petal-3 { width: 26px; height: 26px; background: linear-gradient(135deg, #ff1493, #8b0000); transform: rotate(144deg); top: 5px; left: 15px; }
-        .petal-4 { width: 28px; height: 28px; background: linear-gradient(135deg, #ff69b4, #c41e3a); transform: rotate(216deg); top: 15px; left: 10px; }
-        .petal-5 { width: 30px; height: 30px; background: linear-gradient(135deg, #ff1493, #c41e3a); transform: rotate(288deg); top: 25px; left: 15px; }
-        
-        .stem {
-            position: absolute;
-            width: 4px;
-            height: 150px;
-            background: linear-gradient(to bottom, #228b22, #006400);
-            bottom: -120px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 2px;
-        }
-        
-        .leaf {
-            position: absolute;
-            width: 40px;
-            height: 20px;
-            background: linear-gradient(135deg, #32cd32, #228b22);
-            border-radius: 0 100% 0 100%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        
-        .leaf-1 { bottom: -40px; left: 50%; transform: rotate(-30deg); }
-        .leaf-2 { bottom: -80px; left: 30%; transform: rotate(30deg) scaleX(-1); }
-        .leaf-3 { bottom: -100px; left: 60%; transform: rotate(-20deg); }
-        
-        .bush-left { bottom: 0; left: -50px; transform: scale(0.8) rotate(-5deg); }
-        .bush-right { bottom: 0; right: -50px; transform: scale(0.8) rotate(5deg) scaleX(-1); }
-        .bush-top-left { top: 50px; left: 20px; transform: scale(0.6) rotate(-10deg); }
-        .bush-top-right { top: 50px; right: 20px; transform: scale(0.6) rotate(10deg) scaleX(-1); }
-        
-        /* Floating petals */
-        .floating-petal {
-            position: fixed;
-            width: 15px;
-            height: 15px;
-            background: linear-gradient(135deg, #ff69b4, #c41e3a);
-            border-radius: 50% 0 50% 50%;
-            pointer-events: none;
-            z-index: 2;
-            animation: petalFall 10s linear infinite;
-            opacity: 0.8;
-        }
-        
-        @keyframes petalFall {
-            0% { transform: translateY(-100px) rotate(0deg) translateX(0); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg) translateX(100px); opacity: 0; }
-        }
-        
-        /* Landing Section */
-        .landing {
+        /* Main Container */
+        .container {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -195,140 +67,90 @@
             position: relative;
             background: 
                 radial-gradient(circle at 20% 50%, rgba(0,102,255,0.15), transparent 50%),
-                radial-gradient(circle at 80% 50%, rgba(255,0,0,0.15), transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(255,105,180,0.1), transparent 70%);
-            z-index: 10;
+                radial-gradient(circle at 80% 50%, rgba(255,0,0,0.15), transparent 50%);
         }
         
-        /* 3D Heart System */
-        .heart-system {
-            width: 400px;
-            height: 400px;
+        /* 3D Heart */
+        .heart-wrap {
+            width: 300px;
+            height: 300px;
             position: relative;
             margin-bottom: 2rem;
-            perspective: 1000px;
         }
         
-        .heart-3d-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            animation: systemRotate 20s linear infinite;
-        }
-        
-        @keyframes systemRotate {
-            0% { transform: rotateY(0deg) rotateX(10deg); }
-            100% { transform: rotateY(360deg) rotateX(10deg); }
-        }
-        
-        .orbit-ring {
+        .orbit {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 350px;
-            height: 350px;
+            top: 50%; left: 50%;
+            width: 280px; height: 280px;
             transform: translate(-50%, -50%);
-            animation: counterRotate 20s linear infinite;
+            animation: spin 15s linear infinite;
         }
         
-        @keyframes counterRotate {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(-360deg); }
+        @keyframes spin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
         }
         
-        .orbit-char {
+        .orbit span {
             position: absolute;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
-            text-shadow: 0 0 20px currentColor;
+            color: var(--accent);
         }
         
-        .center-heart {
+        .heart-center {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
-            animation: heartBeat 1.5s ease-in-out infinite;
+            width: 150px; height: 150px;
+            animation: beat 1.5s ease-in-out infinite;
         }
         
-        @keyframes heartBeat {
+        @keyframes beat {
             0%, 100% { transform: translate(-50%, -50%) scale(1); }
             50% { transform: translate(-50%, -50%) scale(1.1); }
         }
         
-        .center-heart svg {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 0 30px rgba(0,102,255,0.8));
+        .heart-center svg {
+            width: 100%; height: 100%;
+            filter: drop-shadow(0 0 20px rgba(0,102,255,0.5));
         }
         
-        .heart-front-text {
+        .heart-text {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 10;
-            pointer-events: none;
-            animation: textPulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes textPulse {
-            0%, 100% { text-shadow: 0 0 20px var(--primary), 0 0 40px var(--secondary); }
-            50% { text-shadow: 0 0 30px var(--secondary), 0 0 60px var(--primary); }
-        }
-        
-        .heart-front-text h2 {
-            font-size: 2rem;
+            font-size: 1.5rem;
+            font-weight: bold;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: 5px;
-            text-transform: uppercase;
+            letter-spacing: 3px;
         }
         
         /* Question Box */
         .question-box {
             text-align: center;
-            z-index: 10;
-            animation: fadeInUp 1s ease;
             padding: 2rem;
             background: rgba(0,0,0,0.3);
-            border-radius: 30px;
+            border-radius: 20px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            z-index: 10;
         }
         
         .question-box h1 {
-            font-size: 3.5rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary), var(--rose-pink), var(--secondary));
-            background-size: 200% 200%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: gradientFlow 3s ease infinite;
-            text-shadow: 0 0 30px rgba(0,102,255,0.3);
-        }
-        
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
         
         .question-box p {
-            font-size: 1.3rem;
-            opacity: 0.9;
-            margin-bottom: 2.5rem;
-            color: rgba(255,255,255,0.8);
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
         }
         
         /* Buttons */
@@ -336,554 +158,115 @@
             display: flex;
             gap: 2rem;
             justify-content: center;
-            position: relative;
-            min-height: 80px;
         }
         
         .btn {
-            padding: 1.3rem 3.5rem;
-            font-size: 1.4rem;
+            padding: 1.2rem 3rem;
+            font-size: 1.3rem;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
         }
         
         .btn-yes {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            box-shadow: 0 10px 30px rgba(0,102,255,0.4), 0 0 60px rgba(255,0,0,0.2);
-            animation: yesPulse 2s infinite;
-        }
-        
-        @keyframes yesPulse {
-            0%, 100% { box-shadow: 0 10px 30px rgba(0,102,255,0.4), 0 0 60px rgba(255,0,0,0.2); }
-            50% { box-shadow: 0 15px 40px rgba(0,102,255,0.6), 0 0 80px rgba(255,0,0,0.4); }
+            box-shadow: 0 10px 30px rgba(0,102,255,0.4);
         }
         
         .btn-yes:hover {
-            transform: scale(1.1) translateY(-3px);
-            box-shadow: 0 20px 50px rgba(0,102,255,0.6), 0 0 100px rgba(255,0,0,0.4);
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(0,102,255,0.6);
         }
         
-        /* NO BUTTON - CALM BUT SLIPPERY */
+        /* NO Button - Calm Escape */
         .btn-no {
             background: transparent;
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 2px solid rgba(255,255,255,0.3);
             color: white;
             position: relative;
-            transition: all 0.3s;
-        }
-        
-        .btn-no:hover {
-            border-color: var(--secondary);
-            color: var(--secondary);
         }
         
         .btn-no.dodging {
             position: fixed !important;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.3s ease;
             z-index: 1000;
         }
         
-        .btn-no.shaking {
-            animation: shake 0.5s;
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        
-        .btn-no.tiny {
-            transform: scale(0.7);
-            font-size: 1rem;
-            padding: 1rem 2rem;
-        }
-        
-        .btn-no.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(0);
-        }
-        
-        /* Rejection popup */
-        .rejection-popup {
+        /* Popup */
+        .popup {
             position: fixed;
             background: rgba(255,0,0,0.9);
             color: white;
-            padding: 1rem 2rem;
-            border-radius: 20px;
-            font-size: 1.2rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
             font-weight: bold;
             pointer-events: none;
             z-index: 10000;
-            animation: popupFloat 2s forwards;
-            box-shadow: 0 10px 30px rgba(255,0,0,0.5);
+            animation: pop 1.5s forwards;
         }
         
-        @keyframes popupFloat {
-            0% { opacity: 0; transform: translateY(20px) scale(0.8); }
-            20% { opacity: 1; transform: translateY(0) scale(1); }
-            80% { opacity: 1; transform: translateY(-20px) scale(1); }
-            100% { opacity: 0; transform: translateY(-40px) scale(0.8); }
+        @keyframes pop {
+            0% { opacity: 0; transform: scale(0.8); }
+            20% { opacity: 1; transform: scale(1); }
+            80% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-30px); }
         }
         
-        /* TIMER SECTION */
-        .timer-section {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            background: radial-gradient(circle at center, rgba(0,102,255,0.1), transparent 70%);
-            position: relative;
-        }
-        
-        .timer-main {
-            text-align: center;
-        }
-        
-        .big-timer {
-            font-size: 5rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(0,102,255,0.3);
-            margin: 2rem 0;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 5px;
-        }
-        
-        .timer-label {
-            font-size: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 10px;
-            opacity: 0.8;
-            color: var(--accent);
-        }
-        
-        .scroll-hint {
-            margin-top: 3rem;
-            font-size: 1.1rem;
-            opacity: 0.6;
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-            width: 100%;
-            max-width: 900px;
-        }
-        
-        .stat-box {
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s;
-        }
-        
-        .stat-box:hover {
-            transform: translateY(-5px);
-            background: rgba(255,255,255,0.08);
-            border-color: var(--primary);
-        }
-        
-        .stat-number {
-            font-size: 3rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .stat-label {
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-top: 0.5rem;
-            opacity: 0.8;
-        }
-        
-        /* Story Slides Section */
-        .story-section {
-            padding: 4rem 2rem;
-            position: relative;
-        }
-        
-        .story-slide {
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 2rem 0;
-            padding: 3rem;
-            background: rgba(255,255,255,0.03);
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .story-slide::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-        }
-        
-        .slide-number {
-            font-size: 5rem;
-            font-weight: bold;
-            opacity: 0.2;
-            position: absolute;
-            top: 1rem;
-            right: 2rem;
-        }
-        
-        .slide-content h3 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .slide-content p {
-            font-size: 1.3rem;
-            line-height: 1.8;
-            max-width: 600px;
-            text-align: center;
-        }
-        
-        .slide-date {
-            margin-top: 1rem;
-            font-size: 1rem;
-            color: var(--accent);
-            opacity: 0.8;
-        }
-        
-        .slide-image {
-            max-width: 300px;
-            max-height: 200px;
-            border-radius: 15px;
-            margin-top: 2rem;
-            border: 3px solid rgba(255,255,255,0.2);
-        }
-        
-        /* Love Letter Section */
-        .letter-section {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 4rem 2rem;
-            background: radial-gradient(circle at center, rgba(255,0,0,0.1), transparent 70%);
-        }
-        
-        .sealed-letter {
-            width: 300px;
-            height: 200px;
-            background: linear-gradient(135deg, #8b0000, #c41e3a);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            transition: all 0.5s;
-            animation: letterFloat 3s ease-in-out infinite;
-        }
-        
-        @keyframes letterFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        .sealed-letter:hover {
-            transform: scale(1.05);
-            box-shadow: 0 30px 80px rgba(196, 30, 58, 0.4);
-        }
-        
-        .sealed-letter::before {
-            content: '💌';
-            font-size: 4rem;
-        }
-        
-        .sealed-letter::after {
-            content: 'Click to Open';
-            position: absolute;
-            bottom: -40px;
-            font-size: 1rem;
-            opacity: 0.8;
-        }
-        
-        .letter-content {
-            display: none;
-            max-width: 600px;
-            background: rgba(255,255,255,0.05);
-            padding: 3rem;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: fadeIn 0.5s;
-        }
-        
-        .letter-content.open {
-            display: block;
-        }
-        
-        .letter-content h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .letter-content p {
-            font-size: 1.2rem;
-            line-height: 2;
-            margin-bottom: 1.5rem;
-            white-space: pre-wrap;
-        }
-        
-        .letter-sign {
-            text-align: right;
-            font-size: 1.5rem;
-            color: var(--accent);
-            margin-top: 2rem;
-            font-style: italic;
-        }
-        
-        /* Confetti Canvas */
-        #confettiCanvas {
+        /* Confetti */
+        canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
             z-index: 9999;
         }
         
-        /* Edit Link */
-        .edit-link {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            color: rgba(255,255,255,0.3);
-            text-decoration: none;
-            font-size: 0.8rem;
-            z-index: 100;
-            transition: all 0.3s;
-        }
-        
-        .edit-link:hover {
-            color: var(--primary);
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .heart-system { width: 300px; height: 300px; }
-            .orbit-ring { width: 250px; height: 250px; }
-            .center-heart { width: 150px; height: 150px; }
+        @media (max-width: 600px) {
             .question-box h1 { font-size: 2rem; }
-            .big-timer { font-size: 3rem; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .buttons { flex-direction: column; gap: 1rem; }
-            .rose-bush { transform: scale(0.4); }
+            .buttons { flex-direction: column; }
+            .heart-wrap { width: 250px; height: 250px; }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
     <div class="loader" id="loader">
         <div class="loader-heart">💙♥️</div>
-        <div class="loader-text">Loading Our Love...</div>
     </div>
     
-    <!-- CSS Art Flowers -->
-    <div class="flower-container">
-        <div class="rose-bush bush-left">
-            <div class="rose" style="top: 0; left: 20px;">
-                <div class="rose-center"></div>
-                <div class="petal petal-1"></div>
-                <div class="petal petal-2"></div>
-                <div class="petal petal-3"></div>
-                <div class="petal petal-4"></div>
-                <div class="petal petal-5"></div>
-                <div class="stem"></div>
-                <div class="leaf leaf-1"></div>
-                <div class="leaf leaf-2"></div>
+    <canvas id="confetti"></canvas>
+    
+    <div class="container">
+        <div class="heart-wrap">
+            <div class="orbit" id="orbit"></div>
+            <div class="heart-center">
+                <svg viewBox="0 0 100 100">
+                    <defs>
+                        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#0066ff"/>
+                            <stop offset="100%" stop-color="#ff0000"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M50,85 C50,85 15,55 15,35 C15,20 25,10 40,10 C47,10 50,15 50,20 C50,15 53,10 60,10 C75,10 85,20 85,35 C85,55 50,85 50,85 Z" 
+                          fill="url(#grad)"/>
+                </svg>
             </div>
-            <div class="rose" style="top: 40px; left: 80px; transform: scale(0.8);">
-                <div class="rose-center"></div>
-                <div class="petal petal-1"></div>
-                <div class="petal petal-2"></div>
-                <div class="petal petal-3"></div>
-                <div class="petal petal-4"></div>
-                <div class="petal petal-5"></div>
-                <div class="stem" style="height: 120px;"></div>
-                <div class="leaf leaf-3"></div>
-            </div>
+            <div class="heart-text" id="orbitText">FOREVER</div>
         </div>
         
-        <div class="rose-bush bush-right">
-            <div class="rose" style="top: 0; left: 20px;">
-                <div class="rose-center"></div>
-                <div class="petal petal-1"></div>
-                <div class="petal petal-2"></div>
-                <div class="petal petal-3"></div>
-                <div class="petal petal-4"></div>
-                <div class="petal petal-5"></div>
-                <div class="stem"></div>
-                <div class="leaf leaf-1"></div>
-                <div class="leaf leaf-2"></div>
-            </div>
-            <div class="rose" style="top: 50px; left: 70px; transform: scale(0.9);">
-                <div class="rose-center"></div>
-                <div class="petal petal-1"></div>
-                <div class="petal petal-2"></div>
-                <div class="petal petal-3"></div>
-                <div class="petal petal-4"></div>
-                <div class="petal petal-5"></div>
-                <div class="stem" style="height: 130px;"></div>
-                <div class="leaf leaf-3"></div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Floating Petals Container -->
-    <div id="petalsContainer"></div>
-    
-    <!-- Confetti -->
-    <canvas id="confettiCanvas"></canvas>
-
-    <!-- LANDING PAGE -->
-    <section class="landing" id="landing">
-        <div class="heart-system">
-            <div class="heart-3d-container">
-                <div class="orbit-ring" id="orbitRing"></div>
-                
-                <div class="center-heart">
-                    <svg viewBox="0 0 200 200">
-                        <defs>
-                            <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#0066ff;stop-opacity:1" />
-                                <stop offset="50%" style="stop-color:#ff1493;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#ff0000;stop-opacity:1" />
-                            </linearGradient>
-                            <filter id="glow">
-                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                                <feMerge>
-                                    <feMergeNode in="coloredBlur"/>
-                                    <feMergeNode in="coloredBlur"/>
-                                    <feMergeNode in="SourceGraphic"/>
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        <path d="M100,180 C100,180 20,120 20,70 C20,40 40,20 70,20 C85,20 95,30 100,40 C105,30 115,20 130,20 C160,20 180,40 180,70 C180,120 100,180 100,180 Z" 
-                              fill="url(#heartGrad)" filter="url(#glow)"/>
-                    </svg>
-                </div>
-                
-                <div class="heart-front-text">
-                    <h2 id="orbitText">FOREVER</h2>
-                </div>
-            </div>
-        </div>
-        
-        <div class="question-box" id="questionBox">
+        <div class="question-box">
             <h1 id="mainQuestion">Will You Be My Valentine?</h1>
             <p id="subMessage">My heart has been waiting for this moment...</p>
             
-            <div class="buttons" id="buttonContainer">
+            <div class="buttons">
                 <button class="btn btn-yes" id="yesBtn">YES! 💙♥️</button>
                 <button class="btn btn-no" id="noBtn">No...</button>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- TIMER SECTION -->
-    <section class="timer-section" id="timerSection" style="display: none;">
-        <div class="timer-main">
-            <div class="timer-label" id="timerLabel">Together For</div>
-            <div class="big-timer" id="bigTimer">000:00:00:00</div>
-            
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <div class="stat-number" id="monthsNum">0</div>
-                    <div class="stat-label">Months</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number" id="weeksNum">0</div>
-                    <div class="stat-label">Weeks</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number" id="daysNum">0</div>
-                    <div class="stat-label">Days</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number" id="hoursNum">0</div>
-                    <div class="stat-label">Hours</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number" id="minutesNum">0</div>
-                    <div class="stat-label">Minutes</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number" id="secondsNum">0</div>
-                    <div class="stat-label">Seconds</div>
-                </div>
-            </div>
-            
-            <div class="scroll-hint">Scroll down to see our story... ↓</div>
-        </div>
-    </section>
-
-    <!-- STORY SECTION -->
-    <section class="story-section" id="storySection" style="display: none;">
-        <div id="slidesContainer"></div>
-    </section>
-
-    <!-- LETTER SECTION -->
-    <section class="letter-section" id="letterSection" style="display: none;">
-        <div class="sealed-letter" id="sealedLetter" onclick="openLetter()"></div>
-        <div class="letter-content" id="letterContent">
-            <h2 id="letterTitle">My Dearest Love</h2>
-            <p id="letterText">Letter content...</p>
-            <div class="letter-sign" id="letterSign">Forever Yours</div>
-        </div>
-    </section>
-
-    <!-- Edit Link -->
-    <a href="edit.html" class="edit-link">Edit Site</a>
-
-    <!-- Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -901,418 +284,154 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        // Data
-        let siteData = {
+        let data = {
             mainQuestion: 'Will You Be My Valentine?',
             subMessage: 'My heart has been waiting for this moment...',
             yesText: 'YES! 💙♥️',
             noText: 'No...',
-            orbitText: 'FOREVER',
-            timerLabel: 'Together For',
-            startDate: '2024-02-14T00:00',
-            slides: [],
-            letterTitle: 'My Dearest Love',
-            letterContent: 'Your letter here...',
-            letterSign: 'Forever Yours'
+            orbitText: 'FOREVER'
         };
         
-        // Rejection messages
-        const rejectionMessages = [
-            "No... 💔",
-            "Think again... 🤔",
-            "Wrong choice! ❌",
-            "Try YES instead 😉",
-            "Are you sure? 🥺",
-            "Please? 🙏",
-            "I'm begging... 😭",
-            "My heart is breaking 💔",
-            "Don't do this to me 😢",
-            "Last chance... ⚠️",
-            "Okay, I'm out 🏃‍♂️💨"
-        ];
+        const messages = ["No... 💔", "Think again... 🤔", "Wrong! ❌", "Try YES 😉", "Please? 🥺", "I'm out 🏃"];
+        let msgIndex = 0;
         
-        let rejectionIndex = 0;
-        let noButtonAttempts = 0;
-        
-        // Cursor Trail (NO laggy circle)
+        // Trail
         document.addEventListener('mousemove', (e) => {
-            if (Math.random() > 0.85) { // Less frequent = less lag
-                createTrail(e.clientX, e.clientY);
+            if (Math.random() > 0.9) {
+                const t = document.createElement('div');
+                t.className = 'trail';
+                t.textContent = ['💙', '♥️', '✨'][Math.floor(Math.random() * 3)];
+                t.style.left = e.clientX + 'px';
+                t.style.top = e.clientY + 'px';
+                t.style.color = Math.random() > 0.5 ? '#0066ff' : '#ff0000';
+                document.body.appendChild(t);
+                setTimeout(() => t.remove(), 600);
             }
         });
         
-        function createTrail(x, y) {
-            const trail = document.createElement('div');
-            trail.className = 'cursor-trail';
-            const emojis = ['💙', '♥️', '✨', '💎', '🌹'];
-            trail.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-            trail.style.left = x + 'px';
-            trail.style.top = y + 'px';
-            trail.style.color = Math.random() > 0.5 ? '#0066ff' : '#ff0000';
-            document.body.appendChild(trail);
-            setTimeout(() => trail.remove(), 800);
-        }
-        
-        // Floating petals
-        function createFloatingPetals() {
-            const container = document.getElementById('petalsContainer');
-            setInterval(() => {
-                const petal = document.createElement('div');
-                petal.className = 'floating-petal';
-                petal.style.left = Math.random() * 100 + '%';
-                petal.style.animationDelay = Math.random() * 2 + 's';
-                petal.style.animationDuration = (Math.random() * 5 + 8) + 's';
-                container.appendChild(petal);
-                setTimeout(() => petal.remove(), 15000);
-            }, 3000); // Less frequent
-        }
-        
         // Load data
-        async function loadData() {
+        async function load() {
             try {
-                const docRef = doc(db, 'site', 'data');
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    siteData = { ...siteData, ...docSnap.data() };
-                }
-                
-                localStorage.setItem('valentineData', JSON.stringify(siteData));
-                initSite();
-                
-                onSnapshot(docRef, (doc) => {
-                    if (doc.exists()) {
-                        siteData = { ...siteData, ...doc.data() };
-                        updateContent();
-                    }
-                });
-                
+                const snap = await getDoc(doc(db, 'site', 'data'));
+                if (snap.exists()) data = { ...data, ...snap.data() };
             } catch (e) {
                 const local = localStorage.getItem('valentineData');
-                if (local) siteData = JSON.parse(local);
-                initSite();
-            }
-        }
-        
-        function initSite() {
-            setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-            }, 1500);
-            
-            updateContent();
-            createFloatingPetals();
-            setupButtons();
-            setupNoButton();
-        }
-        
-        function updateContent() {
-            document.getElementById('mainQuestion').textContent = siteData.mainQuestion;
-            document.getElementById('subMessage').textContent = siteData.subMessage;
-            document.getElementById('yesBtn').textContent = siteData.yesText;
-            document.getElementById('noBtn').textContent = siteData.noText;
-            document.getElementById('orbitText').textContent = siteData.orbitText;
-            document.getElementById('timerLabel').textContent = siteData.timerLabel;
-            document.getElementById('letterTitle').textContent = siteData.letterTitle;
-            document.getElementById('letterText').textContent = siteData.letterContent;
-            document.getElementById('letterSign').textContent = siteData.letterSign;
-            
-            setupOrbitRing(siteData.orbitText);
-            renderSlides();
-        }
-        
-        function setupOrbitRing(text) {
-            const ring = document.getElementById('orbitRing');
-            ring.innerHTML = '';
-            const chars = text.split('');
-            
-            chars.forEach((char, i) => {
-                const span = document.createElement('span');
-                span.className = 'orbit-char';
-                span.textContent = char;
-                const angle = (i / chars.length) * 360;
-                const rad = (angle * Math.PI) / 180;
-                const x = Math.cos(rad) * 175;
-                const y = Math.sin(rad) * 175;
-                
-                span.style.left = `calc(50% + ${x}px)`;
-                span.style.top = `calc(50% + ${y}px)`;
-                span.style.transform = 'translate(-50%, -50%)';
-                span.style.color = i % 2 === 0 ? '#0066ff' : '#ff0000';
-                
-                ring.appendChild(span);
-            });
-        }
-        
-        function setupButtons() {
-            document.getElementById('yesBtn').addEventListener('click', function() {
-                fireConfetti();
-                localStorage.setItem('valentineSaidYes', 'true');
-                showTimer();
-            });
-        }
-        
-        // CALM NO BUTTON - Teleports away smoothly
-        function setupNoButton() {
-            const noBtn = document.getElementById('noBtn');
-            let isEscaping = false;
-            let lastTeleport = 0;
-            
-            // Mouse proximity detection
-            document.addEventListener('mousemove', (e) => {
-                if (isEscaping || noBtn.classList.contains('hidden')) return;
-                
-                const rect = noBtn.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                
-                // Distance from cursor
-                const dist = Math.sqrt(
-                    Math.pow(e.clientX - centerX, 2) + 
-                    Math.pow(e.clientY - centerY, 2)
-                );
-                
-                // Teleport if within 180px
-                if (dist < 180) {
-                    const now = Date.now();
-                    if (now - lastTeleport < 400) return; // Calm cooldown
-                    
-                    isEscaping = true;
-                    lastTeleport = now;
-                    
-                    // Change message
-                    if (rejectionIndex < rejectionMessages.length) {
-                        noBtn.textContent = rejectionMessages[rejectionIndex];
-                        rejectionIndex++;
-                    }
-                    
-                    // Shrink after 5 escapes
-                    if (rejectionIndex > 5) {
-                        noBtn.classList.add('tiny');
-                    }
-                    
-                    teleportCalmly(noBtn);
-                    
-                    setTimeout(() => {
-                        isEscaping = false;
-                    }, 400);
-                }
-            });
-            
-            // Click handler
-            noBtn.addEventListener('click', function(e) {
-                if (this.classList.contains('hidden')) return;
-                
-                noButtonAttempts++;
-                
-                if (noButtonAttempts >= 3) {
-                    this.textContent = "Nice try 😏";
-                    setTimeout(() => {
-                        this.classList.add('hidden');
-                        showPopup("Just click YES! 💙♥️", e.clientX, e.clientY);
-                    }, 400);
-                } else {
-                    this.classList.add('shaking');
-                    showPopup("Too slow! 🐌", e.clientX, e.clientY);
-                    setTimeout(() => this.classList.remove('shaking'), 500);
-                    teleportCalmly(this);
-                }
-            });
-        }
-        
-        function teleportCalmly(btn) {
-            btn.classList.add('dodging');
-            
-            const padding = 80;
-            const maxX = window.innerWidth - btn.offsetWidth - padding;
-            const maxY = window.innerHeight - btn.offsetHeight - padding;
-            
-            // Get YES button position to avoid
-            const yesBtn = document.getElementById('yesBtn');
-            const yesRect = yesBtn.getBoundingClientRect();
-            const yesCenterX = yesRect.left + yesRect.width / 2;
-            const yesCenterY = yesRect.top + yesRect.height / 2;
-            
-            let newX, newY, safeDistance;
-            let attempts = 0;
-            
-            // Find position away from YES button and cursor
-            do {
-                newX = Math.random() * (maxX - padding) + padding;
-                newY = Math.random() * (maxY - padding) + padding;
-                
-                const distToYes = Math.sqrt(
-                    Math.pow(newX - yesCenterX, 2) + 
-                    Math.pow(newY - yesCenterY, 2)
-                );
-                
-                safeDistance = distToYes > 250;
-                attempts++;
-            } while (!safeDistance && attempts < 15);
-            
-            btn.style.left = newX + 'px';
-            btn.style.top = newY + 'px';
-        }
-        
-        function showPopup(text, x, y) {
-            const popup = document.createElement('div');
-            popup.className = 'rejection-popup';
-            popup.textContent = text;
-            popup.style.left = Math.min(x, window.innerWidth - 200) + 'px';
-            popup.style.top = Math.max(y - 80, 20) + 'px';
-            document.body.appendChild(popup);
-            setTimeout(() => popup.remove(), 2000);
-        }
-        
-        function showTimer() {
-            document.getElementById('landing').style.display = 'none';
-            document.getElementById('timerSection').style.display = 'flex';
-            document.getElementById('storySection').style.display = 'block';
-            document.getElementById('letterSection').style.display = 'flex';
-            
-            startTimer();
-            
-            // Smooth scroll to timer
-            setTimeout(() => {
-                document.getElementById('timerSection').scrollIntoView({ behavior: 'smooth' });
-            }, 500);
-        }
-        
-        function startTimer() {
-            const start = new Date(siteData.startDate || '2024-02-14T00:00');
-            
-            function update() {
-                const now = new Date();
-                const diff = now - start;
-                
-                const days = Math.floor(diff / (1000*60*60*24));
-                const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
-                const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
-                const secs = Math.floor((diff % (1000*60)) / 1000);
-                
-                document.getElementById('bigTimer').textContent = 
-                    String(days).padStart(3,'0') + ':' +
-                    String(hours).padStart(2,'0') + ':' +
-                    String(mins).padStart(2,'0') + ':' +
-                    String(secs).padStart(2,'0');
-                
-                document.getElementById('monthsNum').textContent = (days/30.44).toFixed(1);
-                document.getElementById('weeksNum').textContent = Math.floor(days/7);
-                document.getElementById('daysNum').textContent = days;
-                document.getElementById('hoursNum').textContent = Math.floor(diff/(1000*60*60));
-                document.getElementById('minutesNum').textContent = Math.floor(diff/(1000*60));
-                document.getElementById('secondsNum').textContent = Math.floor(diff/1000);
+                if (local) data = { ...data, ...JSON.parse(local) };
             }
             
             update();
-            setInterval(update, 1000);
+            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 1000);
         }
         
-        function renderSlides() {
-            const container = document.getElementById('slidesContainer');
-            const slides = siteData.slides || [];
+        function update() {
+            document.getElementById('mainQuestion').textContent = data.mainQuestion;
+            document.getElementById('subMessage').textContent = data.subMessage;
+            document.getElementById('yesBtn').textContent = data.yesText;
+            document.getElementById('noBtn').textContent = data.noText;
+            document.getElementById('orbitText').textContent = data.orbitText;
             
-            if (slides.length === 0) {
-                container.innerHTML = '<div class="story-slide"><div class="slide-content"><h3>Our Story</h3><p>Add your story slides in the editor!</p></div></div>';
-                return;
+            // Setup orbit text
+            const orbit = document.getElementById('orbit');
+            orbit.innerHTML = '';
+            const chars = data.orbitText.split('');
+            chars.forEach((c, i) => {
+                const s = document.createElement('span');
+                s.textContent = c;
+                const ang = (i / chars.length) * Math.PI * 2;
+                s.style.left = Math.cos(ang) * 130 + 130 + 'px';
+                s.style.top = Math.sin(ang) * 130 + 130 + 'px';
+                s.style.color = i % 2 ? '#ff0000' : '#0066ff';
+                orbit.appendChild(s);
+            });
+        }
+        
+        // YES button
+        document.getElementById('yesBtn').addEventListener('click', () => {
+            confetti();
+            localStorage.setItem('valentineSaidYes', 'true');
+            setTimeout(() => window.location.href = 'timer.html', 1500);
+        });
+        
+        // NO button - calm escape
+        const noBtn = document.getElementById('noBtn');
+        let escaping = false;
+        
+        document.addEventListener('mousemove', (e) => {
+            if (escaping) return;
+            const r = noBtn.getBoundingClientRect();
+            const cx = r.left + r.width/2, cy = r.top + r.height/2;
+            const dist = Math.sqrt((e.clientX-cx)**2 + (e.clientY-cy)**2);
+            
+            if (dist < 150) {
+                escaping = true;
+                noBtn.classList.add('dodging');
+                
+                // Change text
+                if (msgIndex < messages.length) noBtn.textContent = messages[msgIndex++];
+                
+                // Teleport away from YES button
+                const yesR = document.getElementById('yesBtn').getBoundingClientRect();
+                const yesX = yesR.left + yesR.width/2, yesY = yesR.top + yesR.height/2;
+                
+                let nx, ny, d;
+                do {
+                    nx = Math.random() * (window.innerWidth - 150) + 50;
+                    ny = Math.random() * (window.innerHeight - 80) + 50;
+                    d = Math.sqrt((nx-yesX)**2 + (ny-yesY)**2);
+                } while (d < 200);
+                
+                noBtn.style.left = nx + 'px';
+                noBtn.style.top = ny + 'px';
+                
+                setTimeout(() => escaping = false, 300);
             }
-            
-            container.innerHTML = slides.map((slide, i) => `
-                <div class="story-slide" style="background: ${slide.color || 'rgba(255,255,255,0.03)'};">
-                    <div class="slide-number">${String(i+1).padStart(2,'0')}</div>
-                    <div class="slide-content">
-                        <h3>${slide.title || 'Slide ' + (i+1)}</h3>
-                        <p>${slide.content || ''}</p>
-                        ${slide.date ? `<div class="slide-date">📅 ${slide.date}</div>` : ''}
-                        ${slide.image ? `<img src="${slide.image}" class="slide-image" alt="Slide image">` : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
+        });
         
-        window.openLetter = function() {
-            document.getElementById('sealedLetter').style.display = 'none';
-            document.getElementById('letterContent').classList.add('open');
-            fireConfetti();
-        };
+        noBtn.addEventListener('click', (e) => {
+            const p = document.createElement('div');
+            p.className = 'popup';
+            p.textContent = "Nice try! Click YES 💙";
+            p.style.left = e.clientX + 'px';
+            p.style.top = e.clientY + 'px';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 1500);
+        });
         
-        function fireConfetti() {
-            const canvas = document.getElementById('confettiCanvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        function confetti() {
+            const c = document.getElementById('confetti');
+            const x = c.getContext('2d');
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
             
-            const particles = [];
-            const colors = ['#0066ff', '#ff0000', '#ffd93d', '#ff69b4', '#ffffff'];
-            
-            for (let i = 0; i < 150; i++) {
-                particles.push({
-                    x: window.innerWidth / 2,
-                    y: window.innerHeight / 2,
-                    vx: (Math.random() - 0.5) * 20,
-                    vy: (Math.random() - 0.5) * 20 - 5,
-                    size: Math.random() * 10 + 5,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    rotation: Math.random() * 360,
-                    rotSpeed: (Math.random() - 0.5) * 10,
-                    life: 1,
-                    type: Math.random() > 0.3 ? 'heart' : 'circle'
+            const parts = [];
+            for (let i = 0; i < 100; i++) {
+                parts.push({
+                    x: c.width/2, y: c.height/2,
+                    vx: (Math.random()-0.5)*20, vy: (Math.random()-0.5)*20-5,
+                    s: Math.random()*8+4, c: ['#0066ff','#ff0000','#ffd93d'][Math.floor(Math.random()*3)],
+                    l: 1
                 });
             }
             
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            function anim() {
+                x.clearRect(0,0,c.width,c.height);
                 let alive = false;
-                
-                particles.forEach(p => {
-                    if (p.life <= 0) return;
+                parts.forEach(p => {
+                    if (p.l <= 0) return;
                     alive = true;
-                    
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.vy += 0.3;
-                    p.rotation += p.rotSpeed;
-                    p.life -= 0.01;
-                    
-                    ctx.save();
-                    ctx.translate(p.x, p.y);
-                    ctx.rotate(p.rotation * Math.PI / 180);
-                    ctx.globalAlpha = p.life;
-                    ctx.fillStyle = p.color;
-                    
-                    if (p.type === 'heart') {
-                        const s = p.size;
-                        ctx.beginPath();
-                        ctx.moveTo(0, -s/2);
-                        ctx.bezierCurveTo(s/2, -s, s, -s/3, 0, s);
-                        ctx.bezierCurveTo(-s, -s/3, -s/2, -s, 0, -s/2);
-                        ctx.fill();
-                    } else {
-                        ctx.beginPath();
-                        ctx.arc(0, 0, p.size/2, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    
-                    ctx.restore();
+                    p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.l -= 0.02;
+                    x.globalAlpha = p.l;
+                    x.fillStyle = p.c;
+                    x.beginPath();
+                    x.arc(p.x, p.y, p.s, 0, Math.PI*2);
+                    x.fill();
                 });
-                
-                if (alive) requestAnimationFrame(animate);
+                if (alive) requestAnimationFrame(anim);
             }
-            
-            animate();
+            anim();
         }
         
-        // Check if already said yes
-        if (localStorage.getItem('valentineSaidYes') === 'true') {
-            setTimeout(() => {
-                document.getElementById('landing').style.display = 'none';
-                document.getElementById('timerSection').style.display = 'flex';
-                document.getElementById('storySection').style.display = 'block';
-                document.getElementById('letterSection').style.display = 'flex';
-                startTimer();
-            }, 100);
-        }
-        
-        loadData();
+        load();
     </script>
 </body>
 </html>
