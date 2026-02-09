@@ -7,13 +7,30 @@
 </head>
 <body class="centered">
 
-  <h1 id="question">Will you be my Valentine? 💖</h1>
+  <h1>Will you be my Valentine? 💖</h1>
 
-  <div class="buttons">
-    <button onclick="goYes()">Yes</button>
-    <button id="noBtn">No</button>
+  <div style="position: relative; height: 120px; width: 320px;">
+    <button onclick="location.href='home.html'">Yes</button>
+    <button id="noBtn" style="position:absolute;">No</button>
   </div>
 
   <script src="script.js"></script>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+
+    noBtn.addEventListener("mouseover", () => {
+      const parent = noBtn.parentElement;
+      const maxX = parent.offsetWidth - noBtn.offsetWidth;
+      const maxY = parent.offsetHeight - noBtn.offsetHeight;
+
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+    });
+  </script>
+
 </body>
 </html>
