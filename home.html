@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Our Time</title>
+  <title>Our Story</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="centered">
 
-  <div id="donut" class="donut"></div>
-  <div style="font-size:60px;margin-top:-160px;">❤️</div>
-
   <div id="timer" class="timer"></div>
 
-  <button onclick="location.href='slideshow.html'">Enter Our Story</button>
+  <div class="slide">
+    <img id="slideImg">
+    <h2 id="slideTitle"></h2>
+    <p id="slideText"></p>
+  </div>
+
+  <div>
+    <button onclick="prevSlide()">←</button>
+    <button onclick="nextSlide()">→</button>
+  </div>
 
   <script src="script.js"></script>
   <script>
     startTimer();
-    buildDonut();
+    loadSlide();
   </script>
 </body>
 </html>
