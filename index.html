@@ -4,147 +4,492 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Be My Valentine?</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-</head>
-<body class="landing-page">
-    <!-- Dynamic Background Layers -->
-    <div class="bg-layer bg-gradient"></div>
-    <div class="bg-layer bg-particles" id="particles"></div>
-    <div class="bg-layer bg-floating-hearts" id="floatingHearts"></div>
-    <div class="bg-layer bg-spotlight"></div>
-
-    <!-- Main Container -->
-    <div class="landing-container">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e; 
+            color: white; 
+            overflow-x: hidden;
+        }
         
-        <!-- 3D Spinning Heart with Orbiting Text -->
-        <div class="heart-stage">
-            <div class="heart-orbit-system">
-                <!-- Orbiting Characters -->
-                <div class="orbit-ring ring-1" id="orbitRing1"></div>
-                <div class="orbit-ring ring-2" id="orbitRing2"></div>
-                
-                <!-- Center Heart -->
-                <div class="center-heart">
-                    <svg viewBox="0 0 200 200" class="heart-svg">
-                        <defs>
-                            <linearGradient id="heartGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:1" />
-                                <stop offset="50%" style="stop-color:#c44569;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#ff6b9d;stop-opacity:1" />
-                            </linearGradient>
-                            <filter id="heartGlow" x="-50%" y="-50%" width="200%" height="200%">
-                                <feGaussianBlur stdDeviation="4" result="blur"/>
-                                <feMerge>
-                                    <feMergeNode in="blur"/>
-                                    <feMergeNode in="blur"/>
-                                    <feMergeNode in="SourceGraphic"/>
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        <path class="heart-path" 
-                              d="M100,180 C100,180 20,120 20,70 C20,40 40,20 70,20 C85,20 95,30 100,40 C105,30 115,20 130,20 C160,20 180,40 180,70 C180,120 100,180 100,180 Z" 
-                              fill="url(#heartGrad1)" 
-                              filter="url(#heartGlow)"/>
-                    </svg>
-                    <div class="heart-pulse"></div>
-                    <div class="heart-sparkles" id="heartSparkles"></div>
-                </div>
+        /* Landing Section */
+        .landing {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(255,107,157,0.2), transparent 70%);
+        }
+        
+        /* 3D Heart with Front Text */
+        .heart-container {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        .heart-3d {
+            width: 100%;
+            height: 100%;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .heart-3d svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 30px rgba(255,107,157,0.8));
+        }
+        
+        /* Text on TOP of heart (readable) */
+        .heart-text-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .heart-text-overlay h2 {
+            font-size: 1.5rem;
+            color: #ffd93d;
+            text-shadow: 0 0 20px rgba(255,217,61,0.8);
+            letter-spacing: 3px;
+        }
+        
+        /* Question */
+        .question-box {
+            text-align: center;
+            z-index: 10;
+        }
+        
+        .question-box h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ff6b9d, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255,107,157,0.5);
+        }
+        
+        .question-box p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        
+        /* Buttons */
+        .buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 1.2rem 3rem;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .btn-yes {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            box-shadow: 0 10px 30px rgba(255,107,157,0.4);
+        }
+        
+        .btn-yes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(255,107,157,0.6);
+        }
+        
+        .btn-no {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+        }
+        
+        .btn-no:hover {
+            border-color: #ff6b9d;
+            color: #ff6b9d;
+        }
+        
+        .btn-no.dodging {
+            position: fixed;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-no.upside-down {
+            transform: rotate(180deg);
+            background: #ff4444;
+            border-color: #ff4444;
+        }
+        
+        /* Timer Section (Hidden initially) */
+        .timer-section {
+            display: none;
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .timer-section.active {
+            display: block;
+        }
+        
+        .big-timer {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #ff6b9d;
+            text-shadow: 0 0 30px rgba(255,107,157,0.5);
+            margin: 2rem 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .timer-label {
+            font-size: 1.5rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+        
+        /* Scroll Sections */
+        .scroll-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .scroll-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+        
+        .scroll-section .number {
+            font-size: 8rem;
+            font-weight: bold;
+            color: #ffd93d;
+            text-shadow: 0 0 50px rgba(255,217,61,0.5);
+            line-height: 1;
+        }
+        
+        .scroll-section .label {
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            margin-top: 1rem;
+        }
+        
+        /* Continue Button */
+        .continue-btn {
+            position: fixed;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1.5rem 4rem;
+            background: linear-gradient(135deg, #ffd93d, #ff6b9d);
+            border: none;
+            border-radius: 50px;
+            color: #1a1a2e;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255,217,61,0.4);
+            animation: bounce 2s infinite;
+            z-index: 100;
+            display: none;
+        }
+        
+        .continue-btn.show {
+            display: block;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+        
+        /* Floating hearts background */
+        .floating-hearts {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .heart-particle {
+            position: absolute;
+            font-size: 20px;
+            animation: floatUp 10s linear infinite;
+            opacity: 0.6;
+        }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Confetti */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Hearts -->
+    <div class="floating-hearts" id="floatingHearts"></div>
+    
+    <!-- Confetti -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- LANDING PAGE -->
+    <section class="landing" id="landing">
+        <div class="heart-container">
+            <div class="heart-3d">
+                <svg viewBox="0 0 200 200">
+                    <defs>
+                        <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#c44569;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M100,180 C100,180 20,120 20,70 C20,40 40,20 70,20 C85,20 95,30 100,40 C105,30 115,20 130,20 C160,20 180,40 180,70 C180,120 100,180 100,180 Z" 
+                          fill="url(#heartGrad)" />
+                </svg>
+            </div>
+            <!-- READABLE TEXT ON TOP -->
+            <div class="heart-text-overlay">
+                <h2 id="orbitText">FOREVER</h2>
             </div>
         </div>
-
-        <!-- Question Section -->
-        <div class="content-section" id="questionSection">
-            <div class="title-wrapper">
-                <h1 class="main-title glitch-effect" id="mainQuestion" data-text="Will You Be My Valentine?">
-                    Will You Be My Valentine?
-                </h1>
-                <div class="title-underline"></div>
-            </div>
+        
+        <div class="question-box" id="questionBox">
+            <h1 id="mainQuestion">Will You Be My Valentine?</h1>
+            <p id="subMessage">My heart has been waiting for this moment...</p>
             
-            <p class="subtitle typewriter" id="subMessage">My heart has been waiting for this moment...</p>
-            
-            <div class="button-stage">
-                <button class="magic-btn btn-yes" id="yesBtn" onclick="handleYes()">
-                    <div class="btn-bg"></div>
-                    <div class="btn-waves"></div>
-                    <span class="btn-content">
-                        <span class="btn-icon">♥</span>
-                        <span class="btn-text" id="yesBtnText">YES!</span>
-                    </span>
-                    <div class="btn-particles" id="btnParticles"></div>
-                </button>
-                
-                <button class="magic-btn btn-no" id="noBtn" onmouseenter="escapeButton()" onmouseover="escapeButton()" onclick="handleNo()">
-                    <span class="btn-content">
-                        <span class="btn-text" id="noBtnText">No...</span>
-                    </span>
-                </button>
+            <div class="buttons">
+                <button class="btn btn-yes" id="yesBtn" onclick="sayYes()">YES! ♥</button>
+                <button class="btn btn-no" id="noBtn" onclick="handleNo()">No...</button>
             </div>
-
-            <div class="hint-text" id="hintText">She's waiting for your answer...</div>
         </div>
+    </section>
 
-        <!-- Success Section (Hidden) -->
-        <div class="content-section success-section" id="successSection" style="display: none;">
-            <div class="success-animation">
-                <div class="success-heart">💕</div>
-                <div class="success-burst" id="successBurst"></div>
-            </div>
-            
-            <h2 class="success-title gradient-text" id="successMessage">
-                You Made Me The Happiest Person Alive!
-            </h2>
-            
-            <p class="success-subtitle">Every moment with you is a blessing...</p>
-            
-            <div class="countdown-teaser">
-                <p>Together for:</p>
-                <div class="mini-timer" id="miniTimer">
-                    <span id="miniDays">000</span> days
-                </div>
-            </div>
-            
-            <button class="magic-btn btn-continue" onclick="goToStory()">
-                <span>Continue Our Story</span>
-                <div class="arrow-animation">→</div>
-            </button>
-        </div>
-
-        <!-- Decorative Elements -->
-        <div class="corner-decoration top-left">🌹</div>
-        <div class="corner-decoration top-right">💝</div>
-        <div class="corner-decoration bottom-left">💖</div>
-        <div class="corner-decoration bottom-right">🌸</div>
+    <!-- TIMER SECTIONS (Hidden until YES) -->
+    <div id="timerContainer" style="display: none;">
+        <!-- Main Timer -->
+        <section class="timer-section" id="mainTimer">
+            <div class="timer-label" id="timerLabel">Together For</div>
+            <div class="big-timer" id="bigTimer">000:00:00:00</div>
+            <p style="font-size: 1.2rem; opacity: 0.7;">Scroll down to see more...</p>
+        </section>
+        
+        <!-- Months -->
+        <section class="scroll-section">
+            <h2>That's</h2>
+            <div class="number" id="monthsNum">0</div>
+            <div class="label">Months</div>
+        </section>
+        
+        <!-- Weeks -->
+        <section class="scroll-section">
+            <h2>Or</h2>
+            <div class="number" id="weeksNum">0</div>
+            <div class="label">Weeks</div>
+        </section>
+        
+        <!-- Days -->
+        <section class="scroll-section">
+            <h2>Or</h2>
+            <div class="number" id="daysNum">0</div>
+            <div class="label">Days</div>
+        </section>
+        
+        <!-- Hours -->
+        <section class="scroll-section">
+            <h2>Or</h2>
+            <div class="number" id="hoursNum">0</div>
+            <div class="label">Hours</div>
+        </section>
+        
+        <!-- Minutes -->
+        <section class="scroll-section">
+            <h2>Or</h2>
+            <div class="number" id="minutesNum">0</div>
+            <div class="label">Minutes</div>
+        </section>
+        
+        <!-- Seconds -->
+        <section class="scroll-section">
+            <h2>Or</h2>
+            <div class="number" id="secondsNum">0</div>
+            <div class="label">Seconds</div>
+            <p style="margin-top: 3rem; font-size: 1.5rem; opacity: 0.8;">And counting... ♥</p>
+        </section>
     </div>
 
-    <!-- Fixed Navigation -->
-    <nav class="fixed-nav">
-        <div class="nav-bg"></div>
-        <a href="index.html" class="nav-item active">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">Home</span>
-        </a>
-        <a href="story.html" class="nav-item">
-            <span class="nav-icon">📖</span>
-            <span class="nav-label">Story</span>
-        </a>
-        <a href="edit.html" class="nav-item admin">
-            <span class="nav-icon">✎</span>
-            <span class="nav-label">Edit</span>
-        </a>
-    </nav>
+    <!-- Continue Button -->
+    <button class="continue-btn" id="continueBtn" onclick="goToStory()">Continue Our Story →</button>
 
-    <!-- Full Screen Effects -->
-    <canvas id="confettiCanvas" class="effect-canvas"></canvas>
-    <div class="flash-overlay" id="flashOverlay"></div>
-
-    <script src="script.js"></script>
     <script>
-        // Initialize everything when loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            initLandingPage();
-        });
+        // Data
+        const data = JSON.parse(localStorage.getItem('valentineData')) || {
+            startDate: '2024-04-06T00:00',
+            mainQuestion: 'Will You Be My Valentine?',
+            subMessage: 'My heart has been waiting for this moment...',
+            yesText: 'YES! ♥',
+            noText: 'No...',
+            orbitText: 'FOREVER',
+            timerLabel: 'Together For'
+        };
+        
+        // Fill in content
+        document.getElementById('mainQuestion').textContent = data.mainQuestion;
+        document.getElementById('subMessage').textContent = data.subMessage;
+        document.getElementById('yesBtn').textContent = data.yesText;
+        document.getElementById('noBtn').textContent = data.noText;
+        document.getElementById('orbitText').textContent = data.orbitText;
+        document.getElementById('timerLabel').textContent = data.timerLabel;
+        
+        // Floating hearts
+        setInterval(() => {
+            const h = document.createElement('div');
+            h.className = 'heart-particle';
+            h.textContent = ['♥','💖','💕'][Math.floor(Math.random()*3)];
+            h.style.left = Math.random()*100 + '%';
+            h.style.animationDuration = (Math.random()*5+8) + 's';
+            document.getElementById('floatingHearts').appendChild(h);
+            setTimeout(() => h.remove(), 13000);
+        }, 800);
+        
+        // NO button logic
+        let noClicks = 0;
+        function handleNo() {
+            const btn = document.getElementById('noBtn');
+            noClicks++;
+            
+            if (noClicks === 1) {
+                btn.textContent = 'Are you sure? 🥺';
+            } else {
+                btn.textContent = 'NO!';
+                btn.classList.add('upside-down');
+                
+                // Dodge!
+                setTimeout(() => {
+                    btn.classList.add('dodging');
+                    btn.style.left = Math.random() * (window.innerWidth - 150) + 'px';
+                    btn.style.top = Math.random() * (window.innerHeight - 80) + 'px';
+                }, 300);
+            }
+        }
+        
+        // YES button - show timer
+        function sayYes() {
+            // Confetti
+            const c = document.getElementById('confettiCanvas');
+            const x = c.getContext('2d');
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
+            
+            const particles = [];
+            for(let i=0; i<100; i++) {
+                particles.push({
+                    x: window.innerWidth/2, y: window.innerHeight/2,
+                    vx: (Math.random()-0.5)*20, vy: (Math.random()-0.5)*20-5,
+                    color: ['#ff6b9d','#ffd93d','#fff'][Math.floor(Math.random()*3)],
+                    life: 1
+                });
+            }
+            
+            function animate() {
+                x.clearRect(0,0,c.width,c.height);
+                let alive = false;
+                particles.forEach(p => {
+                    if(p.life <= 0) return;
+                    alive = true;
+                    p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life -= 0.02;
+                    x.globalAlpha = p.life;
+                    x.fillStyle = p.color;
+                    x.beginPath();
+                    x.arc(p.x,p.y,5,0,Math.PI*2);
+                    x.fill();
+                });
+                if(alive) requestAnimationFrame(animate);
+            }
+            animate();
+            
+            // Hide landing, show timer
+            document.getElementById('landing').style.display = 'none';
+            document.getElementById('timerContainer').style.display = 'block';
+            document.getElementById('mainTimer').classList.add('active');
+            document.getElementById('continueBtn').classList.add('show');
+            
+            // Start timer
+            startTimer();
+        }
+        
+        function startTimer() {
+            const start = new Date(data.startDate);
+            
+            function update() {
+                const now = new Date();
+                const diff = now - start;
+                
+                const days = Math.floor(diff / (1000*60*60*24));
+                const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+                const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+                const secs = Math.floor((diff % (1000*60)) / 1000);
+                
+                // Main timer
+                document.getElementById('bigTimer').textContent = 
+                    String(days).padStart(3,'0') + ':' +
+                    String(hours).padStart(2,'0') + ':' +
+                    String(mins).padStart(2,'0') + ':' +
+                    String(secs).padStart(2,'0');
+                
+                // All numbers
+                document.getElementById('monthsNum').textContent = (days/30.44).toFixed(1);
+                document.getElementById('weeksNum').textContent = Math.floor(days/7);
+                document.getElementById('daysNum').textContent = days;
+                document.getElementById('hoursNum').textContent = Math.floor(diff/(1000*60*60));
+                document.getElementById('minutesNum').textContent = Math.floor(diff/(1000*60));
+                document.getElementById('secondsNum').textContent = Math.floor(diff/1000);
+            }
+            
+            update();
+            setInterval(update, 1000);
+        }
+        
+        function goToStory() {
+            window.location.href = 'story.html';
+        }
     </script>
 </body>
 </html>
