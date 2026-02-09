@@ -1,37 +1,466 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Edit vibez.website</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Editor - Valentine's Site</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 </head>
-<body class="centered">
+<body class="edit-page">
+    <div class="edit-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="edit-sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">♥</span>
+                    <div class="logo-text">
+                        <h2>Vibe Editor</h2>
+                        <span class="logo-sub">Valentine Site Builder</span>
+                    </div>
+                </div>
+            </div>
 
-  <h1>Control Panel</h1>
+            <nav class="sidebar-nav">
+                <button class="nav-section active" onclick="showSection('general')" data-section="general">
+                    <span class="section-icon">⚙</span>
+                    <div class="section-info">
+                        <span class="section-name">General</span>
+                        <span class="section-desc">Site info & names</span>
+                    </div>
+                </button>
+                
+                <button class="nav-section" onclick="showSection('landing')" data-section="landing">
+                    <span class="section-icon">🏠</span>
+                    <div class="section-info">
+                        <span class="section-name">Landing Page</span>
+                        <span class="section-desc">Question & buttons</span>
+                    </div>
+                </button>
+                
+                <button class="nav-section" onclick="showSection('story')" data-section="story">
+                    <span class="section-icon">📖</span>
+                    <div class="section-info">
+                        <span class="section-name">Story Slides</span>
+                        <span class="section-desc">Manage timeline</span>
+                    </div>
+                </button>
+                
+                <button class="nav-section" onclick="showSection('timer')" data-section="timer">
+                    <span class="section-icon">⏱</span>
+                    <div class="section-info">
+                        <span class="section-name">Love Timer</span>
+                        <span class="section-desc">Countdown settings</span>
+                    </div>
+                </button>
+                
+                <button class="nav-section" onclick="showSection('theme')" data-section="theme">
+                    <span class="section-icon">🎨</span>
+                    <div class="section-info">
+                        <span class="section-name">Theme & Colors</span>
+                        <span class="section-desc">Visual styling</span>
+                    </div>
+                </button>
+                
+                <button class="nav-section" onclick="showSection('images')" data-section="images">
+                    <span class="section-icon">🖼</span>
+                    <div class="section-info">
+                        <span class="section-name">Images</span>
+                        <span class="section-desc">Upload & manage</span>
+                    </div>
+                </button>
+            </nav>
 
-  <label>Relationship Start:</label>
-  <input id="date" type="datetime-local">
+            <div class="sidebar-footer">
+                <div class="save-status" id="saveStatus">
+                    <span class="status-dot"></span>
+                    <span class="status-text">All changes saved</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-icon" onclick="exportData()" title="Export JSON">📤</button>
+                    <button class="btn-icon" onclick="importData()" title="Import JSON">📥</button>
+                    <button class="btn-icon" onclick="resetData()" title="Reset to Default">↺</button>
+                </div>
+            </div>
+        </aside>
 
-  <label>Donut Text:</label>
-  <input id="donutText" style="width:80%">
+        <!-- Main Editor Area -->
+        <main class="edit-main">
+            <header class="edit-header">
+                <div class="header-left">
+                    <h1 id="currentSectionTitle">General Settings</h1>
+                    <p class="header-subtitle" id="currentSectionDesc">Configure your site basics</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn-preview" onclick="previewSite()">
+                        <span>👁</span>
+                        Preview Site
+                    </button>
+                    <a href="index.html" class="btn-exit">Exit Editor →</a>
+                </div>
+            </header>
 
-  <label>Slides (JSON):</label>
-  <textarea id="slides" rows="12" style="width:80%"></textarea>
+            <div class="edit-content">
+                <!-- General Section -->
+                <section class="edit-panel active" id="panel-general">
+                    <div class="panel-grid">
+                        <div class="form-card">
+                            <h3>Site Information</h3>
+                            <div class="form-group">
+                                <label>Site Title</label>
+                                <input type="text" id="siteTitle" placeholder="Our Love Story">
+                                <span class="input-hint">Appears in browser tab</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Site Description</label>
+                                <textarea id="siteDescription" rows="3" placeholder="A special Valentine's surprise..."></textarea>
+                            </div>
+                        </div>
 
-  <button onclick="save()">Save Everything</button>
+                        <div class="form-card">
+                            <h3>Couple Names</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Your Name</label>
+                                    <input type="text" id="partner1Name" placeholder="You">
+                                </div>
+                                <div class="form-group">
+                                    <label>Partner's Name</label>
+                                    <input type="text" id="partner2Name" placeholder="Her">
+                                </div>
+                            </div>
+                            <div class="names-preview" id="namesPreview">
+                                <span class="name-1">You</span>
+                                <span class="heart">♥</span>
+                                <span class="name-2">Her</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-  <script>
-    const data = JSON.parse(localStorage.getItem("vibeData"));
-    date.value = data.startDate;
-    donutText.value = data.donutText;
-    slides.value = JSON.stringify(data.slides, null, 2);
+                <!-- Landing Page Section -->
+                <section class="edit-panel" id="panel-landing">
+                    <div class="panel-grid">
+                        <div class="form-card wide">
+                            <h3>Main Question</h3>
+                            <div class="form-group">
+                                <label>The Big Question</label>
+                                <input type="text" id="mainQuestion" value="Will You Be My Valentine?" maxlength="100">
+                                <span class="char-count"><span id="qCount">0</span>/100</span>
+                            </div>
+                            <div class="preview-box" id="questionPreview">
+                                <span class="preview-label">Preview</span>
+                                <h2>Will You Be My Valentine?</h2>
+                            </div>
+                        </div>
 
-    function save() {
-      data.startDate = date.value;
-      data.donutText = donutText.value;
-      data.slides = JSON.parse(slides.value);
-      localStorage.setItem("vibeData", JSON.stringify(data));
-      alert("Updated 💾");
-    }
-  </script>
+                        <div class="form-card">
+                            <h3>Messages</h3>
+                            <div class="form-group">
+                                <label>Subtitle Text</label>
+                                <textarea id="landingSubtext" rows="2">My heart has been waiting for this moment...</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Success Message</label>
+                                <textarea id="successMessage" rows="2">You Made Me The Happiest Person Alive!</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-card">
+                            <h3>Button Text</h3>
+                            <div class="form-group">
+                                <label>Yes Button</label>
+                                <input type="text" id="yesBtnText" value="YES! ♥">
+                            </div>
+                            <div class="form-group">
+                                <label>No Button</label>
+                                <input type="text" id="noBtnText" value="No...">
+                            </div>
+                        </div>
+
+                        <div class="form-card wide">
+                            <h3>3D Heart Animation</h3>
+                            <div class="form-group">
+                                <label>Orbiting Text</label>
+                                <input type="text" id="orbitText" value="LOVE♥FOREVER" maxlength="20">
+                                <span class="input-hint">Max 20 characters - wraps around spinning heart</span>
+                            </div>
+                            <div class="orbit-preview" id="orbitPreview">
+                                <div class="mini-orbit">
+                                    <span>L</span><span>O</span><span>V</span><span>E</span><span>♥</span><span>F</span><span>O</span><span>R</span><span>E</span><span>V</span><span>E</span><span>R</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Story Slides Section -->
+                <section class="edit-panel" id="panel-story">
+                    <div class="slides-toolbar">
+                        <h3>Story Timeline</h3>
+                        <button class="btn-add" onclick="addNewSlide()">
+                            <span>+</span>
+                            Add Slide
+                        </button>
+                    </div>
+
+                    <div class="slides-list" id="slidesList">
+                        <!-- Slides rendered here -->
+                    </div>
+
+                    <div class="slide-editor-modal" id="slideEditor" style="display: none;">
+                        <div class="modal-header">
+                            <h3>Edit Slide <span id="editingSlideNum">1</span></h3>
+                            <button class="btn-close" onclick="closeSlideEditor()">×</button>
+                        </div>
+                        
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Slide Title</label>
+                                <input type="text" id="slideTitle" placeholder="Our First Meeting">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Content</label>
+                                <textarea id="slideContent" rows="4" placeholder="Tell your story..."></textarea>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Date (Optional)</label>
+                                    <input type="date" id="slideDate">
+                                </div>
+                                <div class="form-group">
+                                    <label>Background Color</label>
+                                    <input type="color" id="slideColor" value="#ff6b9d">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Background Image</label>
+                                <div class="image-dropzone" id="slideDropzone">
+                                    <input type="file" accept="image/*" onchange="handleSlideImage(this)">
+                                    <div class="dropzone-content">
+                                        <span class="icon">📷</span>
+                                        <p>Drop image here or click to browse</p>
+                                        <span class="hint">Recommended: 1920x1080 or similar ratio</span>
+                                    </div>
+                                    <img id="slideImagePreview" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button class="btn-secondary" onclick="closeSlideEditor()">Cancel</button>
+                            <button class="btn-danger" onclick="deleteCurrentSlide()">Delete</button>
+                            <button class="btn-primary" onclick="saveSlide()">Save Slide</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Timer Section -->
+                <section class="edit-panel" id="panel-timer">
+                    <div class="panel-grid">
+                        <div class="form-card">
+                            <h3>Relationship Start</h3>
+                            <div class="form-group">
+                                <label>Official Start Date & Time</label>
+                                <input type="datetime-local" id="startDate" value="2024-04-06T00:00">
+                                <span class="input-hint">When you officially started dating</span>
+                            </div>
+                            <div class="date-preview" id="datePreview">
+                                <span class="preview-label">Formatted:</span>
+                                <p>April 6, 2024 at 12:00 AM</p>
+                            </div>
+                        </div>
+
+                        <div class="form-card">
+                            <h3>Timer Display</h3>
+                            <div class="form-group">
+                                <label>Label Text</label>
+                                <input type="text" id="timerLabel" value="Together Since">
+                            </div>
+                            <div class="form-group">
+                                <label>Position</label>
+                                <select id="timerPosition">
+                                    <option value="floating">Floating Corner</option>
+                                    <option value="top">Top of Page</option>
+                                    <option value="bottom">Bottom of Page</option>
+                                    <option value="hidden">Hidden</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-card wide">
+                            <h3>Live Preview</h3>
+                            <div class="timer-preview-large" id="timerPreviewLarge">
+                                <div class="timer-label">Together Since</div>
+                                <div class="timer-digits">
+                                    <div class="digit-box">
+                                        <span id="prevDays">000</span>
+                                        <label>Days</label>
+                                    </div>
+                                    <span class="sep">:</span>
+                                    <div class="digit-box">
+                                        <span id="prevHours">00</span>
+                                        <label>Hours</label>
+                                    </div>
+                                    <span class="sep">:</span>
+                                    <div class="digit-box">
+                                        <span id="prevMinutes">00</span>
+                                        <label>Mins</label>
+                                    </div>
+                                    <span class="sep">:</span>
+                                    <div class="digit-box">
+                                        <span id="prevSeconds">00</span>
+                                        <label>Secs</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Theme Section -->
+                <section class="edit-panel" id="panel-theme">
+                    <div class="theme-presets">
+                        <h3>Quick Themes</h3>
+                        <div class="preset-grid">
+                            <button class="preset-card" onclick="applyTheme('romantic')" data-theme="romantic">
+                                <div class="preset-preview" style="background: linear-gradient(135deg, #ff6b9d, #c44569)"></div>
+                                <span>Romantic</span>
+                            </button>
+                            <button class="preset-card" onclick="applyTheme('ocean')" data-theme="ocean">
+                                <div class="preset-preview" style="background: linear-gradient(135deg, #667eea, #764ba2)"></div>
+                                <span>Ocean</span>
+                            </button>
+                            <button class="preset-card" onclick="applyTheme('sunset')" data-theme="sunset">
+                                <div class="preset-preview" style="background: linear-gradient(135deg, #f093fb, #f5576c)"></div>
+                                <span>Sunset</span>
+                            </button>
+                            <button class="preset-card" onclick="applyTheme('forest')" data-theme="forest">
+                                <div class="preset-preview" style="background: linear-gradient(135deg, #11998e, #38ef7d)"></div>
+                                <span>Forest</span>
+                            </button>
+                            <button class="preset-card" onclick="applyTheme('gold')" data-theme="gold">
+                                <div class="preset-preview" style="background: linear-gradient(135deg, #f5af19, #f12711)"></div>
+                                <span>Gold</span>
+                            </button>
+                            <button class="preset-card" onclick="applyTheme('midnight')" data-theme="midnight">
+                                <div class="preset-preview" style="background: linear-gradient(135deg, #232526, #414345)"></div>
+                                <span>Midnight</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="custom-colors">
+                        <h3>Custom Colors</h3>
+                        <div class="color-grid">
+                            <div class="color-item">
+                                <label>Primary</label>
+                                <div class="color-input-wrapper">
+                                    <input type="color" id="primaryColor" value="#ff6b9d">
+                                    <span class="color-value">#ff6b9d</span>
+                                </div>
+                            </div>
+                            <div class="color-item">
+                                <label>Secondary</label>
+                                <div class="color-input-wrapper">
+                                    <input type="color" id="secondaryColor" value="#c44569">
+                                    <span class="color-value">#c44569</span>
+                                </div>
+                            </div>
+                            <div class="color-item">
+                                <label>Accent</label>
+                                <div class="color-input-wrapper">
+                                    <input type="color" id="accentColor" value="#ffd93d">
+                                    <span class="color-value">#ffd93d</span>
+                                </div>
+                            </div>
+                            <div class="color-item">
+                                <label>Text</label>
+                                <div class="color-input-wrapper">
+                                    <input type="color" id="textColor" value="#ffffff">
+                                    <span class="color-value">#ffffff</span>
+                                </div>
+                            </div>
+                            <div class="color-item">
+                                <label>Background</label>
+                                <div class="color-input-wrapper">
+                                    <input type="color" id="bgColor" value="#1a1a2e">
+                                    <span class="color-value">#1a1a2e</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="animation-settings">
+                        <h3>Animation Intensity</h3>
+                        <div class="slider-group">
+                            <input type="range" id="animIntensity" min="0" max="100" value="80">
+                            <div class="slider-labels">
+                                <span>Subtle</span>
+                                <span id="animValue">80%</span>
+                                <span>Intense</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Images Section -->
+                <section class="edit-panel" id="panel-images">
+                    <div class="images-header">
+                        <h3>Image Library</h3>
+                        <div class="upload-area" id="bulkUpload">
+                            <input type="file" multiple accept="image/*" onchange="handleBulkUpload(this)">
+                            <span>📤 Drop files or click to upload multiple images</span>
+                        </div>
+                    </div>
+                    
+                    <div class="images-grid" id="imagesGrid">
+                        <!-- Images rendered here -->
+                        <div class="image-placeholder">
+                            <span>No images uploaded yet</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Live Preview Panel -->
+        <aside class="edit-preview">
+            <div class="preview-header">
+                <h3>Live Preview</h3>
+                <div class="device-toggle">
+                    <button class="active" onclick="setPreviewDevice('desktop')" title="Desktop">🖥</button>
+                    <button onclick="setPreviewDevice('tablet')" title="Tablet">📱</button>
+                    <button onclick="setPreviewDevice('mobile')" title="Mobile">📲</button>
+                </div>
+            </div>
+            <div class="preview-frame-wrapper" id="previewWrapper">
+                <iframe id="previewFrame" src="index.html"></iframe>
+            </div>
+            <button class="btn-refresh" onclick="refreshPreview()">🔄 Refresh Preview</button>
+        </aside>
+    </div>
+
+    <!-- Import/Export Modal -->
+    <div class="modal-overlay" id="dataModal" style="display: none;">
+        <div class="modal-box">
+            <h3 id="modalTitle">Export Data</h3>
+            <textarea id="dataTextarea" rows="10" readonly></textarea>
+            <div class="modal-actions">
+                <button onclick="closeDataModal()">Close</button>
+                <button class="btn-primary" onclick="copyData()">Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initEditPage();
+        });
+    </script>
 </body>
 </html>
