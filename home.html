@@ -6,14 +6,17 @@
 </head>
 <body class="centered">
 
-  <h1>We’ve been together for 💞</h1>
+  <div id="donut" class="donut"></div>
+  <div style="font-size:60px;margin-top:-160px;">❤️</div>
+
   <div id="timer" class="timer"></div>
 
-  <button onclick="location.href='slideshow.html'">
-    Continue →
-  </button>
+  <button onclick="location.href='slideshow.html'">Enter Our Story</button>
 
   <script src="script.js"></script>
-  <script>startTimer();</script>
+  <script>
+    startTimer();
+    buildDonut();
+  </script>
 </body>
 </html>
