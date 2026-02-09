@@ -1,36 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>vibez.website</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
-<body class="centered">
+<body class="landing-page">
+    <!-- Dynamic Background Layers -->
+    <div class="bg-layer bg-gradient"></div>
+    <div class="bg-layer bg-particles" id="particles"></div>
+    <div class="bg-layer bg-floating-hearts" id="floatingHearts"></div>
+    <div class="bg-layer bg-spotlight"></div>
 
-  <h1>Will you be my Valentine? 💖</h1>
+    <!-- Main Container -->
+    <div class="landing-container">
+        
+        <!-- 3D Spinning Heart with Orbiting Text -->
+        <div class="heart-stage">
+            <div class="heart-orbit-system">
+                <!-- Orbiting Characters -->
+                <div class="orbit-ring ring-1" id="orbitRing1"></div>
+                <div class="orbit-ring ring-2" id="orbitRing2"></div>
+                
+                <!-- Center Heart -->
+                <div class="center-heart">
+                    <svg viewBox="0 0 200 200" class="heart-svg">
+                        <defs>
+                            <linearGradient id="heartGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#c44569;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ff6b9d;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="heartGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="4" result="blur"/>
+                                <feMerge>
+                                    <feMergeNode in="blur"/>
+                                    <feMergeNode in="blur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <path class="heart-path" 
+                              d="M100,180 C100,180 20,120 20,70 C20,40 40,20 70,20 C85,20 95,30 100,40 C105,30 115,20 130,20 C160,20 180,40 180,70 C180,120 100,180 100,180 Z" 
+                              fill="url(#heartGrad1)" 
+                              filter="url(#heartGlow)"/>
+                    </svg>
+                    <div class="heart-pulse"></div>
+                    <div class="heart-sparkles" id="heartSparkles"></div>
+                </div>
+            </div>
+        </div>
 
-  <div style="position: relative; height: 120px; width: 320px;">
-    <button onclick="location.href='home.html'">Yes</button>
-    <button id="noBtn" style="position:absolute;">No</button>
-  </div>
+        <!-- Question Section -->
+        <div class="content-section" id="questionSection">
+            <div class="title-wrapper">
+                <h1 class="main-title glitch-effect" id="mainQuestion" data-text="Will You Be My Valentine?">
+                    Will You Be My Valentine?
+                </h1>
+                <div class="title-underline"></div>
+            </div>
+            
+            <p class="subtitle typewriter" id="subMessage">My heart has been waiting for this moment...</p>
+            
+            <div class="button-stage">
+                <button class="magic-btn btn-yes" id="yesBtn" onclick="handleYes()">
+                    <div class="btn-bg"></div>
+                    <div class="btn-waves"></div>
+                    <span class="btn-content">
+                        <span class="btn-icon">♥</span>
+                        <span class="btn-text" id="yesBtnText">YES!</span>
+                    </span>
+                    <div class="btn-particles" id="btnParticles"></div>
+                </button>
+                
+                <button class="magic-btn btn-no" id="noBtn" onmouseenter="escapeButton()" onmouseover="escapeButton()" onclick="handleNo()">
+                    <span class="btn-content">
+                        <span class="btn-text" id="noBtnText">No...</span>
+                    </span>
+                </button>
+            </div>
 
-  <script src="script.js"></script>
+            <div class="hint-text" id="hintText">She's waiting for your answer...</div>
+        </div>
 
-  <script>
-    const noBtn = document.getElementById("noBtn");
+        <!-- Success Section (Hidden) -->
+        <div class="content-section success-section" id="successSection" style="display: none;">
+            <div class="success-animation">
+                <div class="success-heart">💕</div>
+                <div class="success-burst" id="successBurst"></div>
+            </div>
+            
+            <h2 class="success-title gradient-text" id="successMessage">
+                You Made Me The Happiest Person Alive!
+            </h2>
+            
+            <p class="success-subtitle">Every moment with you is a blessing...</p>
+            
+            <div class="countdown-teaser">
+                <p>Together for:</p>
+                <div class="mini-timer" id="miniTimer">
+                    <span id="miniDays">000</span> days
+                </div>
+            </div>
+            
+            <button class="magic-btn btn-continue" onclick="goToStory()">
+                <span>Continue Our Story</span>
+                <div class="arrow-animation">→</div>
+            </button>
+        </div>
 
-    noBtn.addEventListener("mouseover", () => {
-      const parent = noBtn.parentElement;
-      const maxX = parent.offsetWidth - noBtn.offsetWidth;
-      const maxY = parent.offsetHeight - noBtn.offsetHeight;
+        <!-- Decorative Elements -->
+        <div class="corner-decoration top-left">🌹</div>
+        <div class="corner-decoration top-right">💝</div>
+        <div class="corner-decoration bottom-left">💖</div>
+        <div class="corner-decoration bottom-right">🌸</div>
+    </div>
 
-      const x = Math.random() * maxX;
-      const y = Math.random() * maxY;
+    <!-- Fixed Navigation -->
+    <nav class="fixed-nav">
+        <div class="nav-bg"></div>
+        <a href="index.html" class="nav-item active">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Home</span>
+        </a>
+        <a href="story.html" class="nav-item">
+            <span class="nav-icon">📖</span>
+            <span class="nav-label">Story</span>
+        </a>
+        <a href="edit.html" class="nav-item admin">
+            <span class="nav-icon">✎</span>
+            <span class="nav-label">Edit</span>
+        </a>
+    </nav>
 
-      noBtn.style.left = x + "px";
-      noBtn.style.top = y + "px";
-    });
-  </script>
+    <!-- Full Screen Effects -->
+    <canvas id="confettiCanvas" class="effect-canvas"></canvas>
+    <div class="flash-overlay" id="flashOverlay"></div>
 
+    <script src="script.js"></script>
+    <script>
+        // Initialize everything when loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initLandingPage();
+        });
+    </script>
 </body>
 </html>
