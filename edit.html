@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit vibez</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="centered">
+
+  <h1>Edit Content</h1>
+
+  <label>Start Date:</label>
+  <input id="dateInput" type="datetime-local">
+
+  <textarea id="slidesInput" rows="10" cols="50"></textarea>
+
+  <button onclick="save()">Save Changes</button>
+
+  <script>
+    const data = JSON.parse(localStorage.getItem("vibeData"));
+    document.getElementById("dateInput").value = data.startDate.slice(0,16);
+    document.getElementById("slidesInput").value =
+      JSON.stringify(data.slides, null, 2);
+
+    function save() {
+      data.startDate = document.getElementById("dateInput").value;
+      data.slides = JSON.parse(document.getElementById("slidesInput").value);
+      localStorage.setItem("vibeData", JSON.stringify(data));
+      alert("Saved 💾");
+    }
+  </script>
+</body>
+</html>
