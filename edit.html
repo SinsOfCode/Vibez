@@ -4,163 +4,925 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Site</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --blue: #0066ff;
+            --red: #ff0000;
+            --accent: #ffd93d;
+            --bg: #0a0a1a;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255,255,255,0.03);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--blue), var(--red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .nav-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            text-align: left;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:hover, .nav-btn.active {
+            background: linear-gradient(135deg, rgba(0,102,255,0.2), rgba(255,0,0,0.2));
+            color: white;
+        }
+        
+        .save-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .btn-save {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--blue), var(--red));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,102,255,0.4);
+        }
+        
+        .btn-secondary {
+            width: 100%;
+            padding: 0.7rem;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .btn-danger {
+            color: var(--red);
+            border-color: var(--red);
+        }
+        
+        .btn-danger:hover {
+            background: rgba(255,0,0,0.1);
+        }
+        
+        .status {
+            font-size: 0.85rem;
+            opacity: 0.6;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+        
+        .status.synced {
+            color: #00ff00;
+        }
+        
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--blue), var(--red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .preview-link {
+            color: var(--blue);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--blue);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        
+        .preview-link:hover {
+            background: var(--blue);
+            color: white;
+        }
+        
+        /* Sections */
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Form Styles */
+        .form-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .form-card h3 {
+            background: linear-gradient(135deg, var(--blue), var(--red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 1rem;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 10px rgba(0,102,255,0.3);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .color-input {
+            height: 50px;
+            cursor: pointer;
+            padding: 0.2rem;
+        }
+        
+        /* Slides List */
+        .slide-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+        
+        .slide-item:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--blue);
+        }
+        
+        .slide-num {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--blue), var(--red));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .slide-info {
+            flex: 1;
+        }
+        
+        .slide-title-small {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+        
+        .slide-preview {
+            font-size: 0.85rem;
+            opacity: 0.6;
+        }
+        
+        .btn-add {
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-add:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+        
+        /* Slide Editor */
+        .slide-editor {
+            background: rgba(0,0,0,0.3);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border: 1px solid rgba(0,102,255,0.3);
+        }
+        
+        .editor-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .editor-actions button {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-confirm {
+            background: linear-gradient(135deg, var(--blue), var(--red));
+            color: white;
+        }
+        
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,102,255,0.4);
+        }
+        
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+        }
+        
+        .btn-cancel:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .btn-delete {
+            background: rgba(255,0,0,0.2);
+            color: var(--red);
+            border: 1px solid var(--red);
+        }
+        
+        .btn-delete:hover {
+            background: rgba(255,0,0,0.3);
+        }
+        
+        /* Theme Presets */
+        .presets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .preset {
+            height: 60px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+        }
+        
+        .preset:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Image Preview */
+        #imagePreview {
+            max-width: 200px;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+    </style>
 </head>
-<body class="edit-page" style="background:#0f0f1e;color:white;font-family:Inter,sans-serif;">
-    
-    <div style="display:flex;height:100vh;">
+<body>
+    <div class="container">
         <!-- Sidebar -->
-        <div style="width:250px;background:rgba(255,255,255,0.05);padding:1rem;border-right:1px solid rgba(255,255,255,0.1);">
-            <h2 style="margin-bottom:2rem;color:#ff6b9d;">♥ Editor</h2>
+        <div class="sidebar">
+            <div class="logo">💙♥️ EDITOR</div>
             
-            <button class="nav-section active" onclick="showEditSection('general')" style="display:block;width:100%;padding:1rem;margin-bottom:0.5rem;background:transparent;border:none;color:white;text-align:left;border-radius:8px;cursor:pointer;">⚙ General</button>
-            <button class="nav-section" onclick="showEditSection('landing')" style="display:block;width:100%;padding:1rem;margin-bottom:0.5rem;background:transparent;border:none;color:white;text-align:left;border-radius:8px;cursor:pointer;">🏠 Landing</button>
-            <button class="nav-section" onclick="showEditSection('story')" style="display:block;width:100%;padding:1rem;margin-bottom:0.5rem;background:transparent;border:none;color:white;text-align:left;border-radius:8px;cursor:pointer;">📖 Story</button>
-            <button class="nav-section" onclick="showEditSection('timer')" style="display:block;width:100%;padding:1rem;margin-bottom:0.5rem;background:transparent;border:none;color:white;text-align:left;border-radius:8px;cursor:pointer;">⏱ Timer</button>
-            <button class="nav-section" onclick="showEditSection('theme')" style="display:block;width:100%;padding:1rem;margin-bottom:0.5rem;background:transparent;border:none;color:white;text-align:left;border-radius:8px;cursor:pointer;">🎨 Theme</button>
+            <button class="nav-btn active" onclick="showSection('general')">⚙ General</button>
+            <button class="nav-btn" onclick="showSection('landing')">🏠 Landing Page</button>
+            <button class="nav-btn" onclick="showSection('timer')">⏱ Timer</button>
+            <button class="nav-btn" onclick="showSection('slides')">📖 Story Slides</button>
+            <button class="nav-btn" onclick="showSection('letter')">💌 Love Letter</button>
+            <button class="nav-btn" onclick="showSection('theme')">🎨 Theme</button>
             
-            <div style="margin-top:2rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,0.1);">
-                <button onclick="saveAll()" style="width:100%;padding:1rem;background:#ff6b9d;border:none;border-radius:8px;color:white;font-weight:bold;cursor:pointer;margin-bottom:0.5rem;">💾 SAVE ALL</button>
-                <button onclick="exportData()" style="width:100%;padding:0.5rem;background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;cursor:pointer;margin-bottom:0.5rem;font-size:0.85rem;">📤 Export</button>
-                <button onclick="importData()" style="width:100%;padding:0.5rem;background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;cursor:pointer;margin-bottom:0.5rem;font-size:0.85rem;">📥 Import</button>
-                <button onclick="resetData()" style="width:100%;padding:0.5rem;background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#ff6b9d;cursor:pointer;font-size:0.85rem;">↺ Reset</button>
+            <div class="save-section">
+                <button class="btn-save" onclick="saveToFirebase()">💾 SAVE TO CLOUD</button>
+                <button class="btn-secondary" onclick="exportData()">📤 Export JSON</button>
+                <button class="btn-secondary" onclick="importData()">📥 Import JSON</button>
+                <button class="btn-secondary btn-danger" onclick="resetAll()">↺ Reset All</button>
+                <div class="status" id="status">Auto-sync enabled</div>
             </div>
             
-            <a href="index.html" style="display:block;margin-top:2rem;text-align:center;color:#ff6b9d;text-decoration:none;">← Exit to Site</a>
+            <a href="index.html" style="display:block;margin-top:2rem;color:var(--blue);text-decoration:none;text-align:center;font-weight:600;">← View Site</a>
         </div>
         
-        <!-- Main Content -->
-        <div style="flex:1;padding:2rem;overflow-y:auto;">
-            <h1 id="currentSectionTitle" style="margin-bottom:2rem;">General Settings</h1>
+        <!-- Main -->
+        <div class="main">
+            <div class="header">
+                <h1 id="sectionTitle">General Settings</h1>
+                <a href="index.html" class="preview-link" target="_blank">Preview →</a>
+            </div>
             
-            <!-- General -->
-            <div class="edit-panel active" id="panel-general">
-                <div style="background:rgba(255,255,255,0.05);padding:1.5rem;border-radius:12px;margin-bottom:1rem;">
-                    <h3 style="margin-bottom:1rem;color:#ff6b9d;">Site Info</h3>
-                    <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Site Title</label>
-                    <input type="text" id="siteTitle" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;margin-bottom:1rem;">
+            <!-- GENERAL -->
+            <div class="section active" id="section-general">
+                <div class="form-card">
+                    <h3>Site Information</h3>
+                    <label>Site Title (browser tab)</label>
+                    <input type="text" id="siteTitle" onchange="updateData()">
                     
-                    <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Your Name</label>
-                    <input type="text" id="partner1Name" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;margin-bottom:1rem;">
+                    <label>Your Name</label>
+                    <input type="text" id="yourName" onchange="updateData()">
                     
-                    <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Partner's Name</label>
-                    <input type="text" id="partner2Name" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;">
+                    <label>Partner's Name</label>
+                    <input type="text" id="partnerName" onchange="updateData()">
                 </div>
             </div>
             
-            <!-- Landing -->
-            <div class="edit-panel" id="panel-landing" style="display:none;">
-                <div style="background:rgba(255,255,255,0.05);padding:1.5rem;border-radius:12px;margin-bottom:1rem;">
-                    <h3 style="margin-bottom:1rem;color:#ff6b9d;">Main Question</h3>
-                    <input type="text" id="mainQuestion" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;margin-bottom:1rem;">
+            <!-- LANDING -->
+            <div class="section" id="section-landing">
+                <div class="form-card">
+                    <h3>Main Question</h3>
+                    <label>The Big Question</label>
+                    <input type="text" id="mainQuestion" onchange="updateData()">
                     
-                    <h3 style="margin-bottom:1rem;color:#ff6b9d;">Subtitle</h3>
-                    <input type="text" id="landingSubtext" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;margin-bottom:1rem;">
+                    <label>Subtitle Message</label>
+                    <input type="text" id="subMessage" onchange="updateData()">
                     
-                    <h3 style="margin-bottom:1rem;color:#ff6b9d;">Yes Button Text</h3>
-                    <input type="text" id="yesBtnText" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;margin-bottom:1rem;">
+                    <label>Yes Button Text</label>
+                    <input type="text" id="yesText" onchange="updateData()">
                     
-                    <h3 style="margin-bottom:1rem;color:#ff6b9d;">No Button Text</h3>
-                    <input type="text" id="noBtnText" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;margin-bottom:1rem;">
+                    <label>No Button Text</label>
+                    <input type="text" id="noText" onchange="updateData()">
                     
-                    <h3 style="margin-bottom:1rem;color:#ff6b9d;">Success Message</h3>
-                    <input type="text" id="successMessage" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;margin-bottom:1rem;">
+                    <label>Heart Text (center of spinning heart)</label>
+                    <input type="text" id="orbitText" onchange="updateData()">
+                </div>
+                
+                <div class="form-card">
+                    <h3>Success Page</h3>
+                    <label>Success Message</label>
+                    <input type="text" id="successMsg" onchange="updateData()">
                     
-                    <h3 style="margin-bottom:1rem;color:#ff6b9d;">Orbit Text (around heart)</h3>
-                    <input type="text" id="orbitText" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;">
+                    <label>Timer Label</label>
+                    <input type="text" id="timerLabel" onchange="updateData()">
                 </div>
             </div>
             
-            <!-- Story -->
-            <div class="edit-panel" id="panel-story" style="display:none;">
-                <div style="background:rgba(255,255,255,0.05);padding:1.5rem;border-radius:12px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-                        <h3 style="color:#ff6b9d;">Slides</h3>
-                        <button onclick="addNewSlide()" style="padding:0.5rem 1rem;background:#ff6b9d;border:none;border-radius:8px;color:white;cursor:pointer;">+ Add Slide</button>
-                    </div>
+            <!-- TIMER -->
+            <div class="section" id="section-timer">
+                <div class="form-card">
+                    <h3>Relationship Start Date</h3>
+                    <label>When did you start dating? (for the counter)</label>
+                    <input type="datetime-local" id="startDate" onchange="updateData()">
                     
-                    <div id="slidesList" style="margin-bottom:1rem;"></div>
+                    <p style="margin-top:1rem;opacity:0.7;font-size:0.9rem;">
+                        This date is used to calculate how long you've been together on the timer page.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- SLIDES -->
+            <div class="section" id="section-slides">
+                <div class="form-card">
+                    <h3>Story Slides</h3>
+                    <button class="btn-add" onclick="addSlide()">+ Add New Slide</button>
+                    
+                    <div id="slidesList"></div>
                     
                     <!-- Slide Editor -->
-                    <div id="slideEditor" style="display:none;background:rgba(0,0,0,0.3);padding:1rem;border-radius:8px;margin-top:1rem;">
-                        <h4 style="margin-bottom:1rem;">Edit Slide <span id="editingSlideNum">1</span></h4>
+                    <div class="slide-editor" id="slideEditor" style="display:none;">
+                        <h4 style="margin-bottom:1rem;color:var(--accent);">Edit Slide <span id="editingNum">1</span></h4>
                         
-                        <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Title</label>
-                        <input type="text" id="slideTitle" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;margin-bottom:1rem;">
+                        <label>Slide Title</label>
+                        <input type="text" id="editSlideTitle">
                         
-                        <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Content</label>
-                        <textarea id="slideContent" rows="4" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;margin-bottom:1rem;"></textarea>
+                        <label>Slide Content</label>
+                        <textarea id="editSlideContent" rows="4"></textarea>
                         
-                        <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Date (optional)</label>
-                        <input type="date" id="slideDate" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;margin-bottom:1rem;">
+                        <label>Date (optional)</label>
+                        <input type="date" id="editSlideDate">
                         
-                        <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Color</label>
-                        <input type="color" id="slideColor" style="width:100%;padding:0.8rem;background:transparent;border:none;margin-bottom:1rem;">
+                        <label>Background Color</label>
+                        <input type="color" id="editSlideColor" class="color-input">
                         
-                        <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Image</label>
-                        <input type="file" accept="image/*" onchange="handleSlideImage(this)" style="margin-bottom:1rem;">
-                        <img id="slideImagePreview" style="max-width:200px;display:none;border-radius:8px;margin-bottom:1rem;">
+                        <label>Image (optional)</label>
+                        <input type="file" accept="image/*" id="editSlideImage" onchange="handleImage(this)">
+                        <img id="imagePreview" style="display:none;">
                         
-                        <div style="display:flex;gap:0.5rem;">
-                            <button onclick="saveSlide()" style="flex:1;padding:0.8rem;background:#ff6b9d;border:none;border-radius:8px;color:white;cursor:pointer;">Save</button>
-                            <button onclick="closeSlideEditor()" style="padding:0.8rem 1.5rem;background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;cursor:pointer;">Cancel</button>
-                            <button onclick="deleteSlide()" style="padding:0.8rem 1.5rem;background:rgba(255,0,0,0.3);border:1px solid rgba(255,0,0,0.5);border-radius:8px;color:#ff6b9d;cursor:pointer;">Delete</button>
+                        <div class="editor-actions">
+                            <button class="btn-confirm" onclick="saveSlide()">💾 Save Slide</button>
+                            <button class="btn-cancel" onclick="closeEditor()">Cancel</button>
+                            <button class="btn-delete" onclick="deleteSlide()">🗑 Delete</button>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Timer -->
-            <div class="edit-panel" id="panel-timer" style="display:none;">
-                <div style="background:rgba(255,255,255,0.05);padding:1.5rem;border-radius:12px;">
-                    <h3 style="margin-bottom:1rem;color:#ff6b9d;">Relationship Start</h3>
-                    <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Date & Time</label>
-                    <input type="datetime-local" id="startDate" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;margin-bottom:1rem;">
+            <!-- LETTER -->
+            <div class="section" id="section-letter">
+                <div class="form-card">
+                    <h3>Final Love Letter</h3>
+                    <label>Letter Title</label>
+                    <input type="text" id="letterTitle" onchange="updateData()">
                     
-                    <h3 style="margin-bottom:1rem;color:#ff6b9d;">Timer Label</h3>
-                    <input type="text" id="timerLabel" style="width:100%;padding:0.8rem;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:white;">
+                    <label>Letter Content (use new lines for paragraphs)</label>
+                    <textarea id="letterContent" rows="10" onchange="updateData()"></textarea>
+                    
+                    <label>Sign-off</label>
+                    <input type="text" id="letterSign" onchange="updateData()">
+                    
+                    <p style="margin-top:1rem;opacity:0.7;font-size:0.9rem;">
+                        This appears when she clicks the sealed letter at the end of the story.
+                    </p>
                 </div>
             </div>
             
-            <!-- Theme -->
-            <div class="edit-panel" id="panel-theme" style="display:none;">
-                <div style="background:rgba(255,255,255,0.05);padding:1.5rem;border-radius:12px;margin-bottom:1rem;">
-                    <h3 style="margin-bottom:1rem;color:#ff6b9d;">Presets</h3>
-                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;">
-                        <button onclick="applyTheme('romantic')" style="height:60px;background:linear-gradient(135deg,#ff6b9d,#c44569);border:none;border-radius:8px;color:white;cursor:pointer;">Romantic</button>
-                        <button onclick="applyTheme('ocean')" style="height:60px;background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:8px;color:white;cursor:pointer;">Ocean</button>
-                        <button onclick="applyTheme('sunset')" style="height:60px;background:linear-gradient(135deg,#f093fb,#f5576c);border:none;border-radius:8px;color:white;cursor:pointer;">Sunset</button>
-                        <button onclick="applyTheme('forest')" style="height:60px;background:linear-gradient(135deg,#11998e,#38ef7d);border:none;border-radius:8px;color:white;cursor:pointer;">Forest</button>
-                        <button onclick="applyTheme('gold')" style="height:60px;background:linear-gradient(135deg,#f5af19,#f12711);border:none;border-radius:8px;color:white;cursor:pointer;">Gold</button>
-                        <button onclick="applyTheme('midnight')" style="height:60px;background:linear-gradient(135deg,#232526,#414345);border:none;border-radius:8px;color:white;cursor:pointer;">Midnight</button>
+            <!-- THEME -->
+            <div class="section" id="section-theme">
+                <div class="form-card">
+                    <h3>Quick Color Presets</h3>
+                    <div class="presets">
+                        <button class="preset" onclick="applyPreset('romantic')" style="background:linear-gradient(135deg,#0066ff,#ff0000)">Blue/Red</button>
+                        <button class="preset" onclick="applyPreset('ocean')" style="background:linear-gradient(135deg,#667eea,#764ba2)">Ocean</button>
+                        <button class="preset" onclick="applyPreset('sunset')" style="background:linear-gradient(135deg,#f093fb,#f5576c)">Sunset</button>
+                        <button class="preset" onclick="applyPreset('forest')" style="background:linear-gradient(135deg,#11998e,#38ef7d)">Forest</button>
+                        <button class="preset" onclick="applyPreset('gold')" style="background:linear-gradient(135deg,#f5af19,#f12711)">Gold</button>
+                        <button class="preset" onclick="applyPreset('midnight')" style="background:linear-gradient(135deg,#232526,#414345)">Midnight</button>
                     </div>
                     
-                    <h3 style="margin-bottom:1rem;color:#ff6b9d;">Custom Colors</h3>
-                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;">
-                        <div>
-                            <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Primary</label>
-                            <input type="color" id="primaryColor" style="width:100%;height:50px;border:none;border-radius:8px;">
-                        </div>
-                        <div>
-                            <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Secondary</label>
-                            <input type="color" id="secondaryColor" style="width:100%;height:50px;border:none;border-radius:8px;">
-                        </div>
-                        <div>
-                            <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Accent</label>
-                            <input type="color" id="accentColor" style="width:100%;height:50px;border:none;border-radius:8px;">
-                        </div>
-                        <div>
-                            <label style="display:block;margin-bottom:0.5rem;opacity:0.8;">Background</label>
-                            <input type="color" id="bgColor" style="width:100%;height:50px;border:none;border-radius:8px;">
-                        </div>
-                    </div>
+                    <h3>Custom Colors</h3>
+                    <label>Primary Color (Blue default)</label>
+                    <input type="color" id="primaryColor" class="color-input" onchange="updateData()">
+                    
+                    <label>Secondary Color (Red default)</label>
+                    <input type="color" id="secondaryColor" class="color-input" onchange="updateData()">
+                    
+                    <label>Accent Color (Yellow default)</label>
+                    <input type="color" id="accentColor" class="color-input" onchange="updateData()">
+                    
+                    <label>Background Color</label>
+                    <input type="color" id="bgColor" class="color-input" onchange="updateData()">
                 </div>
             </div>
             
         </div>
     </div>
-    
-    <script src="script.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', initEditPage);</script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsqaoDlN8-XyHCsGrhaHQkMQBiEwmgk8o",
+            authDomain: "vibez-7c71e.firebaseapp.com",
+            projectId: "vibez-7c71e",
+            storageBucket: "vibez-7c71e.firebasestorage.app",
+            messagingSenderId: "544032234117",
+            appId: "1:544032234117:web:9200a924e920c99221e7ec",
+            measurementId: "G-DQ4GMVLTL7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // DEFAULT DATA
+        const defaultData = {
+            siteTitle: "Our Love Story",
+            yourName: "You",
+            partnerName: "Her",
+            mainQuestion: "Will You Be My Valentine?",
+            subMessage: "My heart has been waiting for this moment...",
+            yesText: "YES! 💙♥️",
+            noText: "No...",
+            orbitText: "FOREVER",
+            successMsg: "You Made Me The Happiest Person Alive!",
+            timerLabel: "Together For",
+            startDate: "2024-04-06T00:00",
+            slides: [
+                { title: "Our First Meeting", content: "The day that changed everything...", date: "2024-04-06", color: "#0066ff", image: null },
+                { title: "Our First Date", content: "I knew you were special from the start.", date: "", color: "#ff0000", image: null },
+                { title: "Countless Memories", content: "Every moment with you is a treasure.", date: "", color: "#0066ff", image: null }
+            ],
+            letterTitle: "My Dearest Love",
+            letterContent: "From the moment I met you, my world changed forever.\n\nYou bring joy to every day and love to every moment.\n\nI am so grateful to have you in my life.\n\nHappy Valentine's Day, my love.\n\nForever and always.",
+            letterSign: "Forever Yours",
+            colors: {
+                primary: "#0066ff",
+                secondary: "#ff0000",
+                accent: "#ffd93d",
+                bg: "#0a0a1a"
+            }
+        };
+        
+        // Current data
+        let data = JSON.parse(JSON.stringify(defaultData));
+        let editingIndex = null;
+        let isSyncing = false;
+        
+        // Load from Firebase first, then local
+        async function init() {
+            try {
+                const docRef = doc(db, 'site', 'data');
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    data = { ...data, ...docSnap.data() };
+                    showStatus('Synced from cloud ✓', true);
+                } else {
+                    // Create default if doesn't exist
+                    await setDoc(docRef, data);
+                    showStatus('Created new site ✓', true);
+                }
+                
+                // Also save to local
+                localStorage.setItem('valentineData', JSON.stringify(data));
+                
+                // Listen for real-time updates
+                onSnapshot(docRef, (doc) => {
+                    if (doc.exists() && !isSyncing) {
+                        data = { ...data, ...doc.data() };
+                        fillAllFields();
+                        renderSlides();
+                        showStatus('Live sync active ✓', true);
+                    }
+                });
+                
+            } catch (e) {
+                console.log('Firebase error, using local:', e);
+                const local = localStorage.getItem('valentineData');
+                if (local) data = JSON.parse(local);
+                showStatus('Offline mode (local only)');
+            }
+            
+            fillAllFields();
+            renderSlides();
+        }
+        
+        function fillAllFields() {
+            // General
+            setVal('siteTitle', data.siteTitle);
+            setVal('yourName', data.yourName);
+            setVal('partnerName', data.partnerName);
+            
+            // Landing
+            setVal('mainQuestion', data.mainQuestion);
+            setVal('subMessage', data.subMessage);
+            setVal('yesText', data.yesText);
+            setVal('noText', data.noText);
+            setVal('orbitText', data.orbitText);
+            setVal('successMsg', data.successMsg);
+            setVal('timerLabel', data.timerLabel);
+            
+            // Timer
+            setVal('startDate', data.startDate);
+            
+            // Letter
+            setVal('letterTitle', data.letterTitle);
+            setVal('letterContent', data.letterContent);
+            setVal('letterSign', data.letterSign);
+            
+            // Colors
+            setVal('primaryColor', data.colors.primary);
+            setVal('secondaryColor', data.colors.secondary);
+            setVal('accentColor', data.colors.accent);
+            setVal('bgColor', data.colors.bg);
+        }
+        
+        function setVal(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.value = value || '';
+        }
+        
+        function getVal(id) {
+            const el = document.getElementById(id);
+            return el ? el.value : '';
+        }
+        
+        // Navigation
+        window.showSection = function(name) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('section-' + name).classList.add('active');
+            event.target.classList.add('active');
+            
+            const titles = {
+                general: 'General Settings',
+                landing: 'Landing Page',
+                timer: 'Love Timer',
+                slides: 'Story Slides',
+                letter: 'Love Letter',
+                theme: 'Theme & Colors'
+            };
+            document.getElementById('sectionTitle').textContent = titles[name];
+        };
+        
+        // Update data object (local only until save)
+        window.updateData = function() {
+            data.siteTitle = getVal('siteTitle');
+            data.yourName = getVal('yourName');
+            data.partnerName = getVal('partnerName');
+            data.mainQuestion = getVal('mainQuestion');
+            data.subMessage = getVal('subMessage');
+            data.yesText = getVal('yesText');
+            data.noText = getVal('noText');
+            data.orbitText = getVal('orbitText');
+            data.successMsg = getVal('successMsg');
+            data.timerLabel = getVal('timerLabel');
+            data.startDate = getVal('startDate');
+            data.letterTitle = getVal('letterTitle');
+            data.letterContent = getVal('letterContent');
+            data.letterSign = getVal('letterSign');
+            data.colors.primary = getVal('primaryColor');
+            data.colors.secondary = getVal('secondaryColor');
+            data.colors.accent = getVal('accentColor');
+            data.colors.bg = getVal('bgColor');
+            
+            // Auto-save to local
+            localStorage.setItem('valentineData', JSON.stringify(data));
+            showStatus('Changes pending (click SAVE TO CLOUD)');
+        };
+        
+        // SAVE TO FIREBASE - THIS SYNCs TO ALL PAGES
+        window.saveToFirebase = async function() {
+            updateData(); // Make sure latest values are in data object
+            
+            try {
+                isSyncing = true;
+                showStatus('Saving to cloud...');
+                
+                await setDoc(doc(db, 'site', 'data'), data);
+                
+                localStorage.setItem('valentineData', JSON.stringify(data));
+                showStatus('✓ SAVED! All pages updated.', true);
+                
+                setTimeout(() => {
+                    isSyncing = false;
+                }, 1000);
+                
+            } catch (e) {
+                console.error('Save failed:', e);
+                showStatus('Save failed - exported to local');
+                alert('Cloud save failed. Use Export to backup your data.');
+                isSyncing = false;
+            }
+        };
+        
+        function showStatus(msg, success = false) {
+            const status = document.getElementById('status');
+            status.textContent = msg;
+            status.className = 'status' + (success ? ' synced' : '');
+        }
+        
+        // SLIDES MANAGEMENT
+        window.renderSlides = function() {
+            const container = document.getElementById('slidesList');
+            if (!container) return;
+            
+            container.innerHTML = data.slides.map((slide, i) => `
+                <div class="slide-item" onclick="editSlide(${i})">
+                    <div class="slide-num" style="background:linear-gradient(135deg,${slide.color},${data.colors.secondary});">${i+1}</div>
+                    <div class="slide-info">
+                        <div class="slide-title-small">${slide.title}</div>
+                        <div class="slide-preview">${slide.content.substring(0,50)}...</div>
+                    </div>
+                </div>
+            `).join('');
+        };
+        
+        window.addSlide = function() {
+            data.slides.push({
+                title: "New Slide",
+                content: "Your story here...",
+                date: "",
+                color: data.colors.primary,
+                image: null
+            });
+            renderSlides();
+            updateData();
+            editSlide(data.slides.length - 1);
+        };
+        
+        window.editSlide = function(index) {
+            editingIndex = index;
+            const slide = data.slides[index];
+            
+            document.getElementById('editingNum').textContent = index + 1;
+            document.getElementById('editSlideTitle').value = slide.title;
+            document.getElementById('editSlideContent').value = slide.content;
+            document.getElementById('editSlideDate').value = slide.date;
+            document.getElementById('editSlideColor').value = slide.color;
+            
+            const preview = document.getElementById('imagePreview');
+            if (slide.image) {
+                preview.src = slide.image;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+            
+            document.getElementById('slideEditor').style.display = 'block';
+        };
+        
+        window.saveSlide = function() {
+            if (editingIndex === null) return;
+            
+            data.slides[editingIndex].title = document.getElementById('editSlideTitle').value;
+            data.slides[editingIndex].content = document.getElementById('editSlideContent').value;
+            data.slides[editingIndex].date = document.getElementById('editSlideDate').value;
+            data.slides[editingIndex].color = document.getElementById('editSlideColor').value;
+            
+            renderSlides();
+            updateData();
+            closeEditor();
+        };
+        
+        window.closeEditor = function() {
+            document.getElementById('slideEditor').style.display = 'none';
+            editingIndex = null;
+        };
+        
+        window.deleteSlide = function() {
+            if (editingIndex === null) return;
+            if (!confirm('Delete this slide?')) return;
+            
+            data.slides.splice(editingIndex, 1);
+            renderSlides();
+            updateData();
+            closeEditor();
+        };
+        
+        window.handleImage = function(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                data.slides[editingIndex].image = e.target.result;
+                document.getElementById('imagePreview').src = e.target.result;
+                document.getElementById('imagePreview').style.display = 'block';
+                updateData();
+            };
+            reader.readAsDataURL(file);
+        };
+        
+        // THEME PRESETS
+        window.applyPreset = function(name) {
+            const presets = {
+                romantic: { primary: "#0066ff", secondary: "#ff0000", accent: "#ffd93d", bg: "#0a0a1a" },
+                ocean: { primary: "#667eea", secondary: "#764ba2", accent: "#f093fb", bg: "#0f0f23" },
+                sunset: { primary: "#f093fb", secondary: "#f5576c", accent: "#ffd93d", bg: "#1a0f1f" },
+                forest: { primary: "#11998e", secondary: "#38ef7d", accent: "#c4e538", bg: "#0a1f15" },
+                gold: { primary: "#f5af19", secondary: "#f12711", accent: "#ffd700", bg: "#1f150a" },
+                midnight: { primary: "#232526", secondary: "#414345", accent: "#7f8c8d", bg: "#000000" }
+            };
+            
+            const p = presets[name];
+            document.getElementById('primaryColor').value = p.primary;
+            document.getElementById('secondaryColor').value = p.secondary;
+            document.getElementById('accentColor').value = p.accent;
+            document.getElementById('bgColor').value = p.bg;
+            
+            updateData();
+        };
+        
+        // EXPORT/IMPORT
+        window.exportData = function() {
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'valentine-site-backup.json';
+            a.click();
+            showStatus('Exported to file ✓', true);
+        };
+        
+        window.importData = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        data = JSON.parse(event.target.result);
+                        fillAllFields();
+                        renderSlides();
+                        updateData();
+                        showStatus('Imported! Click SAVE TO CLOUD');
+                    } catch(err) {
+                        alert('Invalid file!');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        };
+        
+        window.resetAll = function() {
+            if (!confirm('RESET EVERYTHING to default? This cannot be undone!')) return;
+            data = JSON.parse(JSON.stringify(defaultData));
+            fillAllFields();
+            renderSlides();
+            updateData();
+            showStatus('Reset - click SAVE TO CLOUD to apply');
+        };
+        
+        // Initialize
+        init();
+    </script>
 </body>
 </html>
