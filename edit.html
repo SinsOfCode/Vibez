@@ -237,6 +237,14 @@
             padding: 0.2rem;
         }
         
+        /* Helper text */
+        .helper {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+        }
+        
         /* Slides List */
         .slide-item {
             display: flex;
@@ -400,7 +408,8 @@
             
             <button class="nav-btn active" onclick="showSection('general')">⚙ General</button>
             <button class="nav-btn" onclick="showSection('landing')">🏠 Landing Page</button>
-            <button class="nav-btn" onclick="showSection('timer')">⏱ Timer</button>
+            <button class="nav-btn" onclick="showSection('timer')">⏱ Timer Settings</button>
+            <button class="nav-btn" onclick="showSection('timerfacts')">🎯 Timer Facts</button>
             <button class="nav-btn" onclick="showSection('slides')">📖 Story Slides</button>
             <button class="nav-btn" onclick="showSection('letter')">💌 Love Letter</button>
             <button class="nav-btn" onclick="showSection('theme')">🎨 Theme</button>
@@ -457,27 +466,85 @@
                     <label>Heart Text (center of spinning heart)</label>
                     <input type="text" id="orbitText">
                 </div>
-                
-                <div class="form-card">
-                    <h3>Success Page</h3>
-                    <label>Success Message</label>
-                    <input type="text" id="successMsg">
-                    
-                    <label>Timer Label</label>
-                    <input type="text" id="timerLabel">
-                </div>
             </div>
             
-            <!-- TIMER -->
+            <!-- TIMER SETTINGS -->
             <div class="section" id="section-timer">
                 <div class="form-card">
-                    <h3>Relationship Start Date</h3>
-                    <label>When did you start dating? (for the counter)</label>
+                    <h3>Timer Configuration</h3>
+                    <label>Timer Label (e.g., "Together For")</label>
+                    <input type="text" id="timerLabel">
+                    
+                    <label>Relationship Start Date</label>
                     <input type="datetime-local" id="startDate">
                     
                     <p style="margin-top:1rem;opacity:0.7;font-size:0.9rem;">
-                        This date is used to calculate how long you've been together on the timer page.
+                        This date calculates how long you've been together.
                     </p>
+                </div>
+            </div>
+            
+            <!-- TIMER FACTS - NEW SECTION -->
+            <div class="section" id="section-timerfacts">
+                <div class="form-card">
+                    <h3>Intro Fact</h3>
+                    <label>Fact Title</label>
+                    <input type="text" id="introFactTitle">
+                    
+                    <label>Fact Text (use {distance} for Earth miles)</label>
+                    <textarea id="introFactText" rows="2"></textarea>
+                    <p class="helper">Example: "In that time, Earth traveled {distance} miles!"</p>
+                </div>
+                
+                <div class="form-card">
+                    <h3>Perspective Section</h3>
+                    <label>Perspective Text (use {seconds}, {movies}, {songs})</label>
+                    <textarea id="perspectiveText" rows="4"></textarea>
+                    <p class="helper">Available: {seconds}, {movies}, {songs}</p>
+                </div>
+                
+                <div class="form-card">
+                    <h3>Months Fact</h3>
+                    <label>Fact Title</label>
+                    <input type="text" id="monthsFactTitle">
+                    
+                    <label>Fact Text (use {money} for dollar amount)</label>
+                    <textarea id="monthsFactText" rows="2"></textarea>
+                    <p class="helper">Example: "You would have spent ${money} by now!"</p>
+                </div>
+                
+                <div class="form-card">
+                    <h3>Weeks Section</h3>
+                    <label>Weeks Text (use {weekends}, {brunches}, {movies})</label>
+                    <textarea id="weeksText" rows="3"></textarea>
+                    <p class="helper">Available: {weekends}, {brunches}, {movies}</p>
+                </div>
+                
+                <div class="form-card">
+                    <h3>Hours Fact</h3>
+                    <label>Fact Title</label>
+                    <input type="text" id="hoursFactTitle">
+                    
+                    <label>Fact Text (use {series} for TV series count)</label>
+                    <textarea id="hoursFactText" rows="2"></textarea>
+                    <p class="helper">Example: "You could have watched {series} series!"</p>
+                </div>
+                
+                <div class="form-card">
+                    <h3>Minutes Section</h3>
+                    <label>Minutes Text (use {miles}, {loves}, {photos})</label>
+                    <textarea id="minutesText" rows="4"></textarea>
+                    <p class="helper">Available: {miles}, {loves}, {photos}</p>
+                </div>
+                
+                <div class="form-card">
+                    <h3>Final Fact</h3>
+                    <label>Fact Title</label>
+                    <input type="text" id="finalFactTitle">
+                    
+                    <label>Final Fact Text</label>
+                    <textarea id="finalFactText" rows="2"></textarea>
+                    <p class="helper">Use {highlight}text{/highlight} for colored text</p>
                 </div>
             </div>
             
@@ -584,11 +651,10 @@
             measurementId: "G-DQ4GMVLTL7"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        // DEFAULT DATA
+        // DEFAULT DATA - NOW WITH TIMER FACTS
         const defaultData = {
             siteTitle: "Our Love Story",
             yourName: "You",
@@ -598,9 +664,22 @@
             yesText: "YES! 💙♥️",
             noText: "No...",
             orbitText: "FOREVER",
-            successMsg: "You Made Me The Happiest Person Alive!",
             timerLabel: "Together For",
             startDate: "2024-02-14T00:00",
+            
+            // NEW: Timer Facts
+            introFactTitle: "Did You Know?",
+            introFactText: "In that time, the Earth has traveled {distance} miles through space!",
+            perspectiveText: "To put that into perspective...\n\nYou have been together for {seconds} seconds.\nThat is enough time to watch {movies} movies!\nOr listen to your favorite song {songs} times!",
+            monthsFactTitle: "Fun Fact",
+            monthsFactText: "If you spent $1 every day, you would have spent ${money} by now!",
+            weeksText: "That is {weekends} weekends together!\nOr {brunches} Sunday brunches!\nOr {movies} movie nights!",
+            hoursFactTitle: "Time Well Spent?",
+            hoursFactText: "You could have binge-watched {series} TV series by now!",
+            minutesText: "In that time, you could have:\n\n• Walked {miles} miles hand-in-hand\n• Said \"I love you\" {loves} times\n• Taken {photos} photos together",
+            finalFactTitle: "And Counting...",
+            finalFactText: "Every second with you is a second well spent. Here is to {highlight}infinity{/highlight} more!",
+            
             slides: [
                 { title: "Our First Meeting", content: "The day that changed everything...", date: "2024-02-14", color: "#0066ff", image: null },
                 { title: "Our First Date", content: "I knew you were special from the start.", date: "", color: "#ff0000", image: null },
@@ -631,11 +710,9 @@
                 const docSnap = await getDoc(docRef);
                 
                 if (docSnap.exists()) {
-                    // Merge cloud data with defaults
                     const cloudData = docSnap.data();
                     data = { ...defaultData, ...cloudData };
                     
-                    // Restore images from local if cloud doesn't have them
                     const local = localStorage.getItem('valentineData');
                     if (local) {
                         const localData = JSON.parse(local);
@@ -649,19 +726,15 @@
                     
                     showStatus('Synced from cloud ✓', 'synced');
                 } else {
-                    // Create default document
                     await setDoc(docRef, data);
                     showStatus('Created new site ✓', 'synced');
                 }
                 
-                // Save to local
                 localStorage.setItem('valentineData', JSON.stringify(data));
                 
-                // Real-time listener
                 onSnapshot(docRef, (doc) => {
                     if (doc.exists() && !isSyncing) {
-                        const cloudData = doc.data();
-                        data = { ...data, ...cloudData };
+                        data = { ...data, ...doc.data() };
                         fillAllFields();
                         renderSlides();
                         showStatus('Live update received ✓', 'synced');
@@ -670,7 +743,6 @@
                 
             } catch (e) {
                 console.error('Firebase error:', e);
-                // Fallback to local
                 const local = localStorage.getItem('valentineData');
                 if (local) {
                     try {
@@ -689,7 +761,7 @@
             renderSlides();
         }
         
-        // Fill all form fields
+        // Fill all form fields - NOW WITH TIMER FACTS
         function fillAllFields() {
             // General
             document.getElementById('siteTitle').value = data.siteTitle || '';
@@ -702,11 +774,23 @@
             document.getElementById('yesText').value = data.yesText || '';
             document.getElementById('noText').value = data.noText || '';
             document.getElementById('orbitText').value = data.orbitText || '';
-            document.getElementById('successMsg').value = data.successMsg || '';
-            document.getElementById('timerLabel').value = data.timerLabel || '';
             
             // Timer
+            document.getElementById('timerLabel').value = data.timerLabel || '';
             document.getElementById('startDate').value = data.startDate || '';
+            
+            // NEW: Timer Facts
+            document.getElementById('introFactTitle').value = data.introFactTitle || '';
+            document.getElementById('introFactText').value = data.introFactText || '';
+            document.getElementById('perspectiveText').value = data.perspectiveText || '';
+            document.getElementById('monthsFactTitle').value = data.monthsFactTitle || '';
+            document.getElementById('monthsFactText').value = data.monthsFactText || '';
+            document.getElementById('weeksText').value = data.weeksText || '';
+            document.getElementById('hoursFactTitle').value = data.hoursFactTitle || '';
+            document.getElementById('hoursFactText').value = data.hoursFactText || '';
+            document.getElementById('minutesText').value = data.minutesText || '';
+            document.getElementById('finalFactTitle').value = data.finalFactTitle || '';
+            document.getElementById('finalFactText').value = data.finalFactText || '';
             
             // Letter
             document.getElementById('letterTitle').value = data.letterTitle || '';
@@ -720,7 +804,7 @@
             document.getElementById('bgColor').value = data.colors?.bg || '#0a0a1a';
         }
         
-        // Read current form values into data object
+        // Read form data - NOW WITH TIMER FACTS
         function readFormData() {
             data.siteTitle = document.getElementById('siteTitle').value;
             data.yourName = document.getElementById('yourName').value;
@@ -730,9 +814,22 @@
             data.yesText = document.getElementById('yesText').value;
             data.noText = document.getElementById('noText').value;
             data.orbitText = document.getElementById('orbitText').value;
-            data.successMsg = document.getElementById('successMsg').value;
             data.timerLabel = document.getElementById('timerLabel').value;
             data.startDate = document.getElementById('startDate').value;
+            
+            // NEW: Timer Facts
+            data.introFactTitle = document.getElementById('introFactTitle').value;
+            data.introFactText = document.getElementById('introFactText').value;
+            data.perspectiveText = document.getElementById('perspectiveText').value;
+            data.monthsFactTitle = document.getElementById('monthsFactTitle').value;
+            data.monthsFactText = document.getElementById('monthsFactText').value;
+            data.weeksText = document.getElementById('weeksText').value;
+            data.hoursFactTitle = document.getElementById('hoursFactTitle').value;
+            data.hoursFactText = document.getElementById('hoursFactText').value;
+            data.minutesText = document.getElementById('minutesText').value;
+            data.finalFactTitle = document.getElementById('finalFactTitle').value;
+            data.finalFactText = document.getElementById('finalFactText').value;
+            
             data.letterTitle = document.getElementById('letterTitle').value;
             data.letterContent = document.getElementById('letterContent').value;
             data.letterSign = document.getElementById('letterSign').value;
@@ -744,31 +841,23 @@
             data.colors.bg = document.getElementById('bgColor').value;
         }
         
-        // Navigation
+        // Navigation - NOW WITH TIMER FACTS
         window.showSection = function(name) {
-            // Update nav buttons
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('active');
-                if (btn.textContent.toLowerCase().includes(name) || 
-                    (name === 'general' && btn.textContent.includes('General')) ||
-                    (name === 'landing' && btn.textContent.includes('Landing')) ||
-                    (name === 'timer' && btn.textContent.includes('Timer')) ||
-                    (name === 'slides' && btn.textContent.includes('Slides')) ||
-                    (name === 'letter' && btn.textContent.includes('Letter')) ||
-                    (name === 'theme' && btn.textContent.includes('Theme'))) {
+                if (btn.getAttribute('onclick')?.includes(`'${name}'`)) {
                     btn.classList.add('active');
                 }
             });
             
-            // Show correct section
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById('section-' + name).classList.add('active');
             
-            // Update title
             const titles = {
                 general: 'General Settings',
                 landing: 'Landing Page',
-                timer: 'Love Timer',
+                timer: 'Timer Settings',
+                timerfacts: 'Timer Facts',
                 slides: 'Story Slides',
                 letter: 'Love Letter',
                 theme: 'Theme & Colors'
@@ -784,7 +873,6 @@
             isSyncing = true;
             
             try {
-                // Save text data to Firebase (without images to avoid size limits)
                 const cloudData = {
                     ...data,
                     slides: data.slides.map(s => ({ ...s, image: null }))
@@ -792,7 +880,6 @@
                 
                 await setDoc(doc(db, 'site', 'data'), cloudData);
                 
-                // Save full data (with images) to localStorage
                 localStorage.setItem('valentineData', JSON.stringify(data));
                 
                 showStatus('✓ SAVED TO CLOUD!', 'synced');
