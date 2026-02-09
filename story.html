@@ -3,172 +3,496 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Love Story</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-</head>
-<body class="story-page">
-    <!-- Dynamic Background -->
-    <div class="story-bg-layer" id="storyBg"></div>
-    <div class="ambient-particles" id="ambientParticles"></div>
-    <div class="light-leaks" id="lightLeaks"></div>
-
-    <!-- Progress Indicator -->
-    <div class="scroll-progress" id="scrollProgress">
-        <div class="progress-bar" id="progressBar"></div>
-        <div class="progress-dots" id="progressDots"></div>
-    </div>
-
-    <!-- Floating Love Timer -->
-    <div class="floating-timer" id="floatingTimer">
-        <div class="timer-toggle" onclick="toggleTimer()">⏱</div>
-        <div class="timer-content" id="timerContent">
-            <div class="timer-label" id="timerLabel">Together Since</div>
-            <div class="timer-display">
-                <div class="time-unit">
-                    <span class="time-value" id="timerDays">000</span>
-                    <span class="time-label">Days</span>
-                </div>
-                <div class="time-separator">:</div>
-                <div class="time-unit">
-                    <span class="time-value" id="timerHours">00</span>
-                    <span class="time-label">Hours</span>
-                </div>
-                <div class="time-separator">:</div>
-                <div class="time-unit">
-                    <span class="time-value" id="timerMinutes">00</span>
-                    <span class="time-label">Mins</span>
-                </div>
-                <div class="time-separator">:</div>
-                <div class="time-unit">
-                    <span class="time-value" id="timerSeconds">00</span>
-                    <span class="time-label">Secs</span>
-                </div>
-            </div>
-            <div class="start-date" id="startDateDisplay">Since April 6, 2024</div>
-        </div>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="story-nav">
-        <a href="index.html" class="back-btn">
-            <span class="arrow">←</span>
-            <span class="text">Back</span>
-        </a>
-        <div class="story-title-sm">Our Story</div>
-        <a href="edit.html" class="edit-btn">✎</a>
-    </nav>
-
-    <!-- Main Story Container -->
-    <main class="story-container" id="storyContainer">
+    <title>Our Story</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        <!-- Intro Section -->
-        <section class="story-section intro-section" id="section-intro">
-            <div class="section-content">
-                <div class="intro-badge">Est. 2024</div>
-                <h1 class="intro-title">
-                    <span class="title-line">Our</span>
-                    <span class="title-line highlight">Journey</span>
-                </h1>
-                <div class="intro-divider">
-                    <span class="heart-icon">♥</span>
-                </div>
-                <p class="intro-text" id="introText">
-                    Every love story is beautiful, but ours is my favorite...
-                </p>
-                <div class="scroll-hint">
-                    <div class="mouse-icon">
-                        <div class="wheel"></div>
-                    </div>
-                    <span>Scroll to explore</span>
-                </div>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            overflow: hidden;
+        }
+        
+        /* Progress Dots */
+        .progress-dots {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transition: all 0.3s;
+        }
+        
+        .dot.active {
+            background: #ff6b9d;
+            transform: scale(1.3);
+            box-shadow: 0 0 15px #ff6b9d;
+        }
+        
+        /* Slideshow Container */
+        .slideshow {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        /* Individual Slide */
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.8s ease;
+            pointer-events: none;
+        }
+        
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: all;
+        }
+        
+        /* Slide Content Box */
+        .slide-box {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            padding: 4rem;
+            max-width: 800px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.6s ease 0.2s;
+        }
+        
+        .slide.active .slide-box {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .slide-number {
+            font-size: 1rem;
+            color: #ff6b9d;
+            margin-bottom: 1rem;
+            letter-spacing: 5px;
+        }
+        
+        .slide-title {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #ff6b9d, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .slide-text {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+        
+        .slide-date {
+            margin-top: 2rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255,107,157,0.2);
+            border-radius: 20px;
+            display: inline-block;
+            color: #ff6b9d;
+        }
+        
+        /* Click Hint */
+        .click-hint {
+            position: fixed;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            opacity: 0.5;
+            animation: pulse 2s infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+        }
+        
+        /* Navigation Arrows (subtle) */
+        .nav-arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            cursor: pointer;
+            padding: 2rem;
+            z-index: 50;
+        }
+        
+        .slideshow:hover .nav-arrow {
+            opacity: 0.3;
+        }
+        
+        .nav-arrow:hover {
+            opacity: 1 !important;
+        }
+        
+        .nav-arrow.left { left: 1rem; }
+        .nav-arrow.right { right: 1rem; }
+        
+        /* FINAL LETTER */
+        .letter-slide {
+            background: radial-gradient(circle at center, rgba(139,69,19,0.3), transparent 70%);
+        }
+        
+        .sealed-letter {
+            width: 300px;
+            height: 200px;
+            background: linear-gradient(135deg, #f4e4c1, #d4a574);
+            border-radius: 5px;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+        }
+        
+        .sealed-letter:hover {
+            transform: scale(1.05);
+        }
+        
+        .wax-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #ff4444, #990000);
+            border-radius: 50%;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3), inset 0 -5px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            animation: sealPulse 2s infinite;
+        }
+        
+        @keyframes sealPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+        
+        .letter-text {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #8b4513;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        /* OPENED LETTER MODAL */
+        .letter-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+        
+        .letter-modal.active {
+            display: flex;
+        }
+        
+        .scroll-letter {
+            width: 100%;
+            max-width: 600px;
+            background: #f4e4c1;
+            border-radius: 10px;
+            position: relative;
+            transform: scaleY(0);
+            transform-origin: top;
+            animation: unroll 1s ease forwards;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        @keyframes unroll {
+            to { transform: scaleY(1); }
+        }
+        
+        .scroll-content {
+            padding: 3rem;
+            color: #3d2817;
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+        }
+        
+        .scroll-content h2 {
+            color: #8b4513;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-align: center;
+        }
+        
+        .scroll-content p {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .close-letter {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            background: rgba(139,69,19,0.2);
+            border: none;
+            border-radius: 50%;
+            color: #8b4513;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close-letter:hover {
+            background: rgba(139,69,19,0.4);
+            transform: rotate(90deg);
+        }
+        
+        /* Background Effects */
+        .bg-hearts {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Completion Message */
+        .complete-message {
+            position: fixed;
+            bottom: 5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        
+        .complete-message.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Dots -->
+    <div class="progress-dots" id="progressDots"></div>
+    
+    <!-- Background -->
+    <div class="bg-hearts" id="bgHearts"></div>
+    
+    <!-- Slideshow -->
+    <div class="slideshow" id="slideshow" onclick="nextSlide()">
+        
+        <!-- Intro Slide -->
+        <div class="slide active" data-index="0">
+            <div class="slide-box">
+                <div class="slide-number">OUR STORY</div>
+                <h2 class="slide-title">The Beginning</h2>
+                <p class="slide-text">Every love story is beautiful, but ours is my favorite. Click anywhere to begin our journey...</p>
             </div>
-            <div class="intro-visual">
-                <div class="floating-hearts-cluster" id="introHearts"></div>
-            </div>
-        </section>
-
-        <!-- Dynamic Slides Container -->
-        <div id="slidesContainer">
-            <!-- Slides injected by JavaScript -->
         </div>
-
-        <!-- Timeline Connector -->
-        <div class="timeline-line" id="timelineLine"></div>
-
-        <!-- Closing Section -->
-        <section class="story-section closing-section" id="section-closing">
-            <div class="section-content">
-                <div class="closing-hearts" id="closingHearts"></div>
-                <h2 class="closing-title">To Be Continued...</h2>
-                <p class="closing-text">Forever isn't long enough when I'm with you.</p>
-                
-                <div class="love-meter">
-                    <div class="meter-label">My Love For You</div>
-                    <div class="meter-bar">
-                        <div class="meter-fill" id="meterFill"></div>
-                        <div class="meter-glow"></div>
-                    </div>
-                    <div class="meter-value">∞%</div>
-                </div>
-
-                <div class="closing-actions">
-                    <button class="magic-btn btn-replay" onclick="scrollToTop()">
-                        <span>↻ Watch Again</span>
-                    </button>
-                    <a href="index.html" class="magic-btn btn-home">
-                        <span>← Back Home</span>
-                    </a>
-                </div>
+        
+        <!-- Dynamic Slides Inserted Here -->
+        <div id="dynamicSlides"></div>
+        
+        <!-- Final Letter Slide -->
+        <div class="slide letter-slide" id="letterSlide" data-index="999">
+            <div class="sealed-letter" onclick="openLetter(event)">
+                <div class="wax-seal">♥</div>
+                <div class="letter-text">Open Me</div>
             </div>
-            
-            <div class="final-message" id="finalMessage">
-                <div class="message-bubble">I love you more every day ♥</div>
+            <div class="complete-message" id="completeMsg">
+                <p>A letter from my heart to yours...</p>
             </div>
-        </section>
-
-    </main>
-
-    <!-- Lightbox for Images -->
-    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-        <div class="lightbox-content">
-            <img id="lightboxImg" src="" alt="">
-            <div class="lightbox-caption" id="lightboxCaption"></div>
         </div>
-        <button class="lightbox-close" onclick="closeLightbox()">×</button>
+        
+    </div>
+    
+    <!-- Navigation Arrows -->
+    <div class="nav-arrow left" onclick="prevSlide(event)">‹</div>
+    <div class="nav-arrow right" onclick="nextSlide(event)">›</div>
+    
+    <!-- Click Hint -->
+    <div class="click-hint" id="clickHint">Click to continue ♥</div>
+    
+    <!-- Letter Modal -->
+    <div class="letter-modal" id="letterModal" onclick="closeLetter(event)">
+        <div class="scroll-letter" onclick="event.stopPropagation()">
+            <button class="close-letter" onclick="closeLetter()">×</button>
+            <div class="scroll-content" id="letterContent">
+                <h2>My Dearest Love</h2>
+                <p id="letterText">This is where your custom letter will appear. Edit it in the edit page!</p>
+                <p style="text-align: right; margin-top: 2rem;">Forever Yours,<br>♥</p>
+            </div>
+        </div>
     </div>
 
-    <!-- Audio Visualizer (Visual only) -->
-    <div class="audio-viz" id="audioViz">
-        <div class="viz-bar"></div>
-        <div class="viz-bar"></div>
-        <div class="viz-bar"></div>
-        <div class="viz-bar"></div>
-        <div class="viz-bar"></div>
-    </div>
-
-    <!-- Bottom Navigation -->
-    <nav class="fixed-nav">
-        <div class="nav-bg"></div>
-        <a href="index.html" class="nav-item">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">Home</span>
-        </a>
-        <a href="story.html" class="nav-item active">
-            <span class="nav-icon">📖</span>
-            <span class="nav-label">Story</span>
-        </a>
-        <a href="edit.html" class="nav-item admin">
-            <span class="nav-icon">✎</span>
-            <span class="nav-label">Edit</span>
-        </a>
-    </nav>
-
-    <script src="script.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            initStoryPage();
-        });
+        // Load data
+        const data = JSON.parse(localStorage.getItem('valentineData')) || {
+            slides: [
+                { title: "Our First Meeting", content: "The day that changed everything...", date: "2024-04-06" },
+                { title: "Our First Date", content: "I knew you were special from the moment I saw you.", date: "" },
+                { title: "Countless Memories", content: "Every moment with you is a treasure I hold dear.", date: "" }
+            ],
+            letterTitle: "My Dearest Love",
+            letterText: "From the moment I met you, my world changed. You bring joy to every day and love to every moment. I am so grateful to have you in my life. Happy Valentine's Day, my love. Forever and always.",
+            letterSign: "Forever Yours"
+        };
+        
+        let currentSlide = 0;
+        let totalSlides = 0;
+        
+        // Build slides
+        function buildSlides() {
+            const container = document.getElementById('dynamicSlides');
+            const dots = document.getElementById('progressDots');
+            
+            // Clear existing
+            container.innerHTML = '';
+            dots.innerHTML = '';
+            
+            // Add dot for intro
+            dots.innerHTML += '<div class="dot active" onclick="goToSlide(0)"></div>';
+            
+            // Add custom slides
+            data.slides.forEach((slide, i) => {
+                const slideEl = document.createElement('div');
+                slideEl.className = 'slide';
+                slideEl.dataset.index = i + 1;
+                slideEl.innerHTML = `
+                    <div class="slide-box">
+                        <div class="slide-number">CHAPTER ${i + 1}</div>
+                        <h2 class="slide-title">${slide.title}</h2>
+                        <p class="slide-text">${slide.content}</p>
+                        ${slide.date ? `<div class="slide-date">${new Date(slide.date).toLocaleDateString()}</div>` : ''}
+                    </div>
+                `;
+                container.appendChild(slideEl);
+                
+                dots.innerHTML += `<div class="dot" onclick="goToSlide(${i + 1})"></div>`;
+            });
+            
+            // Add dot for letter
+            dots.innerHTML += `<div class="dot" onclick="goToSlide(${data.slides.length + 1})"></div>`;
+            
+            totalSlides = data.slides.length + 2; // +2 for intro and letter
+            
+            // Update letter content
+            document.querySelector('.scroll-content h2').textContent = data.letterTitle;
+            document.getElementById('letterText').textContent = data.letterText;
+        }
+        
+        buildSlides();
+        
+        // Navigation
+        function nextSlide(e) {
+            if (e) e.stopPropagation();
+            if (currentSlide < totalSlides - 1) {
+                goToSlide(currentSlide + 1);
+            }
+        }
+        
+        function prevSlide(e) {
+            if (e) e.stopPropagation();
+            if (currentSlide > 0) {
+                goToSlide(currentSlide - 1);
+            }
+        }
+        
+        function goToSlide(n) {
+            // Hide current
+            document.querySelectorAll('.slide')[currentSlide]?.classList.remove('active');
+            
+            // Show new
+            currentSlide = n;
+            const slides = document.querySelectorAll('.slide');
+            if (slides[n]) slides[n].classList.add('active');
+            
+            // Update dots
+            document.querySelectorAll('.dot').forEach((d, i) => {
+                d.classList.toggle('active', i === n);
+            });
+            
+            // Hide hint on last slide
+            const hint = document.getElementById('clickHint');
+            const complete = document.getElementById('completeMsg');
+            
+            if (n === totalSlides - 1) {
+                hint.style.display = 'none';
+                setTimeout(() => complete.classList.add('show'), 500);
+            } else {
+                hint.style.display = 'block';
+                complete.classList.remove('show');
+            }
+        }
+        
+        // Letter functions
+        function openLetter(e) {
+            e.stopPropagation();
+            document.getElementById('letterModal').classList.add('active');
+        }
+        
+        function closeLetter(e) {
+            if (e) e.stopPropagation();
+            document.getElementById('letterModal').classList.remove('active');
+        }
+        
+        // Background hearts
+        setInterval(() => {
+            const h = document.createElement('div');
+            h.innerHTML = '♥';
+            h.style.cssText = `
+                position: absolute;
+                left: ${Math.random()*100}%;
+                top: 100%;
+                font-size: ${Math.random()*20+10}px;
+                color: rgba(255,107,157,${Math.random()*0.5});
+                animation: floatUp ${Math.random()*5+5}s linear;
+                pointer-events: none;
+            `;
+            document.getElementById('bgHearts').appendChild(h);
+            setTimeout(() => h.remove(), 10000);
+        }, 1000);
     </script>
 </body>
 </html>
