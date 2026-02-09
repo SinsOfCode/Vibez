@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Love Story</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body class="story-page">
+    <!-- Dynamic Background -->
+    <div class="story-bg-layer" id="storyBg"></div>
+    <div class="ambient-particles" id="ambientParticles"></div>
+    <div class="light-leaks" id="lightLeaks"></div>
+
+    <!-- Progress Indicator -->
+    <div class="scroll-progress" id="scrollProgress">
+        <div class="progress-bar" id="progressBar"></div>
+        <div class="progress-dots" id="progressDots"></div>
+    </div>
+
+    <!-- Floating Love Timer -->
+    <div class="floating-timer" id="floatingTimer">
+        <div class="timer-toggle" onclick="toggleTimer()">⏱</div>
+        <div class="timer-content" id="timerContent">
+            <div class="timer-label" id="timerLabel">Together Since</div>
+            <div class="timer-display">
+                <div class="time-unit">
+                    <span class="time-value" id="timerDays">000</span>
+                    <span class="time-label">Days</span>
+                </div>
+                <div class="time-separator">:</div>
+                <div class="time-unit">
+                    <span class="time-value" id="timerHours">00</span>
+                    <span class="time-label">Hours</span>
+                </div>
+                <div class="time-separator">:</div>
+                <div class="time-unit">
+                    <span class="time-value" id="timerMinutes">00</span>
+                    <span class="time-label">Mins</span>
+                </div>
+                <div class="time-separator">:</div>
+                <div class="time-unit">
+                    <span class="time-value" id="timerSeconds">00</span>
+                    <span class="time-label">Secs</span>
+                </div>
+            </div>
+            <div class="start-date" id="startDateDisplay">Since April 6, 2024</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="story-nav">
+        <a href="index.html" class="back-btn">
+            <span class="arrow">←</span>
+            <span class="text">Back</span>
+        </a>
+        <div class="story-title-sm">Our Story</div>
+        <a href="edit.html" class="edit-btn">✎</a>
+    </nav>
+
+    <!-- Main Story Container -->
+    <main class="story-container" id="storyContainer">
+        
+        <!-- Intro Section -->
+        <section class="story-section intro-section" id="section-intro">
+            <div class="section-content">
+                <div class="intro-badge">Est. 2024</div>
+                <h1 class="intro-title">
+                    <span class="title-line">Our</span>
+                    <span class="title-line highlight">Journey</span>
+                </h1>
+                <div class="intro-divider">
+                    <span class="heart-icon">♥</span>
+                </div>
+                <p class="intro-text" id="introText">
+                    Every love story is beautiful, but ours is my favorite...
+                </p>
+                <div class="scroll-hint">
+                    <div class="mouse-icon">
+                        <div class="wheel"></div>
+                    </div>
+                    <span>Scroll to explore</span>
+                </div>
+            </div>
+            <div class="intro-visual">
+                <div class="floating-hearts-cluster" id="introHearts"></div>
+            </div>
+        </section>
+
+        <!-- Dynamic Slides Container -->
+        <div id="slidesContainer">
+            <!-- Slides injected by JavaScript -->
+        </div>
+
+        <!-- Timeline Connector -->
+        <div class="timeline-line" id="timelineLine"></div>
+
+        <!-- Closing Section -->
+        <section class="story-section closing-section" id="section-closing">
+            <div class="section-content">
+                <div class="closing-hearts" id="closingHearts"></div>
+                <h2 class="closing-title">To Be Continued...</h2>
+                <p class="closing-text">Forever isn't long enough when I'm with you.</p>
+                
+                <div class="love-meter">
+                    <div class="meter-label">My Love For You</div>
+                    <div class="meter-bar">
+                        <div class="meter-fill" id="meterFill"></div>
+                        <div class="meter-glow"></div>
+                    </div>
+                    <div class="meter-value">∞%</div>
+                </div>
+
+                <div class="closing-actions">
+                    <button class="magic-btn btn-replay" onclick="scrollToTop()">
+                        <span>↻ Watch Again</span>
+                    </button>
+                    <a href="index.html" class="magic-btn btn-home">
+                        <span>← Back Home</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="final-message" id="finalMessage">
+                <div class="message-bubble">I love you more every day ♥</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Lightbox for Images -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <div class="lightbox-content">
+            <img id="lightboxImg" src="" alt="">
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+        </div>
+        <button class="lightbox-close" onclick="closeLightbox()">×</button>
+    </div>
+
+    <!-- Audio Visualizer (Visual only) -->
+    <div class="audio-viz" id="audioViz">
+        <div class="viz-bar"></div>
+        <div class="viz-bar"></div>
+        <div class="viz-bar"></div>
+        <div class="viz-bar"></div>
+        <div class="viz-bar"></div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed-nav">
+        <div class="nav-bg"></div>
+        <a href="index.html" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Home</span>
+        </a>
+        <a href="story.html" class="nav-item active">
+            <span class="nav-icon">📖</span>
+            <span class="nav-label">Story</span>
+        </a>
+        <a href="edit.html" class="nav-item admin">
+            <span class="nav-icon">✎</span>
+            <span class="nav-label">Edit</span>
+        </a>
+    </nav>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initStoryPage();
+        });
+    </script>
+</body>
+</html>
