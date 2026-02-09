@@ -1,20 +1,20 @@
-// Default editable content
 const defaultData = {
-  startDate: "2024-04-06T00:00:00",
+  startDate: "2024-04-06T00:00",
+  donutText: "I LOVE YOU ❤️ I CHOOSE YOU 💖 ",
   slides: [
     {
-      title: "The Beginning",
-      text: "This was the moment everything changed.",
+      title: "The Start",
+      text: "The day my world quietly shifted.",
       image: "images/slide1.jpg"
     },
     {
-      title: "Us",
-      text: "Every laugh, every late night, every memory.",
+      title: "Moments",
+      text: "Every smile, every second, every heartbeat.",
       image: "images/slide2.jpg"
     },
     {
-      title: "Why You",
-      text: "Because life feels right with you.",
+      title: "Forever Energy",
+      text: "This is only the beginning.",
       image: "images/slide3.jpg"
     }
   ]
@@ -28,18 +28,16 @@ function getData() {
   return JSON.parse(localStorage.getItem("vibeData"));
 }
 
-// Index page
-function goYes() {
-  window.location.href = "home.html";
-}
-
-const noBtn = document.getElementById("noBtn");
-if (noBtn) {
-  noBtn.addEventListener("mouseover", () => {
-    noBtn.style.left = Math.random() * 200 - 100 + "px";
-    noBtn.style.top = Math.random() * 200 - 100 + "px";
-  });
-}
+// Floating hearts
+setInterval(() => {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerText = ["💖","🌸","❤️","🌹","💕"][Math.floor(Math.random()*5)];
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.animationDuration = 6 + Math.random() * 6 + "s";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 12000);
+}, 400);
 
 // Timer
 function startTimer() {
@@ -49,29 +47,41 @@ function startTimer() {
   setInterval(() => {
     const now = new Date();
     let diff = Math.floor((now - start) / 1000);
-
-    const days = Math.floor(diff / 86400);
+    const d = Math.floor(diff / 86400);
     diff %= 86400;
-    const hours = Math.floor(diff / 3600);
+    const h = Math.floor(diff / 3600);
     diff %= 3600;
-    const minutes = Math.floor(diff / 60);
-    const seconds = diff % 60;
-
+    const m = Math.floor(diff / 60);
+    const s = diff % 60;
     document.getElementById("timer").innerText =
-      `${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
+      `${d} days ${h} hours ${m} minutes ${s} seconds`;
   }, 1000);
+}
+
+// Donut
+function buildDonut() {
+  const data = getData();
+  const donut = document.getElementById("donut");
+  donut.innerHTML = "";
+  const text = data.donutText;
+  const radius = 120;
+  [...text].forEach((char, i) => {
+    const span = document.createElement("span");
+    const angle = (360 / text.length) * i;
+    span.style.transform = `rotate(${angle}deg) translate(${radius}px) rotate(${angle * -1}deg)`;
+    span.innerText = char;
+    donut.appendChild(span);
+  });
 }
 
 // Slideshow
 let currentSlide = 0;
-
 function loadSlide() {
   const data = getData();
-  const slide = data.slides[currentSlide];
-
-  document.getElementById("slideTitle").innerText = slide.title;
-  document.getElementById("slideText").innerText = slide.text;
-  document.getElementById("slideImg").src = slide.image;
+  const s = data.slides[currentSlide];
+  document.getElementById("slideTitle").innerText = s.title;
+  document.getElementById("slideText").innerText = s.text;
+  document.getElementById("slideImg").src = s.image;
 }
 
 function nextSlide() {
