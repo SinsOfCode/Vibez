@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Time Together</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #0066ff;
+            --secondary: #ff0000;
+            --accent: #ffd93d;
+            --bg: #0a0a1a;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: white;
+        }
+        
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .section:nth-child(odd) {
+            background: radial-gradient(circle at 20% 50%, rgba(0,102,255,0.1), transparent 60%);
+        }
+        
+        .section:nth-child(even) {
+            background: radial-gradient(circle at 80% 50%, rgba(255,0,0,0.1), transparent 60%);
+        }
+        
+        .big-timer {
+            font-size: 5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 5px;
+            margin: 1rem 0;
+        }
+        
+        .label {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            color: var(--accent);
+            opacity: 0.8;
+        }
+        
+        .number {
+            font-size: 8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+        
+        .unit {
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            margin-top: 1rem;
+            opacity: 0.7;
+        }
+        
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            animation: bounce 2s infinite;
+            opacity: 0.6;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .continue-btn {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,102,255,0.4);
+            z-index: 100;
+        }
+        
+        @media (max-width: 600px) {
+            .big-timer { font-size: 2.5rem; }
+            .number { font-size: 4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="section">
+        <div class="label" id="timerLabel">Together For</div>
+        <div class="big-timer" id="mainTimer">000:00:00:00</div>
+        <div class="scroll-hint">Scroll down ↓</div>
+    </div>
+    
+    <div class="section">
+        <div class="number" id="months">0</div>
+        <div class="unit">Months</div>
+    </div>
+    
+    <div class="section">
+        <div class="number" id="weeks">0</div>
+        <div class="unit">Weeks</div>
+    </div>
+    
+    <div class="section">
+        <div class="number" id="days">0</div>
+        <div class="unit">Days</div>
+    </div>
+    
+    <div class="section">
+        <div class="number" id="hours">0</div>
+        <div class="unit">Hours</div>
+    </div>
+    
+    <div class="section">
+        <div class="number" id="minutes">0</div>
+        <div class="unit">Minutes</div>
+    </div>
+    
+    <div class="section">
+        <div class="number" id="seconds">0</div>
+        <div class="unit">Seconds</div>
+        <p style="margin-top: 2rem; font-size: 1.5rem; color: var(--accent);">And counting... 💙♥️</p>
+    </div>
+    
+    <a href="story.html" class="continue-btn">Continue Our Story →</a>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsqaoDlN8-XyHCsGrhaHQkMQBiEwmgk8o",
+            authDomain: "vibez-7c71e.firebaseapp.com",
+            projectId: "vibez-7c71e",
+            storageBucket: "vibez-7c71e.firebasestorage.app",
+            messagingSenderId: "544032234117",
+            appId: "1:544032234117:web:9200a924e920c99221e7ec",
+            measurementId: "G-DQ4GMVLTL7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        let startDate = '2024-02-14T00:00';
+        
+        async function load() {
+            try {
+                const snap = await getDoc(doc(db, 'site', 'data'));
+                if (snap.exists()) {
+                    const d = snap.data();
+                    startDate = d.startDate || startDate;
+                    document.getElementById('timerLabel').textContent = d.timerLabel || 'Together For';
+                }
+            } catch (e) {
+                const local = localStorage.getItem('valentineData');
+                if (local) {
+                    const d = JSON.parse(local);
+                    startDate = d.startDate || startDate;
+                    document.getElementById('timerLabel').textContent = d.timerLabel || 'Together For';
+                }
+            }
+            start();
+        }
+        
+        function start() {
+            const start = new Date(startDate);
+            
+            function update() {
+                const now = new Date();
+                const diff = now - start;
+                
+                const days = Math.floor(diff / (1000*60*60*24));
+                const hrs = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+                const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+                const secs = Math.floor((diff % (1000*60)) / 1000);
+                
+                document.getElementById('mainTimer').textContent = 
+                    String(days).padStart(3,'0') + ':' +
+                    String(hrs).padStart(2,'0') + ':' +
+                    String(mins).padStart(2,'0') + ':' +
+                    String(secs).padStart(2,'0');
+                
+                document.getElementById('months').textContent = (days/30.44).toFixed(1);
+                document.getElementById('weeks').textContent = Math.floor(days/7);
+                document.getElementById('days').textContent = days;
+                document.getElementById('hours').textContent = Math.floor(diff/(1000*60*60));
+                document.getElementById('minutes').textContent = Math.floor(diff/(1000*60));
+                document.getElementById('seconds').textContent = Math.floor(diff/1000);
+            }
+            
+            update();
+            setInterval(update, 1000);
+        }
+        
+        load();
+    </script>
+</body>
+</html>
