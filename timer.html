@@ -259,24 +259,40 @@
         <div class="big-timer" id="mainTimer">000:00:00:00</div>
         
         <div class="fun-fact" id="introFact">
-            <h3>Did You Know?</h3>
-            <p id="introFactText">In that time, the Earth has traveled <span class="highlight" id="earthDistance">0</span> miles through space!</p>
+            <h3 id="introFactTitle">Did You Know?</h3>
+            <p id="introFactText">In that time, the Earth has traveled <span class="highlight" id="earthDistance">0</span> miles through space! That's like driving around the equator <span id="equatorLaps">0</span> times! 🌍🚀</p>
         </div>
         
-        <div class="scroll-hint">Keep scrolling for more ↓</div>
+        <div class="scroll-hint">Keep scrolling for more mind-blowing facts ↓</div>
     </div>
     
     <!-- PERSPECTIVE -->
     <div class="section">
-        <div class="perspective" id="perspectiveText">
+        <div class="perspective" id="perspectiveSection">
             To put that into perspective...<br><br>
             You've been together for <strong id="totalSeconds">0</strong> seconds.<br>
-            That's enough time to watch <strong id="movieCount">0</strong> movies!<br>
-            Or listen to your favorite song <strong id="songCount">0</strong> times!
+            That's enough time to watch <strong id="movieCount">0</strong> movies! 🎬<br>
+            Or listen to "your song" <strong id="songCount">0</strong> times on repeat! 🎵<br><br>
+            You could've learned <strong id="languageCount">0</strong> new languages!<br>
+            Or baked <strong id="cookieCount">0</strong> cookies! 🍪
         </div>
         
-        <div class="comparison-grid" id="topComparisons">
-            <!-- Filled by JS -->
+        <div class="comparison-grid">
+            <div class="comp-card">
+                <div class="comp-icon">💤</div>
+                <div class="comp-number" id="sleepCount">0</div>
+                <div class="comp-text">Good night's sleep you've missed staying up talking</div>
+            </div>
+            <div class="comp-card">
+                <div class="comp-icon">🍕</div>
+                <div class="comp-number" id="pizzaCount">0</div>
+                <div class="comp-text">Pizzas you could've devoured together</div>
+            </div>
+            <div class="comp-card">
+                <div class="comp-icon">❤️</div>
+                <div class="comp-number" id="heartbeatCount">0</div>
+                <div class="comp-text">Combined heartbeats (thump-thump)</div>
+            </div>
         </div>
     </div>
     
@@ -288,8 +304,8 @@
         </div>
         
         <div class="fun-fact" id="monthsFact">
-            <h3>Fun Fact</h3>
-            <p id="monthsFactText">If you spent $1 every day, you would have spent <span class="highlight" id="moneySpent">$0</span> by now!</p>
+            <h3 id="monthsFactTitle">Fun Fact</h3>
+            <p id="monthsFactText">If you spent $1 every day on cheap coffee, you would have spent <span class="highlight" id="moneySpent">$0</span> by now! But let's be real, you probably spent it on dates instead 💕</p>
         </div>
     </div>
     
@@ -300,10 +316,12 @@
             <div class="unit">Weeks</div>
         </div>
         
-        <div class="perspective" id="weeksText">
+        <div class="perspective" id="weeksSection">
             That's <strong id="weekendCount">0</strong> weekends together!<br>
-            Or <strong id="sundayCount">0</strong> Sunday brunches!<br>
-            Or <strong id="fridayCount">0</strong> movie nights!
+            Or <strong id="sundayCount">0</strong> Sunday brunches! 🥞<br>
+            Or <strong id="fridayCount">0</strong> "Netflix and chill" nights! 📺<br><br>
+            You've survived <strong id="mondayCount">0</strong> Mondays together!<br>
+            That's true love right there 😤💪
         </div>
     </div>
     
@@ -314,8 +332,22 @@
             <div class="unit">Days</div>
         </div>
         
-        <div class="comparison-grid" id="dayComparisons">
-            <!-- Filled by JS -->
+        <div class="comparison-grid">
+            <div class="comp-card">
+                <div class="comp-icon">☕</div>
+                <div class="comp-number" id="coffeeCount">0</div>
+                <div class="comp-text">Cups of coffee (or tea, we don't judge)</div>
+            </div>
+            <div class="comp-card">
+                <div class="comp-icon">😘</div>
+                <div class="comp-number" id="kissCount">0</div>
+                <div class="comp-text">Kisses given (conservative estimate 😏)</div>
+            </div>
+            <div class="comp-card">
+                <div class="comp-icon">📱</div>
+                <div class="comp-number" id="textCount">0</div>
+                <div class="comp-text">"Good morning" texts sent</div>
+            </div>
         </div>
     </div>
     
@@ -327,8 +359,8 @@
         </div>
         
         <div class="fun-fact" id="hoursFact">
-            <h3>Time Well Spent?</h3>
-            <p id="hoursFactText">You could have binge-watched <span class="highlight" id="seriesCount">0</span> TV series by now!</p>
+            <h3 id="hoursFactTitle">Time Well Spent?</h3>
+            <p id="hoursFactText">You could have binge-watched <span class="highlight" id="seriesCount">0</span> TV series by now! But spending time with each other > Netflix... right? 😅<br><br>Or played <span id="gameHours">0</span> hours of video games! 🎮</p>
         </div>
     </div>
     
@@ -339,11 +371,13 @@
             <div class="unit">Minutes</div>
         </div>
         
-        <div class="perspective" id="minutesText">
+        <div class="perspective" id="minutesSection">
             In that time, you could have:<br><br>
-            • Walked <strong id="walkDistance">0</strong> miles hand-in-hand<br>
-            • Said "I love you" <strong id="loveCount">0</strong> times<br>
-            • Taken <strong id="photoCount">0</strong> photos together
+            • Walked <strong id="walkDistance">0</strong> miles hand-in-hand 👫<br>
+            • Said "I love you" <strong id="loveCount">0</strong> times 💕<br>
+            • Taken <strong id="photoCount">0</strong> cute photos together 📸<br>
+            • Had <strong id="argumentCount">0</strong> tiny arguments (and made up after) 😤❤️<br>
+            • Spent <strong id="bathroomCount">0</strong> minutes in the bathroom hiding from each other 💩
         </div>
     </div>
     
@@ -355,16 +389,16 @@
         </div>
         
         <div class="fun-fact" id="finalFact">
-            <h3>And Counting...</h3>
-            <p id="finalFactText">Every second with you is a second well spent. Here is to <span class="highlight">infinity</span> more!</p>
+            <h3 id="finalFactTitle">And Counting... ⏰</h3>
+            <p id="finalFactText">Every second with you is a second well spent. Even when you're stealing the covers or eating my fries.<br><br>Here's to <span class="highlight">infinity</span> more seconds of annoying each other! 💙♥️</p>
         </div>
         
         <p style="margin-top: 3rem; font-size: 2rem; color: var(--accent); animation: pulse 2s infinite;">
-            I love you more every second
+            I love you more every second 💙♥️
         </p>
     </div>
     
-    <a href="story.html" class="continue-btn" id="continueBtn">Continue Our Story</a>
+    <a href="story.html" class="continue-btn" id="continueBtn">Continue Our Story →</a>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -383,39 +417,29 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        // Default data with editable text
+        // Default funny facts - editable via Firebase
         let siteData = {
             startDate: '2024-02-14T00:00',
             timerLabel: 'Together For',
             
-            // Editable facts
+            // Editable facts with my funny defaults
             introFactTitle: 'Did You Know?',
-            introFactText: 'In that time, the Earth has traveled {distance} miles through space!',
+            introFactText: 'In that time, the Earth has traveled {distance} miles through space! That is like driving around the equator {laps} times! 🌍🚀',
             
-            perspectiveText: 'To put that into perspective...\n\nYou have been together for {seconds} seconds.\nThat is enough time to watch {movies} movies!\nOr listen to your favorite song {songs} times!',
+            perspectiveText: 'To put that into perspective...\n\nYou have been together for {seconds} seconds.\nThat is enough time to watch {movies} movies! 🎬\nOr listen to "your song" {songs} times on repeat! 🎵\n\nYou could have learned {languages} new languages!\nOr baked {cookies} cookies! 🍪',
             
             monthsFactTitle: 'Fun Fact',
-            monthsFactText: 'If you spent $1 every day, you would have spent ${money} by now!',
+            monthsFactText: 'If you spent $1 every day on cheap coffee, you would have spent ${money} by now! But let us be real, you probably spent it on dates instead 💕',
             
-            weeksText: 'That is {weekends} weekends together!\nOr {brunches} Sunday brunches!\nOr {movies} movie nights!',
+            weeksText: 'That is {weekends} weekends together!\nOr {brunches} Sunday brunches! 🥞\nOr {movies} "Netflix and chill" nights! 📺\n\nYou have survived {mondays} Mondays together!\nThat is true love right there 😤💪',
             
             hoursFactTitle: 'Time Well Spent?',
-            hoursFactText: 'You could have binge-watched {series} TV series by now!',
+            hoursFactText: 'You could have binge-watched {series} TV series by now! But spending time with each other > Netflix... right? 😅\n\nOr played {games} hours of video games! 🎮',
             
-            minutesText: 'In that time, you could have:\n\n• Walked {miles} miles hand-in-hand\n• Said "I love you" {loves} times\n• Taken {photos} photos together',
+            minutesText: 'In that time, you could have:\n\n• Walked {miles} miles hand-in-hand 👫\n• Said "I love you" {loves} times 💕\n• Taken {photos} cute photos together 📸\n• Had {arguments} tiny arguments (and made up after) 😤❤️\n• Spent {bathroom} minutes in the bathroom hiding from each other 💩',
             
-            finalFactTitle: 'And Counting...',
-            finalFactText: 'Every second with you is a second well spent. Here is to infinity more!',
-            
-            // Comparison cards
-            comparisons: [
-                { icon: '💤', calc: 'sleep', label: 'Good nights sleep', multiplier: 8/24 },
-                { icon: '🍕', calc: 'pizza', label: 'Pizzas eaten', multiplier: 1/7 },
-                { icon: '❤️', calc: 'heartbeat', label: 'Heartbeats combined', multiplier: 9600 }, // 80bpm * 2 people * 60min
-                { icon: '☕', calc: 'coffee', label: 'Cups of coffee', multiplier: 2 },
-                { icon: '😘', calc: 'kiss', label: 'Kisses given', multiplier: 10 },
-                { icon: '📱', calc: 'text', label: 'Good morning texts', multiplier: 1 }
-            ]
+            finalFactTitle: 'And Counting... ⏰',
+            finalFactText: 'Every second with you is a second well spent. Even when you are stealing the covers or eating my fries.\n\nHere is to infinity more seconds of annoying each other! 💙♥️'
         };
         
         async function load() {
@@ -424,9 +448,9 @@
                 const snap = await getDoc(docRef);
                 
                 if (snap.exists()) {
-                    // Merge but keep defaults for missing fields
-                    const data = snap.data();
-                    siteData = { ...siteData, ...data };
+                    // Merge with defaults
+                    const cloud = snap.data();
+                    siteData = { ...siteData, ...cloud };
                 }
                 
                 localStorage.setItem('valentineData', JSON.stringify(siteData));
@@ -455,96 +479,88 @@
         }
         
         function updateText() {
-            // Update all text content from Firebase
-            document.getElementById('timerLabel').textContent = siteData.timerLabel;
+            // Update labels
+            document.getElementById('timerLabel').textContent = siteData.timerLabel || 'Together For';
             
-            document.querySelector('#introFact h3').textContent = siteData.introFactTitle;
-            // {distance} gets replaced in real-time
+            // Update all fact text with variables replaced
+            replaceText('introFactTitle', siteData.introFactTitle);
+            replaceText('introFactText', siteData.introFactText);
+            replaceText('monthsFactTitle', siteData.monthsFactTitle);
+            replaceText('monthsFactText', siteData.monthsFactText);
+            replaceText('hoursFactTitle', siteData.hoursFactTitle);
+            replaceText('hoursFactText', siteData.hoursFactText);
+            replaceText('finalFactTitle', siteData.finalFactTitle);
+            replaceText('finalFactText', siteData.finalFactText);
             
-            // Perspective text (multiline)
-            document.getElementById('perspectiveText').innerHTML = siteData.perspectiveText
-                .replace(/\n/g, '<br>');
+            // Perspective sections
+            const persp = document.getElementById('perspectiveSection');
+            if (persp && siteData.perspectiveText) {
+                persp.innerHTML = formatText(siteData.perspectiveText);
+            }
             
-            document.querySelector('#monthsFact h3').textContent = siteData.monthsFactTitle;
-            // {money} gets replaced
+            const weeks = document.getElementById('weeksSection');
+            if (weeks && siteData.weeksText) {
+                weeks.innerHTML = formatText(siteData.weeksText);
+            }
             
-            document.getElementById('weeksText').innerHTML = siteData.weeksText
-                .replace(/\n/g, '<br>');
-            
-            document.querySelector('#hoursFact h3').textContent = siteData.hoursFactTitle;
-            // {series} gets replaced
-            
-            document.getElementById('minutesText').innerHTML = siteData.minutesText
-                .replace(/\n/g, '<br>');
-            
-            document.querySelector('#finalFact h3').textContent = siteData.finalFactTitle;
-            document.getElementById('finalFactText').innerHTML = siteData.finalFactText
-                .replace(/{highlight}(.*?){\/highlight}/g, '<span class="highlight">$1</span>');
-            
-            // Render comparison cards
-            renderComparisons();
+            const mins = document.getElementById('minutesSection');
+            if (mins && siteData.minutesText) {
+                mins.innerHTML = formatText(siteData.minutesText);
+            }
         }
         
-        function renderComparisons() {
-            const topGrid = document.getElementById('topComparisons');
-            const dayGrid = document.getElementById('dayComparisons');
-            
-            if (!siteData.comparisons) return;
-            
-            const comps = siteData.comparisons;
-            const mid = Math.ceil(comps.length / 2);
-            
-            // Top 3
-            topGrid.innerHTML = comps.slice(0, 3).map(c => `
-                <div class="comp-card">
-                    <div class="comp-icon">${c.icon}</div>
-                    <div class="comp-number" id="comp-${c.calc}">0</div>
-                    <div class="comp-text">${c.label}</div>
-                </div>
-            `).join('');
-            
-            // Bottom 3
-            dayGrid.innerHTML = comps.slice(3).map(c => `
-                <div class="comp-card">
-                    <div class="comp-icon">${c.icon}</div>
-                    <div class="comp-number" id="comp-${c.calc}">0</div>
-                    <div class="comp-text">${c.label}</div>
-                </div>
-            `).join('');
+        function replaceText(id, text) {
+            const el = document.getElementById(id);
+            if (el && text) {
+                el.innerHTML = formatText(text);
+            }
+        }
+        
+        function formatText(text) {
+            return text
+                .replace(/\n/g, '<br>')
+                .replace(/{highlight}(.*?){\/highlight}/g, '<span class="highlight">$1</span>')
+                .replace(/\{(\w+)\}/g, '<span id="var-$1">0</span>');
         }
         
         function startTimer() {
-            const start = new Date(siteData.startDate);
+            const start = new Date(siteData.startDate || '2024-02-14T00:00');
             
             function update() {
                 const now = new Date();
                 const diff = now - start;
-                const seconds = Math.floor(diff / 1000);
-                const minutes = Math.floor(diff / (1000 * 60));
-                const hours = Math.floor(diff / (1000 * 60 * 60));
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                 
-                // Main timer
-                const hrs = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const secs = Math.floor((diff % (1000 * 60)) / 1000);
+                // ALL TIME UNITS
+                const totalSeconds = Math.floor(diff / 1000);
+                const totalMinutes = Math.floor(diff / (1000 * 60));
+                const totalHours = Math.floor(diff / (1000 * 60 * 60));
+                const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
                 
-                document.getElementById('mainTimer').textContent = 
+                // Main timer display (days:hours:minutes:seconds)
+                const days = totalDays;
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                // Format with leading zeros
+                const timeStr = 
                     String(days).padStart(3, '0') + ':' +
-                    String(hrs).padStart(2, '0') + ':' +
-                    String(mins).padStart(2, '0') + ':' +
-                    String(secs).padStart(2, '0');
+                    String(hours).padStart(2, '0') + ':' +
+                    String(minutes).padStart(2, '0') + ':' +
+                    String(seconds).padStart(2, '0');
+                
+                document.getElementById('mainTimer').textContent = timeStr;
                 
                 // Big numbers
-                document.getElementById('months').textContent = (days / 30.44).toFixed(1);
-                document.getElementById('weeks').textContent = Math.floor(days / 7);
-                document.getElementById('days').textContent = days;
-                document.getElementById('hours').textContent = hours;
-                document.getElementById('minutes').textContent = minutes;
-                document.getElementById('seconds').textContent = seconds;
+                document.getElementById('months').textContent = (totalDays / 30.44).toFixed(1);
+                document.getElementById('weeks').textContent = Math.floor(totalDays / 7);
+                document.getElementById('days').textContent = totalDays;
+                document.getElementById('hours').textContent = totalHours;
+                document.getElementById('minutes').textContent = totalMinutes;
+                document.getElementById('seconds').textContent = totalSeconds;
                 
-                // Update all dynamic values
-                updateCalculations(days, hours, minutes, seconds);
+                // Update all calculations
+                updateCalculations(totalDays, totalHours, totalMinutes, totalSeconds);
             }
             
             update();
@@ -552,50 +568,54 @@
         }
         
         function updateCalculations(days, hours, minutes, seconds) {
-            // Intro fact
+            // Earth distance (1.6 million miles per day)
             const earthMiles = (days * 1.6).toFixed(1);
-            document.getElementById('earthDistance').textContent = earthMiles + ' million';
+            setVar('earthDistance', earthMiles + ' million');
+            setVar('equatorLaps', Math.floor(days * 1.6 / 24901));
             
             // Perspective
-            document.getElementById('totalSeconds').textContent = seconds.toLocaleString();
-            document.getElementById('movieCount').textContent = Math.floor(hours / 2.5).toLocaleString();
-            document.getElementById('songCount').textContent = Math.floor(minutes / 3.5).toLocaleString();
+            setVar('totalSeconds', seconds.toLocaleString());
+            setVar('seconds', seconds.toLocaleString());
+            setVar('movies', Math.floor(hours / 2.5).toLocaleString());
+            setVar('songs', Math.floor(minutes / 3.5).toLocaleString());
+            setVar('languages', Math.floor(hours / 480)); // 480 hours per language
+            setVar('cookies', Math.floor(minutes / 15).toLocaleString()); // 15 min per batch
             
-            // Months fact
-            document.getElementById('moneySpent').textContent = '$' + days.toLocaleString();
+            // Top comparisons
+            setVar('sleepCount', Math.floor(days * 8 / 24).toLocaleString());
+            setVar('pizzaCount', Math.floor(days / 7).toLocaleString());
+            setVar('heartbeatCount', (minutes * 160).toLocaleString()); // 80 bpm * 2 people
+            
+            // Months
+            setVar('moneySpent', '$' + days.toLocaleString());
             
             // Weeks
-            document.getElementById('weekendCount').textContent = Math.floor(days / 7 * 2).toLocaleString();
-            document.getElementById('sundayCount').textContent = Math.floor(days / 7).toLocaleString();
-            document.getElementById('fridayCount').textContent = Math.floor(days / 7).toLocaleString();
+            setVar('weekendCount', Math.floor(days / 7 * 2).toLocaleString());
+            setVar('sundayCount', Math.floor(days / 7).toLocaleString());
+            setVar('fridayCount', Math.floor(days / 7).toLocaleString());
+            setVar('mondayCount', Math.floor(days / 7 * 5).toLocaleString());
             
-            // Hours fact
-            document.getElementById('seriesCount').textContent = Math.floor(hours / 10).toLocaleString();
+            // Days
+            setVar('coffeeCount', (days * 2).toLocaleString());
+            setVar('kissCount', (days * 10).toLocaleString());
+            setVar('textCount', (days * 5).toLocaleString());
+            
+            // Hours
+            setVar('seriesCount', Math.floor(hours / 10).toLocaleString());
+            setVar('gameHours', hours.toLocaleString());
             
             // Minutes
-            document.getElementById('walkDistance').textContent = (days * 6).toLocaleString();
-            document.getElementById('loveCount').textContent = (days * 3).toLocaleString();
-            document.getElementById('photoCount').textContent = (days * 2).toLocaleString();
-            
-            // Comparison cards
-            if (siteData.comparisons) {
-                siteData.comparisons.forEach(c => {
-                    const el = document.getElementById('comp-' + c.calc);
-                    if (el) {
-                        let val;
-                        switch(c.calc) {
-                            case 'sleep': val = Math.floor(days * c.multiplier); break;
-                            case 'pizza': val = Math.floor(days * c.multiplier); break;
-                            case 'heartbeat': val = Math.floor(minutes * c.multiplier).toLocaleString(); break;
-                            case 'coffee': val = (days * c.multiplier).toLocaleString(); break;
-                            case 'kiss': val = (days * c.multiplier).toLocaleString(); break;
-                            case 'text': val = (days * c.multiplier).toLocaleString(); break;
-                            default: val = 0;
-                        }
-                        el.textContent = val;
-                    }
-                });
-            }
+            setVar('walkDistance', (days * 6).toLocaleString());
+            setVar('loveCount', (days * 3).toLocaleString());
+            setVar('photoCount', (days * 2).toLocaleString());
+            setVar('argumentCount', Math.floor(days / 7).toLocaleString());
+            setVar('bathroomCount', (days * 10).toLocaleString());
+        }
+        
+        function setVar(name, value) {
+            // Try both formats
+            const el = document.getElementById('var-' + name) || document.getElementById(name);
+            if (el) el.textContent = value;
         }
         
         function createFloaters() {
