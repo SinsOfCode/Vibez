@@ -3,636 +3,1080 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Site</title>
+    <title>Valentine Editor | Edit Site</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
-            --blue: #0066ff;
-            --red: #ff0000;
+            --primary: #667eea;
+            --secondary: #764ba2;
             --accent: #ffd93d;
+            --rose: #ff6b9d;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
             --bg: #0a0a1a;
         }
         
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: white;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
         
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 107, 157, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: bgPulse 10s ease-in-out infinite;
+        }
+        
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+        
+        /* Layout */
         .container {
-            display: flex;
-            height: 100vh;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 100vh;
         }
         
-        /* Sidebar */
+        /* Glassmorphism Sidebar */
         .sidebar {
-            width: 280px;
-            background: rgba(255,255,255,0.03);
-            border-right: 1px solid rgba(255,255,255,0.1);
-            padding: 1.5rem;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: sticky;
+            top: 0;
+            height: 100vh;
             overflow-y: auto;
         }
         
         .logo {
-            font-size: 1.5rem;
-            background: linear-gradient(135deg, var(--blue), var(--red));
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--rose));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 2rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .nav-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .nav-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
         }
         
         .nav-btn {
-            display: block;
-            width: 100%;
-            padding: 1rem;
-            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem 1.2rem;
             background: transparent;
             border: none;
-            color: rgba(255,255,255,0.7);
-            text-align: left;
-            border-radius: 10px;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
             cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 12px;
         }
         
         .nav-btn:hover, .nav-btn.active {
-            background: linear-gradient(135deg, rgba(0,102,255,0.2), rgba(255,0,0,0.2));
             color: white;
+            transform: translateX(5px);
         }
         
+        .nav-btn.active::before {
+            opacity: 0.2;
+        }
+        
+        .nav-btn.active {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+        
+        .nav-btn span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav-icon {
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Save Section */
         .save-section {
-            margin-top: 2rem;
+            margin-top: auto;
             padding-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
         }
         
-        .btn-save {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, var(--blue), var(--red));
+        .btn-primary {
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             color: white;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 0.5rem;
+            font-weight: 600;
             font-size: 1rem;
-            transition: all 0.3s;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
         
-        .btn-save:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0,102,255,0.4);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
         }
         
         .btn-secondary {
-            width: 100%;
-            padding: 0.7rem;
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 10px;
+            padding: 0.8rem 1.5rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
             color: white;
-            cursor: pointer;
-            margin-bottom: 0.5rem;
             font-size: 0.9rem;
-            transition: all 0.3s;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
         
         .btn-secondary:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
         }
         
         .btn-danger {
-            color: var(--red);
-            border-color: var(--red);
+            color: #ff6b6b;
+            border-color: rgba(255, 107, 107, 0.3);
         }
         
         .btn-danger:hover {
-            background: rgba(255,0,0,0.1);
+            background: rgba(255, 107, 107, 0.1);
+            border-color: #ff6b6b;
         }
         
         .status {
             font-size: 0.85rem;
-            opacity: 0.6;
-            margin-top: 0.5rem;
             text-align: center;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
         }
         
         .status.synced {
-            color: #00ff00;
+            color: #4ade80;
+            border-color: rgba(74, 222, 128, 0.3);
+            background: rgba(74, 222, 128, 0.1);
         }
         
         .status.error {
-            color: #ff4444;
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.3);
+            background: rgba(248, 113, 113, 0.1);
         }
         
         /* Main Content */
         .main {
-            flex: 1;
-            padding: 2rem;
+            padding: 2rem 3rem;
             overflow-y: auto;
+            max-height: 100vh;
         }
         
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
         }
         
         .header h1 {
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, var(--blue), var(--red));
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--rose));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         
-        .preview-link {
-            color: var(--blue);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--blue);
-            border-radius: 20px;
-            transition: all 0.3s;
+        .header-actions {
+            display: flex;
+            gap: 1rem;
         }
         
-        .preview-link:hover {
-            background: var(--blue);
+        .preview-btn {
+            padding: 0.8rem 1.5rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
             color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
         }
         
-        /* Sections */
-        .section {
+        .preview-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        /* Content Sections */
+        .content-section {
             display: none;
+            animation: fadeIn 0.4s ease;
         }
         
-        .section.active {
+        .content-section.active {
             display: block;
-            animation: fadeIn 0.3s;
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Form Styles */
-        .form-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 1.5rem;
+        /* Glass Cards */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
             margin-bottom: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
         }
         
-        .form-card h3 {
-            background: linear-gradient(135deg, var(--blue), var(--red));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
+        .glass-card:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.2rem;
         }
         
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
         label {
-            display: block;
-            margin-bottom: 0.5rem;
-            opacity: 0.8;
             font-size: 0.9rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .required::after {
+            content: '*';
+            color: var(--rose);
         }
         
         input, textarea, select {
-            width: 100%;
-            padding: 0.8rem;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
+            padding: 0.9rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
             color: white;
-            margin-bottom: 1rem;
+            font-size: 1rem;
             font-family: inherit;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
         
-        input:focus, textarea:focus {
+        input:focus, textarea:focus, select:focus {
             outline: none;
-            border-color: var(--blue);
-            box-shadow: 0 0 10px rgba(0,102,255,0.3);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
         
         textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 120px;
+            line-height: 1.6;
         }
         
-        .color-input {
-            height: 50px;
-            cursor: pointer;
-            padding: 0.2rem;
-        }
-        
-        /* Helper text */
-        .helper {
+        .helper-text {
             font-size: 0.8rem;
-            color: rgba(255,255,255,0.5);
-            margin-top: -0.5rem;
-            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 0.3rem;
         }
         
-        /* Slides List */
+        /* Slides Manager */
+        .slides-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
         .slide-item {
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 1rem;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            margin-bottom: 0.5rem;
+            padding: 1.2rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
             cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid transparent;
+            transition: all 0.3s ease;
         }
         
         .slide-item:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: var(--blue);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            transform: translateX(5px);
         }
         
-        .slide-num {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--blue), var(--red));
-            border-radius: 8px;
+        .slide-number {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            flex-shrink: 0;
+            font-weight: 700;
+            font-size: 1.1rem;
         }
         
-        .slide-info {
+        .slide-content {
             flex: 1;
         }
         
-        .slide-title-small {
+        .slide-title-preview {
             font-weight: 600;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.3rem;
         }
         
-        .slide-preview {
-            font-size: 0.85rem;
-            opacity: 0.6;
+        .slide-text-preview {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
         }
         
-        .btn-add {
-            width: 100%;
-            padding: 1rem;
-            background: transparent;
-            border: 2px dashed rgba(255,255,255,0.3);
-            border-radius: 10px;
-            color: white;
-            cursor: pointer;
-            margin-bottom: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .btn-add:hover {
-            border-color: var(--blue);
-            color: var(--blue);
-        }
-        
-        /* Slide Editor */
-        .slide-editor {
-            background: rgba(0,0,0,0.3);
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin-top: 1rem;
-            border: 1px solid rgba(0,102,255,0.3);
-        }
-        
-        .editor-actions {
+        .slide-actions {
             display: flex;
             gap: 0.5rem;
-            margin-top: 1rem;
         }
         
-        .editor-actions button {
-            flex: 1;
-            padding: 0.8rem;
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
             border-radius: 8px;
-            border: none;
+            color: white;
             cursor: pointer;
-            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.3s;
         }
         
-        .btn-confirm {
-            background: linear-gradient(135deg, var(--blue), var(--red));
-            color: white;
+        .icon-btn:hover {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
         }
         
-        .btn-confirm:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0,102,255,0.4);
-        }
-        
-        .btn-cancel {
+        .btn-add-slide {
+            padding: 1.2rem;
             background: transparent;
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 2px dashed var(--glass-border);
+            border-radius: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-add-slide:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        /* Slide Editor Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal-content {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s ease;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .close-modal {
+            width: 40px;
+            height: 40px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .close-modal:hover {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+            transform: rotate(90deg);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .modal-actions button {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 12px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-save-modal {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
         }
         
-        .btn-cancel:hover {
-            background: rgba(255,255,255,0.1);
+        .btn-save-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
         }
         
-        .btn-delete {
-            background: rgba(255,0,0,0.2);
-            color: var(--red);
-            border: 1px solid var(--red);
+        .btn-cancel-modal {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: white;
         }
         
-        .btn-delete:hover {
-            background: rgba(255,0,0,0.3);
+        .btn-cancel-modal:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Color Picker */
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        input[type="color"] {
+            width: 60px;
+            height: 45px;
+            padding: 0.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .color-value {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
         }
         
         /* Theme Presets */
-        .presets {
+        .presets-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
         
-        .preset {
-            height: 60px;
-            border-radius: 10px;
-            border: none;
+        .preset-card {
+            height: 80px;
+            border-radius: 15px;
+            border: 2px solid transparent;
             cursor: pointer;
-            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .preset-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .preset-card:hover::before {
+            opacity: 1;
+        }
+        
+        .preset-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            border-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .preset-name {
+            font-size: 0.85rem;
             font-weight: 600;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            transition: all 0.3s;
+            z-index: 1;
         }
         
-        .preset:hover {
-            transform: scale(1.05);
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s;
         }
         
-        /* Image Preview */
-        #imagePreview {
-            max-width: 200px;
-            border-radius: 10px;
-            margin: 1rem 0;
-            border: 2px solid rgba(255,255,255,0.2);
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
         
-        .image-note {
-            font-size: 0.8rem;
-            color: #ffc107;
-            margin-top: 0.5rem;
+        .loading-hearts {
+            font-size: 4rem;
+            animation: heartbeat 1.5s infinite;
+            margin-bottom: 1.5rem;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+        }
+        
+        .loading-text {
+            font-size: 1.2rem;
+            background: linear-gradient(90deg, var(--primary), var(--rose));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-hearts">💙♥️</div>
+        <div class="loading-text">Loading Editor...</div>
+    </div>
+
     <div class="container">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="logo">💙♥️ EDITOR</div>
+        <aside class="sidebar">
+            <div class="logo">💙♥️ Editor</div>
             
-            <button class="nav-btn active" onclick="showSection('general')">⚙ General</button>
-            <button class="nav-btn" onclick="showSection('landing')">🏠 Landing Page</button>
-            <button class="nav-btn" onclick="showSection('timer')">⏱ Timer Settings</button>
-            <button class="nav-btn" onclick="showSection('timerfacts')">🎯 Timer Facts</button>
-            <button class="nav-btn" onclick="showSection('slides')">📖 Story Slides</button>
-            <button class="nav-btn" onclick="showSection('letter')">💌 Love Letter</button>
-            <button class="nav-btn" onclick="showSection('theme')">🎨 Theme</button>
+            <div class="nav-section">
+                <div class="nav-section-title">Pages</div>
+                <button class="nav-btn active" onclick="showSection('landing')">
+                    <span class="nav-icon">🏠</span>
+                    <span>Landing Page</span>
+                </button>
+                <button class="nav-btn" onclick="showSection('timer')">
+                    <span class="nav-icon">⏱</span>
+                    <span>Timer Page</span>
+                </button>
+                <button class="nav-btn" onclick="showSection('story')">
+                    <span class="nav-icon">📖</span>
+                    <span>Story Slides</span>
+                </button>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Content</div>
+                <button class="nav-btn" onclick="showSection('letter')">
+                    <span class="nav-icon">💌</span>
+                    <span>Love Letter</span>
+                </button>
+                <button class="nav-btn" onclick="showSection('theme')">
+                    <span class="nav-icon">🎨</span>
+                    <span>Theme</span>
+                </button>
+            </div>
             
             <div class="save-section">
-                <button class="btn-save" onclick="saveToFirebase()">💾 SAVE TO CLOUD</button>
+                <button class="btn-primary" onclick="saveToFirebase()">
+                    <span>💾</span>
+                    <span>Save to Cloud</span>
+                </button>
                 <button class="btn-secondary" onclick="exportData()">📤 Export JSON</button>
                 <button class="btn-secondary" onclick="importData()">📥 Import JSON</button>
                 <button class="btn-secondary btn-danger" onclick="resetAll()">↺ Reset All</button>
-                <div class="status" id="status">Click SAVE TO CLOUD when ready</div>
+                <div class="status" id="status">Ready to edit</div>
             </div>
-            
-            <a href="index.html" style="display:block;margin-top:2rem;color:var(--blue);text-decoration:none;text-align:center;font-weight:600;">← View Site</a>
-        </div>
+        </aside>
         
-        <!-- Main -->
-        <div class="main">
-            <div class="header">
-                <h1 id="sectionTitle">General Settings</h1>
-                <a href="index.html" class="preview-link" target="_blank">Preview →</a>
-            </div>
-            
-            <!-- GENERAL -->
-            <div class="section active" id="section-general">
-                <div class="form-card">
-                    <h3>Site Information</h3>
-                    <label>Site Title (browser tab)</label>
-                    <input type="text" id="siteTitle">
-                    
-                    <label>Your Name</label>
-                    <input type="text" id="yourName">
-                    
-                    <label>Partner's Name</label>
-                    <input type="text" id="partnerName">
-                </div>
-            </div>
-            
-            <!-- LANDING -->
-            <div class="section" id="section-landing">
-                <div class="form-card">
-                    <h3>Main Question</h3>
-                    <label>The Big Question</label>
-                    <input type="text" id="mainQuestion">
-                    
-                    <label>Subtitle Message</label>
-                    <input type="text" id="subMessage">
-                    
-                    <label>Yes Button Text</label>
-                    <input type="text" id="yesText">
-                    
-                    <label>No Button Text</label>
-                    <input type="text" id="noText">
-                    
-                    <label>Heart Text (center of spinning heart)</label>
-                    <input type="text" id="orbitText">
-                </div>
-            </div>
-            
-            <!-- TIMER SETTINGS -->
-            <div class="section" id="section-timer">
-                <div class="form-card">
-                    <h3>Timer Configuration</h3>
-                    <label>Timer Label (e.g., "Together For")</label>
-                    <input type="text" id="timerLabel">
-                    
-                    <label>Relationship Start Date</label>
-                    <input type="datetime-local" id="startDate">
-                    
-                    <p style="margin-top:1rem;opacity:0.7;font-size:0.9rem;">
-                        This date calculates how long you've been together.
-                    </p>
-                </div>
-            </div>
-            
-            <!-- TIMER FACTS -->
-            <div class="section" id="section-timerfacts">
-                <div class="form-card">
-                    <h3>Intro Fact</h3>
-                    <label>Fact Title</label>
-                    <input type="text" id="introFactTitle">
-                    
-                    <label>Fact Text (use {distance} for Earth miles)</label>
-                    <textarea id="introFactText" rows="2"></textarea>
-                    <p class="helper">Example: "In that time, Earth traveled {distance} miles!"</p>
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Landing Page Section -->
+            <div class="content-section active" id="section-landing">
+                <div class="header">
+                    <h1>Landing Page</h1>
+                    <div class="header-actions">
+                        <a href="index.html" class="preview-btn" target="_blank">
+                            <span>👁</span>
+                            <span>Preview</span>
+                        </a>
+                    </div>
                 </div>
                 
-                <div class="form-card">
-                    <h3>Perspective Section</h3>
-                    <label>Perspective Text (use {seconds}, {movies}, {songs})</label>
-                    <textarea id="perspectiveText" rows="4"></textarea>
-                    <p class="helper">Available: {seconds}, {movies}, {songs}, {languages}, {cookies}</p>
-                </div>
-                
-                <div class="form-card">
-                    <h3>Months Fact</h3>
-                    <label>Fact Title</label>
-                    <input type="text" id="monthsFactTitle">
-                    
-                    <label>Fact Text (use {money} for dollar amount)</label>
-                    <textarea id="monthsFactText" rows="2"></textarea>
-                    <p class="helper">Example: "You would have spent ${money} by now!"</p>
-                </div>
-                
-                <div class="form-card">
-                    <h3>Weeks Section</h3>
-                    <label>Weeks Text (use {weekends}, {mondays})</label>
-                    <textarea id="weeksText" rows="3"></textarea>
-                    <p class="helper">Available: {weekends}, {mondays}</p>
-                </div>
-                
-                <div class="form-card">
-                    <h3>Hours Fact</h3>
-                    <label>Fact Title</label>
-                    <input type="text" id="hoursFactTitle">
-                    
-                    <label>Fact Text (use {series} for TV series count)</label>
-                    <textarea id="hoursFactText" rows="2"></textarea>
-                    <p class="helper">Example: "You could have watched {series} series!"</p>
-                </div>
-                
-                <div class="form-card">
-                    <h3>Minutes Section</h3>
-                    <label>Minutes Text (use {miles}, {loves}, {photos})</label>
-                    <textarea id="minutesText" rows="4"></textarea>
-                    <p class="helper">Available: {miles}, {loves}, {photos}</p>
-                </div>
-                
-                <div class="form-card">
-                    <h3>Final Fact</h3>
-                    <label>Fact Title</label>
-                    <input type="text" id="finalFactTitle">
-                    
-                    <label>Final Fact Text</label>
-                    <textarea id="finalFactText" rows="2"></textarea>
-                    <p class="helper">This appears at the end of the timer page</p>
-                </div>
-            </div>
-            
-            <!-- SLIDES -->
-            <div class="section" id="section-slides">
-                <div class="form-card">
-                    <h3>Story Slides</h3>
-                    <button class="btn-add" onclick="addSlide()">+ Add New Slide</button>
-                    
-                    <div id="slidesList"></div>
-                    
-                    <!-- Slide Editor -->
-                    <div class="slide-editor" id="slideEditor" style="display:none;">
-                        <h4 style="margin-bottom:1rem;color:var(--accent);">Edit Slide <span id="editingNum">1</span></h4>
-                        
-                        <label>Slide Title</label>
-                        <input type="text" id="editSlideTitle">
-                        
-                        <label>Slide Content</label>
-                        <textarea id="editSlideContent" rows="4"></textarea>
-                        
-                        <label>Date (optional)</label>
-                        <input type="date" id="editSlideDate">
-                        
-                        <label>Background Color</label>
-                        <input type="color" id="editSlideColor" class="color-input">
-                        
-                        <label>Image (optional)</label>
-                        <input type="file" accept="image/*" id="editSlideImage" onchange="handleImage(this)">
-                        <p class="image-note">⚠️ Images stored locally only</p>
-                        <img id="imagePreview" style="display:none;">
-                        
-                        <div class="editor-actions">
-                            <button class="btn-confirm" onclick="saveSlide()">💾 Save Slide</button>
-                            <button class="btn-cancel" onclick="closeEditor()">Cancel</button>
-                            <button class="btn-delete" onclick="deleteSlide()">🗑 Delete</button>
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="card-icon">💝</div>
+                        <div class="card-title">Main Question</div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label class="required">The Big Question</label>
+                            <input type="text" id="mainQuestion" placeholder="Will You Be My Valentine?">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Subtitle Message</label>
+                            <input type="text" id="subMessage" placeholder="My heart has been waiting...">
+                        </div>
+                        <div class="form-group">
+                            <label>Yes Button Text</label>
+                            <input type="text" id="yesText" placeholder="YES! 💙♥️">
+                        </div>
+                        <div class="form-group">
+                            <label>No Button Text</label>
+                            <input type="text" id="noText" placeholder="No...">
+                        </div>
+                        <div class="form-group">
+                            <label>Heart Text</label>
+                            <input type="text" id="orbitText" placeholder="FOREVER">
+                            <div class="helper-text">Text inside the spinning heart</div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- LETTER -->
-            <div class="section" id="section-letter">
-                <div class="form-card">
-                    <h3>Final Love Letter</h3>
-                    <label>Letter Title</label>
-                    <input type="text" id="letterTitle">
-                    
-                    <label>Letter Content (use new lines for paragraphs)</label>
-                    <textarea id="letterContent" rows="10"></textarea>
-                    
-                    <label>Sign-off</label>
-                    <input type="text" id="letterSign">
-                    
-                    <p style="margin-top:1rem;opacity:0.7;font-size:0.9rem;">
-                        This appears when she clicks the sealed letter at the end of the story.
-                    </p>
-                </div>
-            </div>
-            
-            <!-- THEME -->
-            <div class="section" id="section-theme">
-                <div class="form-card">
-                    <h3>Quick Color Presets</h3>
-                    <div class="presets">
-                        <button class="preset" onclick="applyPreset('romantic')" style="background:linear-gradient(135deg,#0066ff,#ff0000)">Blue/Red</button>
-                        <button class="preset" onclick="applyPreset('ocean')" style="background:linear-gradient(135deg,#667eea,#764ba2)">Ocean</button>
-                        <button class="preset" onclick="applyPreset('sunset')" style="background:linear-gradient(135deg,#f093fb,#f5576c)">Sunset</button>
-                        <button class="preset" onclick="applyPreset('forest')" style="background:linear-gradient(135deg,#11998e,#38ef7d)">Forest</button>
-                        <button class="preset" onclick="applyPreset('gold')" style="background:linear-gradient(135deg,#f5af19,#f12711)">Gold</button>
-                        <button class="preset" onclick="applyPreset('midnight')" style="background:linear-gradient(135deg,#232526,#414345)">Midnight</button>
+            <!-- Timer Page Section -->
+            <div class="content-section" id="section-timer">
+                <div class="header">
+                    <h1>Timer Page</h1>
+                    <div class="header-actions">
+                        <a href="timer.html" class="preview-btn" target="_blank">
+                            <span>👁</span>
+                            <span>Preview</span>
+                        </a>
                     </div>
-                    
-                    <h3>Custom Colors</h3>
-                    <label>Primary Color</label>
-                    <input type="color" id="primaryColor" class="color-input">
-                    
-                    <label>Secondary Color</label>
-                    <input type="color" id="secondaryColor" class="color-input">
-                    
-                    <label>Accent Color</label>
-                    <input type="color" id="accentColor" class="color-input">
-                    
-                    <label>Background Color</label>
-                    <input type="color" id="bgColor" class="color-input">
+                </div>
+                
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="card-icon">⏱</div>
+                        <div class="card-title">Timer Settings</div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="required">Start Date</label>
+                            <input type="datetime-local" id="startDate">
+                            <div class="helper-text">When your relationship started</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Timer Label (Spanish)</label>
+                            <input type="text" id="timerLabelEs" placeholder="JUNTOS DESDE...">
+                        </div>
+                        <div class="form-group">
+                            <label>Timer Label (English)</label>
+                            <input type="text" id="timerLabelEn" placeholder="TOGETHER SINCE...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="card-icon">🎯</div>
+                        <div class="card-title">Timer Facts</div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Intro Fact Title</label>
+                            <input type="text" id="introFactTitle" placeholder="¿Sabías Qué?">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Intro Fact Text</label>
+                            <textarea id="introFactText" rows="2" placeholder="En ese tiempo, la Tierra ha viajado... {distance}..."></textarea>
+                            <div class="helper-text">Use {distance} for Earth miles, {laps} for equator laps</div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Perspective Text</label>
+                            <textarea id="perspectiveText" rows="4" placeholder="Para ponerlo en perspectiva..."></textarea>
+                            <div class="helper-text">Available: {seconds}, {movies}, {songs}, {cookies}</div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Months Fact Title</label>
+                            <input type="text" id="monthsFactTitle" placeholder="Dato Curioso">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Months Fact Text</label>
+                            <textarea id="monthsFactText" rows="2" placeholder="Si gastaras $60 cada mes... {money}..."></textarea>
+                            <div class="helper-text">Use {money} for calculated amount</div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Weeks Text</label>
+                            <textarea id="weeksText" rows="3" placeholder="¡Eso son {weekends} fines de semana..."></textarea>
+                            <div class="helper-text">Available: {weekends}, {mondays}</div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Hours Fact Title</label>
+                            <input type="text" id="hoursFactTitle" placeholder="¿Tiempo Bien Empleado?">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Hours Fact Text</label>
+                            <textarea id="hoursFactText" rows="2" placeholder="¡Podrías haber visto Demon Slayer... {series}..."></textarea>
+                            <div class="helper-text">Use {series} for series count</div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Minutes Text</label>
+                            <textarea id="minutesText" rows="4" placeholder="En ese tiempo, podríamos haber..."></textarea>
+                            <div class="helper-text">Available: {miles}, {loves}, {photos}</div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Final Fact Title</label>
+                            <input type="text" id="finalFactTitle" placeholder="Y Contando...">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Final Fact Text</label>
+                            <textarea id="finalFactText" rows="3" placeholder="Cada segundo contigo..."></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Final Message</label>
+                            <input type="text" id="finalMessage" placeholder="Te amo más cada segundo 💙♥️">
+                        </div>
+                    </div>
                 </div>
             </div>
             
+            <!-- Story Slides Section -->
+            <div class="content-section" id="section-story">
+                <div class="header">
+                    <h1>Story Slides</h1>
+                    <div class="header-actions">
+                        <a href="story.html" class="preview-btn" target="_blank">
+                            <span>👁</span>
+                            <span>Preview</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="card-icon">📖</div>
+                        <div class="card-title">Manage Slides</div>
+                    </div>
+                    <div class="slides-container" id="slidesList">
+                        <!-- Slides injected here -->
+                    </div>
+                    <button class="btn-add-slide" onclick="openSlideModal()">
+                        <span>+</span>
+                        <span>Add New Slide</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Love Letter Section -->
+            <div class="content-section" id="section-letter">
+                <div class="header">
+                    <h1>Love Letter</h1>
+                    <div class="header-actions">
+                        <a href="story.html" class="preview-btn" target="_blank">
+                            <span>👁</span>
+                            <span>Preview</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="card-icon">💌</div>
+                        <div class="card-title">Final Letter Content</div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label class="required">Letter Title</label>
+                            <input type="text" id="letterTitle" placeholder="Mi Amor">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="required">Letter Content</label>
+                            <textarea id="letterContent" rows="12" placeholder="Desde el momento en que te conocí..."></textarea>
+                            <div class="helper-text">Use new lines for paragraphs. This appears when she clicks the sealed envelope.</div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Sign-off</label>
+                            <input type="text" id="letterSign" placeholder="Tuyo para siempre">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Theme Section -->
+            <div class="content-section" id="section-theme">
+                <div class="header">
+                    <h1>Theme & Colors</h1>
+                </div>
+                
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="card-icon">🎨</div>
+                        <div class="card-title">Quick Presets</div>
+                    </div>
+                    <div class="presets-grid">
+                        <div class="preset-card" onclick="applyPreset('romantic')" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                            <span class="preset-name">Ocean</span>
+                        </div>
+                        <div class="preset-card" onclick="applyPreset('sunset')" style="background: linear-gradient(135deg, #ff6b9d, #c44569);">
+                            <span class="preset-name">Sunset</span>
+                        </div>
+                        <div class="preset-card" onclick="applyPreset('forest')" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+                            <span class="preset-name">Forest</span>
+                        </div>
+                        <div class="preset-card" onclick="applyPreset('gold')" style="background: linear-gradient(135deg, #f5af19, #f12711);">
+                            <span class="preset-name">Gold</span>
+                        </div>
+                        <div class="preset-card" onclick="applyPreset('midnight')" style="background: linear-gradient(135deg, #232526, #414345);">
+                            <span class="preset-name">Midnight</span>
+                        </div>
+                        <div class="preset-card" onclick="applyPreset('berry')" style="background: linear-gradient(135deg, #8e2de2, #4a00e0);">
+                            <span class="preset-name">Berry</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="card-icon">⚙</div>
+                        <div class="card-title">Custom Colors</div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Primary Color</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="primaryColor" value="#667eea">
+                                <span class="color-value" id="primaryColorValue">#667eea</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Secondary Color</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="secondaryColor" value="#764ba2">
+                                <span class="color-value" id="secondaryColorValue">#764ba2</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Accent Color</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="accentColor" value="#ffd93d">
+                                <span class="color-value" id="accentColorValue">#ffd93d</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Background Color</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="bgColor" value="#0a0a1a">
+                                <span class="color-value" id="bgColorValue">#0a0a1a</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Slide Editor Modal -->
+    <div class="modal-overlay" id="slideModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Slide <span id="modalSlideNum">1</span></h3>
+                <button class="close-modal" onclick="closeSlideModal()">×</button>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Slide Title</label>
+                    <input type="text" id="modalSlideTitle" placeholder="Our First Meeting">
+                </div>
+                <div class="form-group full-width">
+                    <label>Slide Content</label>
+                    <textarea id="modalSlideContent" rows="4" placeholder="The day that changed everything..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Date (optional)</label>
+                    <input type="date" id="modalSlideDate">
+                </div>
+                <div class="form-group">
+                    <label>Background Color</label>
+                    <div class="color-picker-wrapper">
+                        <input type="color" id="modalSlideColor" value="#667eea">
+                    </div>
+                </div>
+                <div class="form-group full-width">
+                    <label>Image (optional)</label>
+                    <input type="file" id="modalSlideImage" accept="image/*" onchange="handleModalImage(this)">
+                    <div class="helper-text">Max 500KB. Stored locally only.</div>
+                    <img id="modalImagePreview" style="display:none; max-width:200px; border-radius:10px; margin-top:1rem; border:2px solid var(--glass-border);">
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-save-modal" onclick="saveSlideModal()">💾 Save Slide</button>
+                <button class="btn-cancel-modal" onclick="closeSlideModal()">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -654,18 +1098,19 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        // DEFAULT DATA - Updated for both pages
+        // Default Data Structure
         const defaultData = {
-            siteTitle: "Our Love Story",
-            yourName: "You",
-            partnerName: "Her",
+            // Landing Page
             mainQuestion: "Will You Be My Valentine?",
             subMessage: "My heart has been waiting for this moment...",
             yesText: "YES! 💙♥️",
             noText: "No...",
             orbitText: "FOREVER",
-            timerLabel: "JUNTOS DESDE...",
+            
+            // Timer Page
             startDate: "2023-04-15T00:00",
+            timerLabelEs: "JUNTOS DESDE...",
+            timerLabelEn: "TOGETHER SINCE...",
             
             // Timer Facts
             introFactTitle: "¿Sabías Qué?",
@@ -679,6 +1124,7 @@
             minutesText: "En ese tiempo, podríamos haber:\n\n• Caminado {miles} kilómetros juntos\n• Dicho \"Te amo\" {loves} veces\n• Tomado {photos} fotos",
             finalFactTitle: "Y Contando...",
             finalFactText: "Cada segundo contigo es un segundo bien aprovechado. Me alegro de haberte conocido. ¡Brindo por infinity más!",
+            finalMessage: "Te amo más cada segundo 💙♥️",
             
             // Story Slides
             slides: [
@@ -692,7 +1138,7 @@
             letterContent: "Desde el momento en que te conocí, mi mundo cambió para siempre.\n\nTraes alegría a cada día y amor a cada momento. Estoy tan agradecido de tenerte en mi vida.\n\nFeliz San Valentín, mi amor.\n\nPor siempre y para siempre.",
             letterSign: "Tuyo para siempre",
             
-            // Colors
+            // Theme
             colors: {
                 primary: "#667eea",
                 secondary: "#764ba2",
@@ -702,9 +1148,10 @@
         };
         
         let data = JSON.parse(JSON.stringify(defaultData));
-        let editingIndex = null;
+        let editingSlideIndex = null;
         let isSyncing = false;
         
+        // Initialize
         async function init() {
             showStatus('Loading...');
             
@@ -737,7 +1184,11 @@
                 
                 onSnapshot(docRef, (doc) => {
                     if (doc.exists() && !isSyncing) {
-                        data = { ...data, ...doc.data() };
+                        const newData = doc.data();
+                        const currentImages = data.slides.map(s => s.image);
+                        data = { ...data, ...newData };
+                        data.slides = data.slides.map((s, i) => ({...s, image: currentImages[i] || null}));
+                        
                         fillAllFields();
                         renderSlides();
                         showStatus('Live update received ✓', 'synced');
@@ -750,26 +1201,24 @@
                 if (local) {
                     try {
                         data = JSON.parse(local);
-                        showStatus('Offline mode (local data)', 'error');
+                        showStatus('Offline mode (local)', 'error');
                     } catch (err) {
                         data = JSON.parse(JSON.stringify(defaultData));
                         showStatus('Using defaults', 'error');
                     }
-                } else {
-                    showStatus('Offline mode (defaults)', 'error');
                 }
             }
             
             fillAllFields();
             renderSlides();
+            setupColorListeners();
+            
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 800);
         }
         
         function fillAllFields() {
-            // General
-            document.getElementById('siteTitle').value = data.siteTitle || '';
-            document.getElementById('yourName').value = data.yourName || '';
-            document.getElementById('partnerName').value = data.partnerName || '';
-            
             // Landing
             document.getElementById('mainQuestion').value = data.mainQuestion || '';
             document.getElementById('subMessage').value = data.subMessage || '';
@@ -778,8 +1227,9 @@
             document.getElementById('orbitText').value = data.orbitText || '';
             
             // Timer
-            document.getElementById('timerLabel').value = data.timerLabel || '';
             document.getElementById('startDate').value = data.startDate || '';
+            document.getElementById('timerLabelEs').value = data.timerLabelEs || '';
+            document.getElementById('timerLabelEn').value = data.timerLabelEn || '';
             
             // Timer Facts
             document.getElementById('introFactTitle').value = data.introFactTitle || '';
@@ -793,6 +1243,7 @@
             document.getElementById('minutesText').value = data.minutesText || '';
             document.getElementById('finalFactTitle').value = data.finalFactTitle || '';
             document.getElementById('finalFactText').value = data.finalFactText || '';
+            document.getElementById('finalMessage').value = data.finalMessage || '';
             
             // Letter
             document.getElementById('letterTitle').value = data.letterTitle || '';
@@ -800,25 +1251,26 @@
             document.getElementById('letterSign').value = data.letterSign || '';
             
             // Colors
-            document.getElementById('primaryColor').value = data.colors?.primary || '#667eea';
-            document.getElementById('secondaryColor').value = data.colors?.secondary || '#764ba2';
-            document.getElementById('accentColor').value = data.colors?.accent || '#ffd93d';
-            document.getElementById('bgColor').value = data.colors?.bg || '#0a0a1a';
+            if (data.colors) {
+                document.getElementById('primaryColor').value = data.colors.primary;
+                document.getElementById('secondaryColor').value = data.colors.secondary;
+                document.getElementById('accentColor').value = data.colors.accent;
+                document.getElementById('bgColor').value = data.colors.bg;
+                updateColorValues();
+            }
         }
         
         function readFormData() {
-            data.siteTitle = document.getElementById('siteTitle').value;
-            data.yourName = document.getElementById('yourName').value;
-            data.partnerName = document.getElementById('partnerName').value;
             data.mainQuestion = document.getElementById('mainQuestion').value;
             data.subMessage = document.getElementById('subMessage').value;
             data.yesText = document.getElementById('yesText').value;
             data.noText = document.getElementById('noText').value;
             data.orbitText = document.getElementById('orbitText').value;
-            data.timerLabel = document.getElementById('timerLabel').value;
-            data.startDate = document.getElementById('startDate').value;
             
-            // Timer Facts
+            data.startDate = document.getElementById('startDate').value;
+            data.timerLabelEs = document.getElementById('timerLabelEs').value;
+            data.timerLabelEn = document.getElementById('timerLabelEn').value;
+            
             data.introFactTitle = document.getElementById('introFactTitle').value;
             data.introFactText = document.getElementById('introFactText').value;
             data.perspectiveText = document.getElementById('perspectiveText').value;
@@ -830,41 +1282,132 @@
             data.minutesText = document.getElementById('minutesText').value;
             data.finalFactTitle = document.getElementById('finalFactTitle').value;
             data.finalFactText = document.getElementById('finalFactText').value;
+            data.finalMessage = document.getElementById('finalMessage').value;
             
-            // Letter
             data.letterTitle = document.getElementById('letterTitle').value;
             data.letterContent = document.getElementById('letterContent').value;
             data.letterSign = document.getElementById('letterSign').value;
             
-            // Colors
-            if (!data.colors) data.colors = {};
-            data.colors.primary = document.getElementById('primaryColor').value;
-            data.colors.secondary = document.getElementById('secondaryColor').value;
-            data.colors.accent = document.getElementById('accentColor').value;
-            data.colors.bg = document.getElementById('bgColor').value;
+            data.colors = {
+                primary: document.getElementById('primaryColor').value,
+                secondary: document.getElementById('secondaryColor').value,
+                accent: document.getElementById('accentColor').value,
+                bg: document.getElementById('bgColor').value
+            };
         }
         
-        window.showSection = function(name) {
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('onclick')?.includes(`'${name}'`)) {
-                    btn.classList.add('active');
-                }
-            });
+        window.showSection = function(sectionName) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.nav-btn').classList.add('active');
             
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById('section-' + name).classList.add('active');
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + sectionName).classList.add('active');
+        };
+        
+        window.renderSlides = function() {
+            const container = document.getElementById('slidesList');
+            if (!data.slides || data.slides.length === 0) {
+                container.innerHTML = '<p style="text-align:center;opacity:0.6;padding:2rem;">No slides yet. Add your first slide!</p>';
+                return;
+            }
             
-            const titles = {
-                general: 'General Settings',
-                landing: 'Landing Page',
-                timer: 'Timer Settings',
-                timerfacts: 'Timer Facts',
-                slides: 'Story Slides',
-                letter: 'Love Letter',
-                theme: 'Theme & Colors'
+            container.innerHTML = data.slides.map((slide, i) => `
+                <div class="slide-item" onclick="editSlide(${i})">
+                    <div class="slide-number">${i + 1}</div>
+                    <div class="slide-content">
+                        <div class="slide-title-preview">${slide.title || 'Untitled'}</div>
+                        <div class="slide-text-preview">${(slide.content || '').substring(0, 60)}...</div>
+                    </div>
+                    <div class="slide-actions" onclick="event.stopPropagation()">
+                        <button class="icon-btn" onclick="deleteSlide(${i})" title="Delete">🗑</button>
+                    </div>
+                </div>
+            `).join('');
+        };
+        
+        window.openSlideModal = function() {
+            editingSlideIndex = null;
+            document.getElementById('modalSlideNum').textContent = (data.slides.length + 1);
+            document.getElementById('modalSlideTitle').value = '';
+            document.getElementById('modalSlideContent').value = '';
+            document.getElementById('modalSlideDate').value = '';
+            document.getElementById('modalSlideColor').value = data.colors?.primary || '#667eea';
+            document.getElementById('modalSlideImage').value = '';
+            document.getElementById('modalImagePreview').style.display = 'none';
+            document.getElementById('slideModal').classList.add('active');
+        };
+        
+        window.editSlide = function(index) {
+            editingSlideIndex = index;
+            const slide = data.slides[index];
+            document.getElementById('modalSlideNum').textContent = (index + 1);
+            document.getElementById('modalSlideTitle').value = slide.title || '';
+            document.getElementById('modalSlideContent').value = slide.content || '';
+            document.getElementById('modalSlideDate').value = slide.date || '';
+            document.getElementById('modalSlideColor').value = slide.color || data.colors?.primary || '#667eea';
+            
+            const preview = document.getElementById('modalImagePreview');
+            if (slide.image) {
+                preview.src = slide.image;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+            
+            document.getElementById('slideModal').classList.add('active');
+        };
+        
+        window.closeSlideModal = function() {
+            document.getElementById('slideModal').classList.remove('active');
+            editingSlideIndex = null;
+        };
+        
+        window.saveSlideModal = function() {
+            const slideData = {
+                title: document.getElementById('modalSlideTitle').value,
+                content: document.getElementById('modalSlideContent').value,
+                date: document.getElementById('modalSlideDate').value,
+                color: document.getElementById('modalSlideColor').value,
+                image: editingSlideIndex !== null ? data.slides[editingSlideIndex]?.image : null
             };
-            document.getElementById('sectionTitle').textContent = titles[name] || 'Settings';
+            
+            if (editingSlideIndex !== null) {
+                data.slides[editingSlideIndex] = slideData;
+            } else {
+                data.slides.push(slideData);
+            }
+            
+            renderSlides();
+            closeSlideModal();
+            showStatus('Slide saved - click Save to Cloud to sync');
+        };
+        
+        window.deleteSlide = function(index) {
+            if (!confirm('Delete this slide?')) return;
+            data.slides.splice(index, 1);
+            renderSlides();
+            showStatus('Slide deleted - click Save to Cloud');
+        };
+        
+        window.handleModalImage = function(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            if (file.size > 500 * 1024) {
+                alert('Image too large! Max 500KB.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (editingSlideIndex !== null) {
+                    data.slides[editingSlideIndex].image = e.target.result;
+                }
+                const preview = document.getElementById('modalImagePreview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
         };
         
         window.saveToFirebase = async function() {
@@ -880,15 +1423,11 @@
                 };
                 
                 await setDoc(doc(db, 'site', 'data'), cloudData);
-                
                 localStorage.setItem('valentineData', JSON.stringify(data));
                 
                 showStatus('✓ SAVED TO CLOUD!', 'synced');
                 
-                setTimeout(() => {
-                    isSyncing = false;
-                }, 1000);
-                
+                setTimeout(() => isSyncing = false, 1000);
             } catch (e) {
                 console.error('Save failed:', e);
                 showStatus('Save failed - check console', 'error');
@@ -898,15 +1437,12 @@
         
         window.exportData = function() {
             readFormData();
-            const json = JSON.stringify(data, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `valentine-backup-${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
             a.click();
-            document.body.removeChild(a);
             URL.revokeObjectURL(url);
             showStatus('Exported ✓', 'synced');
         };
@@ -926,7 +1462,7 @@
                         data = { ...defaultData, ...imported };
                         fillAllFields();
                         renderSlides();
-                        showStatus('Imported! Click SAVE TO CLOUD');
+                        showStatus('Imported! Click Save to Cloud to apply');
                     } catch (err) {
                         alert('Invalid JSON file!');
                     }
@@ -941,123 +1477,17 @@
             data = JSON.parse(JSON.stringify(defaultData));
             fillAllFields();
             renderSlides();
-            showStatus('Reset - click SAVE TO CLOUD to apply');
-        };
-        
-        window.renderSlides = function() {
-            const container = document.getElementById('slidesList');
-            if (!container) return;
-            
-            if (!data.slides || data.slides.length === 0) {
-                container.innerHTML = '<p style="opacity:0.6;text-align:center;padding:2rem;">No slides yet. Click "Add New Slide" to start!</p>';
-                return;
-            }
-            
-            container.innerHTML = data.slides.map((slide, i) => `
-                <div class="slide-item" onclick="editSlide(${i})">
-                    <div class="slide-num" style="background:linear-gradient(135deg,${slide.color || '#667eea'},${data.colors?.secondary || '#764ba2'});">${i+1}</div>
-                    <div class="slide-info">
-                        <div class="slide-title-small">${slide.title || 'Untitled'}</div>
-                        <div class="slide-preview">${(slide.content || '').substring(0,50)}...</div>
-                        ${slide.image ? '<span style="color:#ffd93d;font-size:0.75rem;">📷 Has image</span>' : ''}
-                    </div>
-                </div>
-            `).join('');
-        };
-        
-        window.addSlide = function() {
-            if (!data.slides) data.slides = [];
-            
-            data.slides.push({
-                title: "New Slide",
-                content: "Your story here...",
-                date: "",
-                color: data.colors?.primary || "#667eea",
-                image: null
-            });
-            
-            renderSlides();
-            editSlide(data.slides.length - 1);
-            showStatus('Slide added - edit and save');
-        };
-        
-        window.editSlide = function(index) {
-            editingIndex = index;
-            const slide = data.slides[index];
-            
-            document.getElementById('editingNum').textContent = index + 1;
-            document.getElementById('editSlideTitle').value = slide.title || '';
-            document.getElementById('editSlideContent').value = slide.content || '';
-            document.getElementById('editSlideDate').value = slide.date || '';
-            document.getElementById('editSlideColor').value = slide.color || '#667eea';
-            
-            const preview = document.getElementById('imagePreview');
-            if (slide.image) {
-                preview.src = slide.image;
-                preview.style.display = 'block';
-            } else {
-                preview.style.display = 'none';
-            }
-            
-            document.getElementById('slideEditor').style.display = 'block';
-        };
-        
-        window.saveSlide = function() {
-            if (editingIndex === null || !data.slides[editingIndex]) return;
-            
-            data.slides[editingIndex].title = document.getElementById('editSlideTitle').value;
-            data.slides[editingIndex].content = document.getElementById('editSlideContent').value;
-            data.slides[editingIndex].date = document.getElementById('editSlideDate').value;
-            data.slides[editingIndex].color = document.getElementById('editSlideColor').value;
-            
-            renderSlides();
-            closeEditor();
-            showStatus('Slide saved - click SAVE TO CLOUD to sync');
-        };
-        
-        window.closeEditor = function() {
-            document.getElementById('slideEditor').style.display = 'none';
-            editingIndex = null;
-        };
-        
-        window.deleteSlide = function() {
-            if (editingIndex === null) return;
-            if (!confirm('Delete this slide?')) return;
-            
-            data.slides.splice(editingIndex, 1);
-            renderSlides();
-            closeEditor();
-            showStatus('Slide deleted - click SAVE TO CLOUD');
-        };
-        
-        window.handleImage = function(input) {
-            const file = input.files[0];
-            if (!file) return;
-            
-            if (file.size > 500 * 1024) {
-                alert('Image too large! Max 500KB. Use a smaller image or compress it first.');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                if (editingIndex !== null && data.slides[editingIndex]) {
-                    data.slides[editingIndex].image = e.target.result;
-                    document.getElementById('imagePreview').src = e.target.result;
-                    document.getElementById('imagePreview').style.display = 'block';
-                }
-            };
-            reader.readAsDataURL(file);
+            showStatus('Reset - click Save to Cloud to apply');
         };
         
         window.applyPreset = function(name) {
             const presets = {
                 romantic: { primary: "#667eea", secondary: "#764ba2", accent: "#ffd93d", bg: "#0a0a1a" },
-                ocean: { primary: "#667eea", secondary: "#764ba2", accent: "#ffd93d", bg: "#0f0f23" },
                 sunset: { primary: "#ff6b9d", secondary: "#c44569", accent: "#ffd93d", bg: "#1a0f1f" },
                 forest: { primary: "#11998e", secondary: "#38ef7d", accent: "#c4e538", bg: "#0a1f15" },
                 gold: { primary: "#f5af19", secondary: "#f12711", accent: "#ffd700", bg: "#1f150a" },
-                midnight: { primary: "#232526", secondary: "#414345", accent: "#7f8c8d", bg: "#000000" }
+                midnight: { primary: "#232526", secondary: "#414345", accent: "#7f8c8d", bg: "#000000" },
+                berry: { primary: "#8e2de2", secondary: "#4a00e0", accent: "#ffd93d", bg: "#0f0a1a" }
             };
             
             const p = presets[name];
@@ -1066,9 +1496,23 @@
                 document.getElementById('secondaryColor').value = p.secondary;
                 document.getElementById('accentColor').value = p.accent;
                 document.getElementById('bgColor').value = p.bg;
-                showStatus('Theme applied - click SAVE TO CLOUD');
+                updateColorValues();
+                showStatus('Theme applied - click Save to Cloud');
             }
         };
+        
+        function setupColorListeners() {
+            ['primaryColor', 'secondaryColor', 'accentColor', 'bgColor'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updateColorValues);
+            });
+        }
+        
+        function updateColorValues() {
+            document.getElementById('primaryColorValue').textContent = document.getElementById('primaryColor').value;
+            document.getElementById('secondaryColorValue').textContent = document.getElementById('secondaryColor').value;
+            document.getElementById('accentColorValue').textContent = document.getElementById('accentColor').value;
+            document.getElementById('bgColorValue').textContent = document.getElementById('bgColor').value;
+        }
         
         function showStatus(msg, type = '') {
             const status = document.getElementById('status');
@@ -1076,7 +1520,6 @@
             status.className = 'status ' + type;
         }
         
-        // Start
         init();
     </script>
 </body>
