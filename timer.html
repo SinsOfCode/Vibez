@@ -1,17 +1,18 @@
-<!DOCTYPE html>
+html_code = '''<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Time Together</title>
+    <title>Our Time Together | Nuestro Tiempo</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
-            --primary: #0066ff;
-            --secondary: #ff0000;
+            --primary: #667eea;
+            --secondary: #764ba2;
             --accent: #ffd93d;
             --bg: #0a0a1a;
+            --glass: rgba(255, 255, 255, 0.1);
         }
         
         html { scroll-behavior: smooth; }
@@ -21,75 +22,178 @@
             background: var(--bg);
             color: white;
             overflow-x: hidden;
+            position: relative;
         }
         
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 217, 61, 0.1) 0%, transparent 50%);
+            z-index: -2;
+            animation: bgPulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Language Toggle Button */
+        .lang-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 0.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .lang-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+        }
+        
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .lang-btn:not(.active):hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Progress bar */
         .progress-bar {
             position: fixed;
             top: 0;
             left: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            z-index: 1000;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            z-index: 999;
             transition: width 0.3s;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
         }
         
+        /* Sections */
         .section {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 3rem 2rem;
+            padding: 4rem 2rem;
             position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .section:nth-child(odd) {
-            background: radial-gradient(circle at 20% 50%, rgba(0,102,255,0.1), transparent 60%);
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
         
-        .section:nth-child(even) {
-            background: radial-gradient(circle at 80% 50%, rgba(255,0,0,0.1), transparent 60%);
+        /* Glassmorphism cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Big Timer */
+        .timer-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .timer-label {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            color: var(--accent);
+            opacity: 0.9;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(255, 217, 61, 0.3);
         }
         
         .big-timer {
-            font-size: 5rem;
+            font-size: 6rem;
             font-weight: bold;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-family: 'Courier New', monospace;
-            letter-spacing: 5px;
-            margin: 1rem 0;
-            text-shadow: 0 0 30px rgba(0,102,255,0.3);
-        }
-        
-        .label {
-            font-size: 1.2rem;
-            text-transform: uppercase;
             letter-spacing: 8px;
-            color: var(--accent);
-            opacity: 0.8;
+            text-shadow: 0 0 40px rgba(102, 126, 234, 0.5);
+            animation: glow 3s ease-in-out infinite alternate;
+            position: relative;
         }
         
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6)); }
+            to { filter: drop-shadow(0 0 40px rgba(118, 75, 162, 0.8)); }
+        }
+        
+        /* Fun facts */
         .fun-fact {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 2rem;
+            padding: 2.5rem;
             max-width: 700px;
             text-align: center;
             margin: 2rem 0;
         }
         
         .fun-fact h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--accent);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--accent), #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
         
         .fun-fact p {
             font-size: 1.3rem;
-            line-height: 1.6;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
         }
         
         .highlight {
@@ -97,9 +201,10 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: bold;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
         }
         
+        /* Comparison grid */
         .comparison-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -110,50 +215,53 @@
         }
         
         .comp-card {
-            background: rgba(0,0,0,0.3);
-            border-radius: 20px;
-            padding: 2rem;
+            padding: 2.5rem;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s;
-        }
-        
-        .comp-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255,255,255,0.08);
         }
         
         .comp-icon {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+            display: inline-block;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
         
         .comp-number {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: bold;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin: 0.5rem 0;
         }
         
         .comp-text {
-            font-size: 1rem;
+            font-size: 1.1rem;
             opacity: 0.8;
             margin-top: 0.5rem;
+            line-height: 1.5;
         }
         
+        /* Big number displays */
         .number-display {
             text-align: center;
+            padding: 3rem;
         }
         
         .number {
-            font-size: 10rem;
+            font-size: 12rem;
             font-weight: bold;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             line-height: 1;
             animation: pulse 3s ease-in-out infinite;
+            text-shadow: 0 0 60px rgba(102, 126, 234, 0.4);
         }
         
         @keyframes pulse {
@@ -162,58 +270,60 @@
         }
         
         .unit {
-            font-size: 2.5rem;
+            font-size: 3rem;
             text-transform: uppercase;
-            letter-spacing: 15px;
-            margin-top: 1rem;
-            opacity: 0.7;
+            letter-spacing: 20px;
+            margin-top: 1.5rem;
+            opacity: 0.8;
+            color: var(--accent);
+            font-weight: 300;
         }
         
+        /* Perspective text */
         .perspective {
-            font-size: 1.5rem;
-            max-width: 800px;
+            font-size: 1.6rem;
+            max-width: 900px;
             text-align: center;
-            line-height: 1.8;
+            line-height: 2;
             margin: 2rem 0;
-            padding: 2rem;
-            background: rgba(255,255,255,0.03);
-            border-radius: 20px;
-            border-left: 4px solid var(--primary);
+            padding: 3rem;
         }
         
         .perspective strong {
-            color: var(--accent);
-            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--accent), #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+            font-weight: 700;
         }
         
+        /* Scroll hint */
         .scroll-hint {
             position: absolute;
-            bottom: 2rem;
+            bottom: 3rem;
             animation: bounce 2s infinite;
-            opacity: 0.6;
-            font-size: 1.2rem;
+            opacity: 0.7;
+            font-size: 1.3rem;
+            color: var(--accent);
         }
         
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
+        /* Continue button */
         .continue-btn {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            padding: 1rem 2rem;
+            padding: 1.2rem 2.5rem;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             text-decoration: none;
             border-radius: 50px;
             font-weight: bold;
-            box-shadow: 0 10px 30px rgba(0,102,255,0.4);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
             z-index: 100;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             opacity: 0;
             transform: translateY(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .continue-btn.show {
@@ -222,17 +332,19 @@
         }
         
         .continue-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0,102,255,0.6);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
         }
         
+        /* Floating elements */
         .floater {
             position: fixed;
             font-size: 2rem;
             pointer-events: none;
-            opacity: 0.1;
+            opacity: 0.15;
             animation: float 20s linear infinite;
             z-index: 0;
+            filter: blur(1px);
         }
         
         @keyframes float {
@@ -240,165 +352,187 @@
             100% { transform: translateY(-100vh) rotate(360deg); }
         }
         
-        @media (max-width: 600px) {
-            .big-timer { font-size: 2.5rem; letter-spacing: 2px; }
-            .number { font-size: 5rem; }
+        /* Heart particles */
+        .heart-particle {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0;
+            animation: heartFloat 4s ease-in infinite;
+            z-index: 0;
+            font-size: 1.5rem;
+        }
+        
+        @keyframes heartFloat {
+            0% { opacity: 0; transform: translateY(0) scale(0); }
+            10% { opacity: 0.6; transform: translateY(-20px) scale(1); }
+            90% { opacity: 0.6; }
+            100% { opacity: 0; transform: translateY(-100vh) scale(0.5); }
+        }
+        
+        /* Final message */
+        .final-message {
+            margin-top: 3rem;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s infinite;
+            font-weight: 700;
+            text-align: center;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .big-timer { font-size: 3rem; letter-spacing: 4px; }
+            .number { font-size: 6rem; }
             .comparison-grid { grid-template-columns: 1fr; }
             .fun-fact { margin: 1rem; padding: 1.5rem; }
-            .perspective { font-size: 1.2rem; }
+            .perspective { font-size: 1.2rem; padding: 1.5rem; }
+            .lang-toggle { top: 1rem; right: 1rem; }
+            .section { padding: 2rem 1rem; }
         }
     </style>
 </head>
 <body>
     <div class="progress-bar" id="progressBar"></div>
+    
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLanguage('es')">🇪🇸 ES</button>
+        <button class="lang-btn" onclick="setLanguage('en')">🇺🇸 EN</button>
+    </div>
+    
     <div id="floaters"></div>
+    <div id="heartContainer"></div>
 
     <!-- MAIN TIMER -->
-    <div class="section">
-        <div class="label" id="timerLabel">Together For</div>
-        <div class="big-timer" id="mainTimer">000:00:00:00</div>
-        
-        <div class="fun-fact" id="introFact">
-            <h3 id="introFactTitle">Did You Know?</h3>
-            <p id="introFactText">In that time, the Earth has traveled <span class="highlight" id="earthDistance">0</span> miles through space! That's like driving around the equator <span id="equatorLaps">0</span> times! 🌍🚀</p>
+    <div class="section" id="section1">
+        <div class="timer-header">
+            <div class="timer-label" data-key="timerLabel">JUNTOS DESDE...</div>
+            <div class="big-timer" id="mainTimer">000:00:00:00</div>
         </div>
         
-        <div class="scroll-hint">Keep scrolling for more mind-blowing facts ↓</div>
+        <div class="fun-fact glass-card">
+            <h3 data-key="introFactTitle">¿Sabías Qué?</h3>
+            <p><span data-key="introFactText1">En ese tiempo, la Tierra ha viajado aproximadamente</span> <span class="highlight" id="earthDistance">0</span> <span data-key="introFactText2">millones de millas a través del espacio!</span></p>
+        </div>
+        
+        <div class="scroll-hint" data-key="scrollHint">Sigue desplazándote para más datos increíbles ↓</div>
     </div>
     
     <!-- PERSPECTIVE -->
-    <div class="section">
-        <div class="perspective" id="perspectiveSection">
-            To put that into perspective...<br><br>
-            You've been together for <strong id="totalSeconds">0</strong> seconds.<br>
-            That's enough time to watch <strong id="movieCount">0</strong> movies! 🎬<br>
-            Or listen to "your song" <strong id="songCount">0</strong> times on repeat! 🎵<br><br>
-            You could've learned <strong id="languageCount">0</strong> new languages!<br>
-            Or baked <strong id="cookieCount">0</strong> cookies! 🍪
+    <div class="section" id="section2">
+        <div class="perspective glass-card">
+            <span data-key="perspectiveTitle">Para ponerlo en perspectiva...</span><br><br>
+            <span data-key="perspective1">Nos conocemos desde hace unos</span> <strong id="totalSeconds">0</strong> <span data-key="perspective2">segundos.</span><br>
+            <span data-key="perspective3">¡Tiempo suficiente para ver</span> <strong id="movieCount">0</strong> <span data-key="perspective4">películas!</span> 🎬<br>
+            <span data-key="perspective5">¡Escuchar "MAMMAMIA"</span> <strong id="songCount">0</strong> <span data-key="perspective6">veces en repetición!</span> 🎵<br><br>
+            <span data-key="perspective7">¡O hornear</span> <strong id="cookieCount">0</strong> <span data-key="perspective8">galletas!</span> 🍪
         </div>
         
         <div class="comparison-grid">
-            <div class="comp-card">
-                <div class="comp-icon">💤</div>
-                <div class="comp-number" id="sleepCount">0</div>
-                <div class="comp-text">Good night's sleep you've missed staying up talking</div>
-            </div>
-            <div class="comp-card">
-                <div class="comp-icon">🍕</div>
-                <div class="comp-number" id="pizzaCount">0</div>
-                <div class="comp-text">Pizzas you could've devoured together</div>
-            </div>
-            <div class="comp-card">
+            <div class="comp-card glass-card">
                 <div class="comp-icon">❤️</div>
                 <div class="comp-number" id="heartbeatCount">0</div>
-                <div class="comp-text">Combined heartbeats (thump-thump)</div>
+                <div class="comp-text" data-key="heartbeatText">Latidos combinados (tum-tum)</div>
             </div>
         </div>
     </div>
     
     <!-- MONTHS -->
-    <div class="section">
-        <div class="number-display">
+    <div class="section" id="section3">
+        <div class="number-display glass-card">
             <div class="number" id="months">0</div>
-            <div class="unit">Months</div>
+            <div class="unit" data-key="monthsLabel">Meses</div>
         </div>
         
-        <div class="fun-fact" id="monthsFact">
-            <h3 id="monthsFactTitle">Fun Fact</h3>
-            <p id="monthsFactText">If you spent $1 every day on cheap coffee, you would have spent <span class="highlight" id="moneySpent">$0</span> by now! But let's be real, you probably spent it on dates instead 💕</p>
+        <div class="fun-fact glass-card">
+            <h3 data-key="monthsFactTitle">Dato Curioso</h3>
+            <p data-key="monthsFactText">Si gastaras $60 cada mes, ahora habrías gastado <span class="highlight" id="moneySpent">$0</span>.</p>
         </div>
     </div>
     
     <!-- WEEKS -->
-    <div class="section">
-        <div class="number-display">
+    <div class="section" id="section4">
+        <div class="number-display glass-card">
             <div class="number" id="weeks">0</div>
-            <div class="unit">Weeks</div>
+            <div class="unit" data-key="weeksLabel">Semanas</div>
         </div>
         
-        <div class="perspective" id="weeksSection">
-            That's <strong id="weekendCount">0</strong> weekends together!<br>
-            Or <strong id="sundayCount">0</strong> Sunday brunches! 🥞<br>
-            Or <strong id="fridayCount">0</strong> "Netflix and chill" nights! 📺<br><br>
-            You've survived <strong id="mondayCount">0</strong> Mondays together!<br>
-            That's true love right there 😤💪
+        <div class="perspective glass-card">
+            <span data-key="weeksText1">¡Eso son</span> <strong id="weekendCount">0</strong> <span data-key="weeksText2">fines de semana, qué locura!</span><br><br>
+            <span data-key="weeksText3">¡Has sobrevivido</span> <strong id="mondayCount">0</strong> <span data-key="weeksText4">lunes!</span> 😤💪<br>
+            <span data-key="weeksText5">¡Felicidades, Reina del Lunes!</span>
         </div>
     </div>
     
     <!-- DAYS -->
-    <div class="section">
-        <div class="number-display">
+    <div class="section" id="section5">
+        <div class="number-display glass-card">
             <div class="number" id="days">0</div>
-            <div class="unit">Days</div>
+            <div class="unit" data-key="daysLabel">Días</div>
         </div>
         
         <div class="comparison-grid">
-            <div class="comp-card">
+            <div class="comp-card glass-card">
                 <div class="comp-icon">☕</div>
                 <div class="comp-number" id="coffeeCount">0</div>
-                <div class="comp-text">Cups of coffee (or tea, we don't judge)</div>
+                <div class="comp-text" data-key="coffeeText">Tazas de café</div>
             </div>
-            <div class="comp-card">
+            <div class="comp-card glass-card">
                 <div class="comp-icon">😘</div>
                 <div class="comp-number" id="kissCount">0</div>
-                <div class="comp-text">Kisses given (conservative estimate 😏)</div>
-            </div>
-            <div class="comp-card">
-                <div class="comp-icon">📱</div>
-                <div class="comp-number" id="textCount">0</div>
-                <div class="comp-text">"Good morning" texts sent</div>
+                <div class="comp-text" data-key="kissText">Besos dados (estimación conservadora 😏)</div>
             </div>
         </div>
     </div>
     
     <!-- HOURS -->
-    <div class="section">
-        <div class="number-display">
+    <div class="section" id="section6">
+        <div class="number-display glass-card">
             <div class="number" id="hours">0</div>
-            <div class="unit">Hours</div>
+            <div class="unit" data-key="hoursLabel">Horas</div>
         </div>
         
-        <div class="fun-fact" id="hoursFact">
-            <h3 id="hoursFactTitle">Time Well Spent?</h3>
-            <p id="hoursFactText">You could have binge-watched <span class="highlight" id="seriesCount">0</span> TV series by now! But spending time with each other > Netflix... right? 😅<br><br>Or played <span id="gameHours">0</span> hours of video games! 🎮</p>
+        <div class="fun-fact glass-card">
+            <h3 data-key="hoursFactTitle">¿Tiempo Bien Empleado?</h3>
+            <p><span data-key="hoursFactText">¡Podrías haber visto Demon Slayer de corrido unas</span> <span class="highlight" id="seriesCount">0</span> <span data-key="hoursFactText2">veces hasta ahora!</span>🌸</p>
         </div>
     </div>
     
     <!-- MINUTES -->
-    <div class="section">
-        <div class="number-display">
+    <div class="section" id="section7">
+        <div class="number-display glass-card">
             <div class="number" id="minutes">0</div>
-            <div class="unit">Minutes</div>
+            <div class="unit" data-key="minutesLabel">Minutos</div>
         </div>
         
-        <div class="perspective" id="minutesSection">
-            In that time, you could have:<br><br>
-            • Walked <strong id="walkDistance">0</strong> miles hand-in-hand 👫<br>
-            • Said "I love you" <strong id="loveCount">0</strong> times 💕<br>
-            • Taken <strong id="photoCount">0</strong> cute photos together 📸<br>
-            • Had <strong id="argumentCount">0</strong> tiny arguments (and made up after) 😤❤️<br>
-            • Spent <strong id="bathroomCount">0</strong> minutes in the bathroom hiding from each other 💩
+        <div class="perspective glass-card">
+            <span data-key="minutesTitle">En ese tiempo, podríamos haber:</span><br><br>
+            • <span data-key="minutes1">Caminado</span> <strong id="walkDistance">0</strong> <span data-key="minutes2">kilómetros juntos</span> 👫<br>
+            • <span data-key="minutes3">Dicho "Te amo"</span> <strong id="loveCount">0</strong> <span data-key="minutes4">veces</span> 💕<br>
+            • <span data-key="minutes5">Tomado</span> <strong id="photoCount">0</strong> <span data-key="minutes6">fotos</span> ❤️
         </div>
     </div>
     
     <!-- SECONDS -->
-    <div class="section">
-        <div class="number-display">
+    <div class="section" id="section8">
+        <div class="number-display glass-card">
             <div class="number" id="seconds">0</div>
-            <div class="unit">Seconds</div>
+            <div class="unit" data-key="secondsLabel">Segundos</div>
         </div>
         
-        <div class="fun-fact" id="finalFact">
-            <h3 id="finalFactTitle">And Counting... ⏰</h3>
-            <p id="finalFactText">Every second with you is a second well spent. Even when you're stealing the covers or eating my fries.<br><br>Here's to <span class="highlight">infinity</span> more seconds of annoying each other! 💙♥️</p>
+        <div class="fun-fact glass-card">
+            <h3 data-key="finalFactTitle">Y Contando... ⏰</h3>
+            <p data-key="finalFactText">Cada segundo contigo es un segundo bien aprovechado. Me alegro de haberte conocido. ¡Brindo por infinity más!</p>
         </div>
         
-        <p style="margin-top: 3rem; font-size: 2rem; color: var(--accent); animation: pulse 2s infinite;">
-            I love you more every second 💙♥️
+        <p class="final-message">
+            <span data-key="finalMessage">Te amo más cada segundo</span> 💙♥️
         </p>
     </div>
     
-    <a href="story.html" class="continue-btn" id="continueBtn">Continue Our Story →</a>
+    <a href="story.html" class="continue-btn" id="continueBtn" data-key="continueBtn">Continuar Nuestra Historia →</a>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -417,30 +551,126 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        // Default funny facts - editable via Firebase
-        let siteData = {
-            startDate: '2024-02-14T00:00',
-            timerLabel: 'Together For',
-            
-            // Editable facts with my funny defaults
-            introFactTitle: 'Did You Know?',
-            introFactText: 'In that time, the Earth has traveled {distance} miles through space! That is like driving around the equator {laps} times! 🌍🚀',
-            
-            perspectiveText: 'To put that into perspective...\n\nYou have been together for {seconds} seconds.\nThat is enough time to watch {movies} movies! 🎬\nOr listen to "your song" {songs} times on repeat! 🎵\n\nYou could have learned {languages} new languages!\nOr baked {cookies} cookies! 🍪',
-            
-            monthsFactTitle: 'Fun Fact',
-            monthsFactText: 'If you spent $1 every day on cheap coffee, you would have spent ${money} by now! But let us be real, you probably spent it on dates instead 💕',
-            
-            weeksText: 'That is {weekends} weekends together!\nOr {brunches} Sunday brunches! 🥞\nOr {movies} "Netflix and chill" nights! 📺\n\nYou have survived {mondays} Mondays together!\nThat is true love right there 😤💪',
-            
-            hoursFactTitle: 'Time Well Spent?',
-            hoursFactText: 'You could have binge-watched {series} TV series by now! But spending time with each other > Netflix... right? 😅\n\nOr played {games} hours of video games! 🎮',
-            
-            minutesText: 'In that time, you could have:\n\n• Walked {miles} miles hand-in-hand 👫\n• Said "I love you" {loves} times 💕\n• Taken {photos} cute photos together 📸\n• Had {arguments} tiny arguments (and made up after) 😤❤️\n• Spent {bathroom} minutes in the bathroom hiding from each other 💩',
-            
-            finalFactTitle: 'And Counting... ⏰',
-            finalFactText: 'Every second with you is a second well spent. Even when you are stealing the covers or eating my fries.\n\nHere is to infinity more seconds of annoying each other! 💙♥️'
+        // Translations
+        const translations = {
+            es: {
+                timerLabel: "JUNTOS DESDE...",
+                introFactTitle: "¿Sabías Qué?",
+                introFactText1: "En ese tiempo, la Tierra ha viajado aproximadamente",
+                introFactText2: "millones de millas a través del espacio!",
+                scrollHint: "Sigue desplazándote para más datos increíbles ↓",
+                perspectiveTitle: "Para ponerlo en perspectiva...",
+                perspective1: "Nos conocemos desde hace unos",
+                perspective2: "segundos.",
+                perspective3: "¡Tiempo suficiente para ver",
+                perspective4: "películas!",
+                perspective5: '¡Escuchar "MAMMAMIA"',
+                perspective6: "veces en repetición!",
+                perspective7: "¡O hornear",
+                perspective8: "galletas!",
+                heartbeatText: "Latidos combinados (tum-tum)",
+                monthsLabel: "Meses",
+                monthsFactTitle: "Dato Curioso",
+                monthsFactText: "Si gastaras $60 cada mes, ahora habrías gastado",
+                weeksLabel: "Semanas",
+                weeksText1: "¡Eso son",
+                weeksText2: "fines de semana, qué locura!",
+                weeksText3: "¡Has sobrevivido",
+                weeksText4: "lunes!",
+                weeksText5: "¡Felicidades, Reina del Lunes!",
+                daysLabel: "Días",
+                coffeeText: "Tazas de café",
+                kissText: "Besos dados (estimación conservadora 😏)",
+                hoursLabel: "Horas",
+                hoursFactTitle: "¿Tiempo Bien Empleado?",
+                hoursFactText: "¡Podrías haber visto Demon Slayer de corrido unas",
+                hoursFactText2: "veces hasta ahora!",
+                minutesLabel: "Minutos",
+                minutesTitle: "En ese tiempo, podríamos haber:",
+                minutes1: "Caminado",
+                minutes2: "kilómetros juntos",
+                minutes3: 'Dicho "Te amo"',
+                minutes4: "veces",
+                minutes5: "Tomado",
+                minutes6: "fotos",
+                secondsLabel: "Segundos",
+                finalFactTitle: "Y Contando... ⏰",
+                finalFactText: "Cada segundo contigo es un segundo bien aprovechado. Me alegro de haberte conocido. ¡Brindo por infinity más!",
+                finalMessage: "Te amo más cada segundo",
+                continueBtn: "Continuar Nuestra Historia →"
+            },
+            en: {
+                timerLabel: "TOGETHER SINCE...",
+                introFactTitle: "Did You Know?",
+                introFactText1: "In that time, Earth has traveled approximately",
+                introFactText2: "million miles through space!",
+                scrollHint: "Keep scrolling for more mind-blowing facts ↓",
+                perspectiveTitle: "To put that in perspective...",
+                perspective1: "We've known each other for about",
+                perspective2: "seconds.",
+                perspective3: "Enough time to watch",
+                perspective4: "movies!",
+                perspective5: 'Listen to "MAMMAMIA"',
+                perspective6: "times on repeat!",
+                perspective7: "Or bake",
+                perspective8: "cookies!",
+                heartbeatText: "Combined heartbeats (thump-thump)",
+                monthsLabel: "Months",
+                monthsFactTitle: "Fun Fact",
+                monthsFactText: "If you spent $60 every month, you would have spent",
+                weeksLabel: "Weeks",
+                weeksText1: "That's",
+                weeksText2: "weekends, crazy!",
+                weeksText3: "You've survived",
+                weeksText4: "Mondays!",
+                weeksText5: "Congratulations, Monday Queen!",
+                daysLabel: "Days",
+                coffeeText: "Cups of coffee",
+                kissText: "Kisses given (conservative estimate 😏)",
+                hoursLabel: "Hours",
+                hoursFactTitle: "Time Well Spent?",
+                hoursFactText: "You could have binge-watched Demon Slayer",
+                hoursFactText2: "times by now!",
+                minutesLabel: "Minutes",
+                minutesTitle: "In that time, we could have:",
+                minutes1: "Walked",
+                minutes2: "kilometers together",
+                minutes3: 'Said "I love you"',
+                minutes4: "times",
+                minutes5: "Taken",
+                minutes6: "photos",
+                secondsLabel: "Seconds",
+                finalFactTitle: "And Counting... ⏰",
+                finalFactText: "Every second with you is a second well spent. I'm glad I met you. Here's to infinity more!",
+                finalMessage: "I love you more every second",
+                continueBtn: "Continue Our Story →"
+            }
         };
+        
+        let currentLang = 'es';
+        let siteData = { startDate: '2023-04-15T00:00' };
+        
+        // Language switcher
+        window.setLanguage = function(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.includes(lang.toUpperCase()));
+            });
+            updateLanguage();
+        };
+        
+        function updateLanguage() {
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[currentLang][key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = translations[currentLang][key];
+                    } else {
+                        el.textContent = translations[currentLang][key];
+                    }
+                }
+            });
+        }
         
         async function load() {
             try {
@@ -448,19 +678,15 @@
                 const snap = await getDoc(docRef);
                 
                 if (snap.exists()) {
-                    // Merge with defaults
-                    const cloud = snap.data();
-                    siteData = { ...siteData, ...cloud };
+                    siteData = { ...siteData, ...snap.data() };
                 }
                 
                 localStorage.setItem('valentineData', JSON.stringify(siteData));
                 init();
                 
-                // Real-time updates
                 onSnapshot(docRef, (doc) => {
                     if (doc.exists()) {
                         siteData = { ...siteData, ...doc.data() };
-                        updateText();
                     }
                 });
                 
@@ -473,76 +699,44 @@
         
         function init() {
             createFloaters();
+            createHeartParticles();
             setupScroll();
-            updateText();
+            setupIntersectionObserver();
             startTimer();
+            updateLanguage();
         }
         
-        function updateText() {
-            // Update labels
-            document.getElementById('timerLabel').textContent = siteData.timerLabel || 'Together For';
+        function setupIntersectionObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
             
-            // Update all fact text with variables replaced
-            replaceText('introFactTitle', siteData.introFactTitle);
-            replaceText('introFactText', siteData.introFactText);
-            replaceText('monthsFactTitle', siteData.monthsFactTitle);
-            replaceText('monthsFactText', siteData.monthsFactText);
-            replaceText('hoursFactTitle', siteData.hoursFactTitle);
-            replaceText('hoursFactText', siteData.hoursFactText);
-            replaceText('finalFactTitle', siteData.finalFactTitle);
-            replaceText('finalFactText', siteData.finalFactText);
-            
-            // Perspective sections
-            const persp = document.getElementById('perspectiveSection');
-            if (persp && siteData.perspectiveText) {
-                persp.innerHTML = formatText(siteData.perspectiveText);
-            }
-            
-            const weeks = document.getElementById('weeksSection');
-            if (weeks && siteData.weeksText) {
-                weeks.innerHTML = formatText(siteData.weeksText);
-            }
-            
-            const mins = document.getElementById('minutesSection');
-            if (mins && siteData.minutesText) {
-                mins.innerHTML = formatText(siteData.minutesText);
-            }
-        }
-        
-        function replaceText(id, text) {
-            const el = document.getElementById(id);
-            if (el && text) {
-                el.innerHTML = formatText(text);
-            }
-        }
-        
-        function formatText(text) {
-            return text
-                .replace(/\n/g, '<br>')
-                .replace(/{highlight}(.*?){\/highlight}/g, '<span class="highlight">$1</span>')
-                .replace(/\{(\w+)\}/g, '<span id="var-$1">0</span>');
+            document.querySelectorAll('.section').forEach(section => {
+                observer.observe(section);
+            });
         }
         
         function startTimer() {
-            const start = new Date(siteData.startDate || '2024-02-14T00:00');
+            const start = new Date(siteData.startDate || '2023-04-15T00:00');
             
             function update() {
                 const now = new Date();
                 const diff = now - start;
                 
-                // ALL TIME UNITS
                 const totalSeconds = Math.floor(diff / 1000);
                 const totalMinutes = Math.floor(diff / (1000 * 60));
                 const totalHours = Math.floor(diff / (1000 * 60 * 60));
                 const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
                 
-                // Main timer display (days:hours:minutes:seconds)
                 const days = totalDays;
                 const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
                 
-                // Format with leading zeros
                 const timeStr = 
                     String(days).padStart(3, '0') + ':' +
                     String(hours).padStart(2, '0') + ':' +
@@ -551,7 +745,6 @@
                 
                 document.getElementById('mainTimer').textContent = timeStr;
                 
-                // Big numbers
                 document.getElementById('months').textContent = (totalDays / 30.44).toFixed(1);
                 document.getElementById('weeks').textContent = Math.floor(totalDays / 7);
                 document.getElementById('days').textContent = totalDays;
@@ -559,7 +752,6 @@
                 document.getElementById('minutes').textContent = totalMinutes;
                 document.getElementById('seconds').textContent = totalSeconds;
                 
-                // Update all calculations
                 updateCalculations(totalDays, totalHours, totalMinutes, totalSeconds);
             }
             
@@ -568,69 +760,70 @@
         }
         
         function updateCalculations(days, hours, minutes, seconds) {
-            // Earth distance (1.6 million miles per day)
+            // Earth distance
             const earthMiles = (days * 1.6).toFixed(1);
-            setVar('earthDistance', earthMiles + ' million');
-            setVar('equatorLaps', Math.floor(days * 1.6 / 24901));
+            document.getElementById('earthDistance').textContent = earthMiles;
             
             // Perspective
-            setVar('totalSeconds', seconds.toLocaleString());
-            setVar('seconds', seconds.toLocaleString());
-            setVar('movies', Math.floor(hours / 2.5).toLocaleString());
-            setVar('songs', Math.floor(minutes / 3.5).toLocaleString());
-            setVar('languages', Math.floor(hours / 480)); // 480 hours per language
-            setVar('cookies', Math.floor(minutes / 15).toLocaleString()); // 15 min per batch
+            document.getElementById('totalSeconds').textContent = seconds.toLocaleString();
+            document.getElementById('movieCount').textContent = Math.floor(hours / 2.5).toLocaleString();
+            document.getElementById('songCount').textContent = Math.floor(minutes / 3.5).toLocaleString();
+            document.getElementById('cookieCount').textContent = Math.floor(minutes / 15).toLocaleString();
             
-            // Top comparisons
-            setVar('sleepCount', Math.floor(days * 8 / 24).toLocaleString());
-            setVar('pizzaCount', Math.floor(days / 7).toLocaleString());
-            setVar('heartbeatCount', (minutes * 160).toLocaleString()); // 80 bpm * 2 people
+            // Heartbeats (80 bpm * 2 people * minutes)
+            document.getElementById('heartbeatCount').textContent = (minutes * 160).toLocaleString();
             
             // Months
-            setVar('moneySpent', '$' + days.toLocaleString());
+            document.getElementById('moneySpent').textContent = '$' + (days * 2).toLocaleString();
             
             // Weeks
-            setVar('weekendCount', Math.floor(days / 7 * 2).toLocaleString());
-            setVar('sundayCount', Math.floor(days / 7).toLocaleString());
-            setVar('fridayCount', Math.floor(days / 7).toLocaleString());
-            setVar('mondayCount', Math.floor(days / 7 * 5).toLocaleString());
+            document.getElementById('weekendCount').textContent = Math.floor(days / 7 * 2).toLocaleString();
+            document.getElementById('mondayCount').textContent = Math.floor(days / 7 * 5).toLocaleString();
             
             // Days
-            setVar('coffeeCount', (days * 2).toLocaleString());
-            setVar('kissCount', (days * 10).toLocaleString());
-            setVar('textCount', (days * 5).toLocaleString());
+            document.getElementById('coffeeCount').textContent = (days * 2).toLocaleString();
+            document.getElementById('kissCount').textContent = (days * 10).toLocaleString();
             
-            // Hours
-            setVar('seriesCount', Math.floor(hours / 10).toLocaleString());
-            setVar('gameHours', hours.toLocaleString());
+            // Hours (Demon Slayer ~24 episodes * 24 min = ~576 min = ~9.6 hours)
+            document.getElementById('seriesCount').textContent = Math.floor(hours / 10).toLocaleString();
             
             // Minutes
-            setVar('walkDistance', (days * 6).toLocaleString());
-            setVar('loveCount', (days * 3).toLocaleString());
-            setVar('photoCount', (days * 2).toLocaleString());
-            setVar('argumentCount', Math.floor(days / 7).toLocaleString());
-            setVar('bathroomCount', (days * 10).toLocaleString());
-        }
-        
-        function setVar(name, value) {
-            // Try both formats
-            const el = document.getElementById('var-' + name) || document.getElementById(name);
-            if (el) el.textContent = value;
+            document.getElementById('walkDistance').textContent = (days * 6).toLocaleString();
+            document.getElementById('loveCount').textContent = (days * 3).toLocaleString();
+            document.getElementById('photoCount').textContent = (days * 2).toLocaleString();
         }
         
         function createFloaters() {
             const container = document.getElementById('floaters');
-            const emojis = ['💙', '♥️', '✨', '💎', '🌹', '💕'];
+            const emojis = ['💙', '♥️', '✨', '💎', '🌹', '💕', '🦋', '⭐'];
             
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 15; i++) {
                 const f = document.createElement('div');
                 f.className = 'floater';
                 f.textContent = emojis[Math.floor(Math.random() * emojis.length)];
                 f.style.left = Math.random() * 100 + '%';
                 f.style.animationDelay = Math.random() * 20 + 's';
-                f.style.animationDuration = (15 + Math.random() * 10) + 's';
+                f.style.animationDuration = (15 + Math.random() * 15) + 's';
+                f.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
                 container.appendChild(f);
             }
+        }
+        
+        function createHeartParticles() {
+            const container = document.getElementById('heartContainer');
+            const hearts = ['💙', '♥️', '💖', '💕', '💗'];
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'heart-particle';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.bottom = '0';
+                heart.style.animationDuration = (3 + Math.random() * 2) + 's';
+                container.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 5000);
+            }, 800);
         }
         
         function setupScroll() {
@@ -643,11 +836,13 @@
                 const pct = (scrolled / max) * 100;
                 
                 bar.style.width = pct + '%';
-                btn.classList.toggle('show', pct > 80);
+                btn.classList.toggle('show', pct > 85);
             });
         }
         
         load();
     </script>
 </body>
-</html>
+</html>'''
+
+print(html_code)
