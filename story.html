@@ -3,27 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Story</title>
+    <title>Our Story | Nuestra Historia</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
-            --primary: #ff6b9d;
-            --secondary: #c44569;
+            --primary: #667eea;
+            --secondary: #764ba2;
             --accent: #ffd93d;
-            --blue: #0066ff;
-            --red: #ff0000;
+            --rose: #ff6b9d;
+            --deep-rose: #c44569;
             --bg: #0a0a1a;
+            --glass: rgba(255, 255, 255, 0.05);
         }
+        
+        html { scroll-behavior: smooth; }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg);
             color: white;
             overflow: hidden;
+            position: relative;
         }
         
-        /* Loading */
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 107, 157, 0.1) 0%, transparent 50%);
+            z-index: -2;
+            animation: bgPulse 10s ease-in-out infinite;
+        }
+        
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+        
+        /* Loading Screen */
         .loader {
             position: fixed;
             top: 0;
@@ -36,25 +61,68 @@
             align-items: center;
             justify-content: center;
             z-index: 10000;
-            transition: opacity 0.5s;
+            transition: opacity 0.8s ease, visibility 0.8s;
         }
         
         .loader.hidden {
             opacity: 0;
+            visibility: hidden;
             pointer-events: none;
+        }
+        
+        .loader-hearts {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.05); }
         }
         
         .loader-text {
             font-size: 1.5rem;
-            background: linear-gradient(90deg, var(--blue), var(--red));
+            background: linear-gradient(90deg, var(--primary), var(--rose));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: pulse 1.5s infinite;
+            letter-spacing: 3px;
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        /* Language Toggle */
+        .lang-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 0.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
         
         /* Progress Dots */
@@ -66,31 +134,55 @@
             display: flex;
             gap: 1rem;
             z-index: 100;
-            background: rgba(0,0,0,0.5);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .dot {
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .dot::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s;
         }
         
         .dot:hover {
-            transform: scale(1.2);
+            transform: scale(1.3);
+            background: rgba(255, 255, 255, 0.5);
         }
         
         .dot.active {
-            background: var(--blue);
-            border-color: var(--red);
-            transform: scale(1.3);
-            box-shadow: 0 0 15px var(--blue);
+            background: var(--primary);
+            transform: scale(1.4);
+            box-shadow: 0 0 20px var(--primary);
+        }
+        
+        .dot.active::after {
+            opacity: 1;
+            transform: scale(1.2);
+            animation: pulseRing 2s infinite;
+        }
+        
+        @keyframes pulseRing {
+            0%, 100% { transform: scale(1.2); opacity: 0.5; }
+            50% { transform: scale(1.5); opacity: 0; }
         }
         
         /* Navigation Arrows */
@@ -98,23 +190,34 @@
             position: fixed;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 4rem;
-            color: rgba(255,255,255,0.2);
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.3);
             cursor: pointer;
             padding: 2rem;
             z-index: 50;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             user-select: none;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .nav-arrow:hover {
-            color: var(--blue);
-            text-shadow: 0 0 20px var(--blue);
-            transform: translateY(-50%) scale(1.2);
+            color: white;
+            background: rgba(102, 126, 234, 0.3);
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+            transform: translateY(-50%) scale(1.1);
         }
         
-        .nav-arrow.left { left: 0; }
-        .nav-arrow.right { right: 0; }
+        .nav-arrow.left { left: 2rem; }
+        .nav-arrow.right { right: 2rem; }
         
         /* Slideshow Container */
         .slideshow {
@@ -134,10 +237,9 @@
             justify-content: center;
             padding: 2rem;
             opacity: 0;
-            transform: scale(0.9) translateY(50px);
+            transform: scale(0.9) translateY(30px);
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: none;
-            background: radial-gradient(circle at center, rgba(0,102,255,0.05), transparent 70%);
         }
         
         .slide.active {
@@ -146,83 +248,90 @@
             pointer-events: all;
         }
         
-        /* Slide Content Box */
+        /* Glass Card */
         .slide-box {
-            background: rgba(255,255,255,0.05);
+            background: var(--glass);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 30px;
             padding: 4rem;
-            max-width: 800px;
+            max-width: 850px;
+            width: 90%;
             text-align: center;
             box-shadow: 
-                0 25px 50px rgba(0,0,0,0.5),
-                0 0 100px rgba(0,102,255,0.1);
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                0 0 100px rgba(102, 126, 234, 0.1);
             position: relative;
             overflow: hidden;
+            transform: translateZ(0);
         }
         
         .slide-box::before {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, var(--blue), var(--red), var(--blue));
-            border-radius: 30px;
-            opacity: 0.3;
-            z-index: -1;
-            animation: borderRotate 3s linear infinite;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.7s;
         }
         
-        @keyframes borderRotate {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
+        .slide.active .slide-box::before {
+            left: 100%;
         }
         
         .slide-number {
             font-size: 0.9rem;
-            color: var(--blue);
-            margin-bottom: 1rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
             letter-spacing: 5px;
             text-transform: uppercase;
+            font-weight: 600;
         }
         
         .slide-title {
             font-size: 3.5rem;
             margin-bottom: 2rem;
-            background: linear-gradient(135deg, var(--blue), var(--red));
+            background: linear-gradient(135deg, var(--primary), var(--rose));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(0,102,255,0.3);
+            font-weight: 700;
+            line-height: 1.2;
         }
         
         .slide-text {
             font-size: 1.4rem;
-            line-height: 1.8;
+            line-height: 1.9;
             opacity: 0.9;
-            color: rgba(255,255,255,0.9);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
         }
         
         .slide-date {
-            margin-top: 2rem;
-            padding: 0.8rem 2rem;
-            background: linear-gradient(135deg, rgba(0,102,255,0.2), rgba(255,0,0,0.2));
-            border-radius: 25px;
             display: inline-block;
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(255, 107, 157, 0.2));
+            border-radius: 25px;
             color: var(--accent);
             font-weight: 600;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1rem;
         }
         
         .slide-image {
             max-width: 100%;
-            max-height: 400px;
+            max-height: 350px;
             border-radius: 20px;
             margin-top: 2rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .slide-image:hover {
+            transform: scale(1.02);
         }
         
         /* Click Hint */
@@ -232,10 +341,14 @@
             left: 50%;
             transform: translateX(-50%);
             font-size: 1.1rem;
-            opacity: 0.6;
+            opacity: 0.7;
             animation: bounce 2s infinite;
             pointer-events: none;
             color: var(--accent);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
         }
         
         @keyframes bounce {
@@ -245,7 +358,7 @@
         
         /* FINAL LETTER SLIDE */
         .letter-slide {
-            background: radial-gradient(circle at center, rgba(139,69,19,0.2), transparent 70%);
+            background: radial-gradient(circle at center, rgba(255, 107, 157, 0.1), transparent 70%);
         }
         
         .letter-container {
@@ -253,32 +366,59 @@
         }
         
         .letter-instruction {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            opacity: 0.8;
+            font-size: 1.4rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
             color: var(--accent);
             animation: pulse 2s infinite;
+            font-weight: 500;
+        }
+        
+        /* Modern Envelope */
+        .envelope-wrapper {
+            perspective: 1000px;
+            display: inline-block;
         }
         
         .sealed-letter {
-            width: 320px;
-            height: 220px;
-            background: linear-gradient(135deg, #f4e4c1, #d4a574);
-            border-radius: 5px;
+            width: 340px;
+            height: 240px;
             position: relative;
             cursor: pointer;
-            box-shadow: 
-                0 20px 60px rgba(0,0,0,0.5),
-                0 0 100px rgba(255,0,0,0.2);
-            transition: all 0.3s;
-            margin: 0 auto;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
         }
         
         .sealed-letter:hover {
-            transform: scale(1.05) translateY(-10px);
+            transform: rotateY(-5deg) rotateX(5deg) translateY(-10px);
+        }
+        
+        .envelope-body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f4e4c1 0%, #e8d4a8 50%, #d4a574 100%);
+            border-radius: 8px;
             box-shadow: 
-                0 30px 80px rgba(0,0,0,0.6),
-                0 0 120px rgba(255,0,0,0.3);
+                0 25px 60px rgba(0, 0, 0, 0.4),
+                0 0 100px rgba(255, 107, 157, 0.2);
+        }
+        
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(180deg, #e8d4a8 0%, #d4a574 100%);
+            clip-path: polygon(0 0, 50% 100%, 100% 0);
+            transform-origin: top;
+            transition: transform 0.4s ease;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .sealed-letter:hover .envelope-flap {
+            transform: rotateX(20deg);
         }
         
         .wax-seal {
@@ -286,36 +426,38 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 90px;
-            height: 90px;
-            background: radial-gradient(circle at 30% 30%, var(--red), #990000);
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at 30% 30%, var(--rose), var(--deep-rose));
             border-radius: 50%;
             box-shadow: 
-                0 5px 20px rgba(0,0,0,0.3),
-                inset 0 -5px 10px rgba(0,0,0,0.2),
-                0 0 30px rgba(255,0,0,0.4);
+                0 8px 25px rgba(0, 0, 0, 0.3),
+                inset 0 -5px 15px rgba(0, 0, 0, 0.2),
+                0 0 40px rgba(255, 107, 157, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5rem;
-            animation: sealPulse 2s infinite;
-            border: 3px solid rgba(255,255,255,0.2);
+            z-index: 10;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            animation: sealFloat 3s ease-in-out infinite;
         }
         
-        @keyframes sealPulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 5px 20px rgba(0,0,0,0.3), 0 0 30px rgba(255,0,0,0.4); }
-            50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 0 50px rgba(255,0,0,0.6); }
+        @keyframes sealFloat {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-5px); }
         }
         
         .letter-text {
             position: absolute;
-            bottom: 25px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             color: #8b4513;
             font-weight: bold;
-            font-size: 1.2rem;
-            letter-spacing: 2px;
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
         }
         
         /* LETTER MODAL */
@@ -325,14 +467,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0, 0, 0, 0.95);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             padding: 2rem;
             opacity: 0;
-            transition: opacity 0.5s;
+            transition: opacity 0.5s ease;
+            backdrop-filter: blur(10px);
         }
         
         .letter-modal.active {
@@ -342,99 +485,134 @@
         
         .scroll-letter {
             width: 100%;
-            max-width: 600px;
-            background: linear-gradient(180deg, #f4e4c1 0%, #e8d4a8 100%);
-            border-radius: 10px;
+            max-width: 650px;
+            max-height: 85vh;
+            background: 
+                linear-gradient(180deg, #f4e4c1 0%, #e8d4a8 100%);
+            border-radius: 15px;
             position: relative;
-            transform: scaleY(0);
+            transform: scaleY(0) rotateX(-10deg);
             transform-origin: top;
-            animation: unroll 1.5s ease forwards;
-            max-height: 80vh;
+            animation: unroll 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             overflow-y: auto;
             box-shadow: 
-                0 0 100px rgba(0,102,255,0.3),
-                0 0 200px rgba(255,0,0,0.2);
+                0 0 100px rgba(102, 126, 234, 0.3),
+                0 0 200px rgba(255, 107, 157, 0.2),
+                inset 0 0 100px rgba(139, 69, 19, 0.1);
+            border: 1px solid rgba(139, 69, 19, 0.2);
         }
         
         @keyframes unroll {
-            0% { transform: scaleY(0); }
-            100% { transform: scaleY(1); }
+            0% { transform: scaleY(0) rotateX(-10deg); opacity: 0; }
+            100% { transform: scaleY(1) rotateX(0); opacity: 1; }
         }
         
         .scroll-content {
-            padding: 4rem 3rem;
+            padding: 4rem 3.5rem;
             color: #3d2817;
-            font-family: 'Georgia', serif;
+            font-family: 'Georgia', 'Times New Roman', serif;
             line-height: 2;
             position: relative;
+            background-image: 
+                repeating-linear-gradient(
+                    transparent,
+                    transparent 31px,
+                    rgba(139, 69, 19, 0.05) 31px,
+                    rgba(139, 69, 19, 0.05) 32px
+                );
         }
         
         .scroll-content::before {
             content: '💙♥️';
             position: absolute;
-            top: 1rem;
-            right: 1rem;
+            top: 1.5rem;
+            right: 1.5rem;
             font-size: 1.5rem;
-            opacity: 0.5;
+            opacity: 0.4;
         }
         
         .scroll-content h2 {
             color: #8b4513;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             font-size: 2.5rem;
             text-align: center;
-            border-bottom: 2px solid rgba(139,69,19,0.3);
-            padding-bottom: 1rem;
+            border-bottom: 3px double rgba(139, 69, 19, 0.3);
+            padding-bottom: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
         
         .scroll-content p {
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem;
+            margin-bottom: 1.8rem;
+            font-size: 1.25rem;
             text-align: justify;
+            text-indent: 2rem;
+        }
+        
+        .scroll-content p:first-of-type {
+            text-indent: 0;
+        }
+        
+        .scroll-content p:first-of-type::first-letter {
+            font-size: 3.5rem;
+            float: left;
+            line-height: 1;
+            margin-right: 0.5rem;
+            margin-top: -0.5rem;
+            color: var(--deep-rose);
+            font-weight: bold;
         }
         
         .scroll-content .sign-off {
             text-align: right;
-            margin-top: 3rem;
+            margin-top: 4rem;
             font-style: italic;
             color: #8b4513;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
+            border-top: 1px solid rgba(139, 69, 19, 0.2);
+            padding-top: 2rem;
         }
         
         .close-letter {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
+            top: 1.5rem;
+            right: 1.5rem;
             width: 45px;
             height: 45px;
-            background: rgba(139,69,19,0.2);
-            border: 2px solid rgba(139,69,19,0.3);
+            background: rgba(139, 69, 19, 0.1);
+            border: 2px solid rgba(139, 69, 19, 0.3);
             border-radius: 50%;
             color: #8b4513;
             font-size: 1.8rem;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .close-letter:hover {
-            background: rgba(139,69,19,0.4);
+            background: rgba(255, 107, 157, 0.2);
             transform: rotate(90deg);
-            border-color: var(--red);
+            border-color: var(--rose);
+            color: var(--deep-rose);
         }
         
-        /* Background Effects */
+        /* Background Particles */
         .bg-particles {
             position: fixed;
             width: 100%;
             height: 100%;
             pointer-events: none;
             z-index: 0;
+            overflow: hidden;
         }
         
         .bg-particle {
             position: absolute;
-            animation: floatUp 20s linear infinite;
+            animation: floatUp 15s linear infinite;
+            filter: blur(1px);
         }
         
         @keyframes floatUp {
@@ -450,35 +628,66 @@
             top: 2rem;
             left: 2rem;
             padding: 0.8rem 1.5rem;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 25px;
             color: white;
             text-decoration: none;
             font-size: 0.9rem;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             z-index: 100;
             backdrop-filter: blur(10px);
+            font-weight: 500;
         }
         
         .home-btn:hover {
-            background: rgba(0,102,255,0.2);
-            border-color: var(--blue);
+            background: rgba(102, 126, 234, 0.3);
+            border-color: var(--primary);
             transform: translateX(-5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .slide-title { font-size: 2.2rem; }
+            .slide-text { font-size: 1.1rem; }
+            .slide-box { padding: 2.5rem 1.5rem; }
+            .nav-arrow { 
+                width: 50px; 
+                height: 50px; 
+                font-size: 2rem;
+                padding: 1rem;
+            }
+            .nav-arrow.left { left: 0.5rem; }
+            .nav-arrow.right { right: 0.5rem; }
+            .lang-toggle { top: 1rem; right: 1rem; }
+            .home-btn { top: 1rem; left: 1rem; }
+            .progress-dots { top: 5rem; }
+            .sealed-letter { width: 280px; height: 200px; }
+            .scroll-content { padding: 2.5rem 1.5rem; }
+            .scroll-content h2 { font-size: 1.8rem; }
+            .scroll-content p { font-size: 1.1rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Loading -->
+    <!-- Loading Screen -->
     <div class="loader" id="loader">
-        <div class="loader-text">Loading Our Story...</div>
+        <div class="loader-hearts">💙♥️</div>
+        <div class="loader-text" data-key="loading">Loading Our Story...</div>
     </div>
     
-    <!-- Background -->
+    <!-- Background Particles -->
     <div class="bg-particles" id="bgParticles"></div>
     
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLanguage('es')">🇪🇸 ES</button>
+        <button class="lang-btn" onclick="setLanguage('en')">🇺🇸 EN</button>
+    </div>
+    
     <!-- Home Button -->
-    <a href="index.html" class="home-btn">← Back</a>
+    <a href="index.html" class="home-btn" data-key="back">← Back</a>
     
     <!-- Progress Dots -->
     <div class="progress-dots" id="progressDots"></div>
@@ -493,9 +702,9 @@
         <!-- Intro Slide -->
         <div class="slide active" data-index="0">
             <div class="slide-box">
-                <div class="slide-number">Chapter 0</div>
-                <h2 class="slide-title">Our Journey</h2>
-                <p class="slide-text">Every love story is beautiful, but ours is my favorite. Click anywhere to begin...</p>
+                <div class="slide-number" data-key="chapter">Chapter 0</div>
+                <h2 class="slide-title" data-key="ourJourney">Our Journey</h2>
+                <p class="slide-text" data-key="introText">Every love story is beautiful, but ours is my favorite. Click anywhere to begin...</p>
             </div>
         </div>
         
@@ -505,10 +714,14 @@
         <!-- Final Letter Slide -->
         <div class="slide letter-slide" id="letterSlide">
             <div class="letter-container">
-                <div class="letter-instruction">A special message awaits...</div>
-                <div class="sealed-letter" id="sealedLetter">
-                    <div class="wax-seal">♥️</div>
-                    <div class="letter-text">OPEN ME</div>
+                <div class="letter-instruction" data-key="letterHint">A special message awaits...</div>
+                <div class="envelope-wrapper">
+                    <div class="sealed-letter" id="sealedLetter">
+                        <div class="envelope-body"></div>
+                        <div class="envelope-flap"></div>
+                        <div class="wax-seal">♥️</div>
+                        <div class="letter-text" data-key="openMe">OPEN ME</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -516,7 +729,7 @@
     </div>
     
     <!-- Click Hint -->
-    <div class="click-hint" id="clickHint">Click to continue 💙♥️</div>
+    <div class="click-hint" id="clickHint" data-key="clickContinue">Click to continue 💙♥️</div>
     
     <!-- Letter Modal -->
     <div class="letter-modal" id="letterModal">
@@ -550,20 +763,65 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        // Data
-        window.storyData = {
-            slides: [
-                { title: "Our First Meeting", content: "The day that changed everything...", date: "2024-04-06" },
-                { title: "Our First Date", content: "I knew you were special from the start.", date: "" },
-                { title: "Countless Memories", content: "Every moment with you is a treasure I hold dear.", date: "" }
-            ],
-            letterTitle: "My Dearest Love",
-            letterContent: "From the moment I met you, my world changed forever. You bring joy to every day and love to every moment. I am so grateful to have you in my life. Happy Valentine's Day, my love. Forever and always.",
-            letterSign: "Forever Yours"
+        // Translations
+        const translations = {
+            es: {
+                loading: "Cargando Nuestra Historia...",
+                back: "← Volver",
+                chapter: "Capítulo",
+                ourJourney: "Nuestro Viaje",
+                introText: "Cada historia de amor es hermosa, pero la nuestra es mi favorita. Haz clic para comenzar...",
+                letterHint: "Un mensaje especial te espera...",
+                openMe: "ÁBREME",
+                clickContinue: "Haz clic para continuar 💙♥️",
+                clickBegin: "Haz clic para comenzar 💙♥️"
+            },
+            en: {
+                loading: "Loading Our Story...",
+                back: "← Back",
+                chapter: "Chapter",
+                ourJourney: "Our Journey",
+                introText: "Every love story is beautiful, but ours is my favorite. Click anywhere to begin...",
+                letterHint: "A special message awaits...",
+                openMe: "OPEN ME",
+                clickContinue: "Click to continue 💙♥️",
+                clickBegin: "Click to begin 💙♥️"
+            }
         };
         
+        let currentLang = 'es';
         let currentSlide = 0;
         let totalSlides = 0;
+        
+        window.storyData = {
+            slides: [
+                { title: "Nuestro Primer Encuentro", content: "El día que cambió todo...", date: "2023-04-15" },
+                { title: "Nuestra Primera Cita", content: "Supe que eras especial desde el principio.", date: "" },
+                { title: "Incontables Memorias", content: "Cada momento contigo es un tesoro que guardo.", date: "" }
+            ],
+            letterTitle: "Mi Amor",
+            letterContent: "Desde el momento en que te conocí, mi mundo cambió para siempre. Traes alegría a cada día y amor a cada momento. Estoy tan agradecido de tenerte en mi vida. Feliz San Valentín, mi amor. Por siempre y para siempre.",
+            letterSign: "Tuyo para siempre"
+        };
+        
+        // Language switcher
+        window.setLanguage = function(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.includes(lang.toUpperCase()));
+            });
+            updateLanguage();
+            rebuildSlides();
+        };
+        
+        function updateLanguage() {
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[currentLang][key]) {
+                    el.textContent = translations[currentLang][key];
+                }
+            });
+        }
         
         // Load data
         async function loadData() {
@@ -586,7 +844,6 @@
                 
                 initStory();
                 
-                // Real-time updates
                 onSnapshot(docRef, (doc) => {
                     if (doc.exists()) {
                         const data = doc.data();
@@ -594,11 +851,14 @@
                             window.storyData.slides = data.slides;
                             rebuildSlides();
                         }
+                        if (data.letterTitle) window.storyData.letterTitle = data.letterTitle;
+                        if (data.letterContent) window.storyData.letterContent = data.letterContent;
+                        if (data.letterSign) window.storyData.letterSign = data.letterSign;
+                        updateLetterContent();
                     }
                 });
                 
             } catch (e) {
-                console.log('Using local data');
                 const local = localStorage.getItem('valentineData');
                 if (local) {
                     const parsed = JSON.parse(local);
@@ -612,15 +872,15 @@
         }
         
         function initStory() {
-            // Hide loader
             setTimeout(() => {
                 document.getElementById('loader').classList.add('hidden');
-            }, 800);
+            }, 1000);
             
             buildSlides();
             createBgParticles();
             setupNavigation();
             setupLetter();
+            updateLanguage();
         }
         
         function buildSlides() {
@@ -628,38 +888,46 @@
             const dots = document.getElementById('progressDots');
             
             container.innerHTML = '';
-            dots.innerHTML = '';
+            dots.innerHTML = '<div class="dot active" onclick="goToSlide(0)"></div>';
             
-            // Intro dot
-            dots.innerHTML += '<div class="dot active" onclick="goToSlide(0)"></div>';
-            
-            // Dynamic slides
             window.storyData.slides.forEach((slide, i) => {
                 const slideEl = document.createElement('div');
                 slideEl.className = 'slide';
                 slideEl.dataset.index = i + 1;
+                
+                const chapterNum = currentLang === 'es' ? `Capítulo ${i + 1}` : `Chapter ${i + 1}`;
+                
                 slideEl.innerHTML = `
                     <div class="slide-box">
-                        <div class="slide-number">Chapter ${i + 1}</div>
+                        <div class="slide-number">${chapterNum}</div>
                         <h2 class="slide-title">${slide.title}</h2>
                         <p class="slide-text">${slide.content}</p>
-                        ${slide.date ? `<div class="slide-date">${new Date(slide.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>` : ''}
-                        ${slide.image ? `<img src="${slide.image}" class="slide-image" alt="${slide.title}">` : ''}
+                        ${slide.date ? `<div class="slide-date">${formatDate(slide.date)}</div>` : ''}
+                        ${slide.image ? `<img src="${slide.image}" class="slide-image" alt="${slide.title}" loading="lazy">` : ''}
                     </div>
                 `;
                 container.appendChild(slideEl);
-                
                 dots.innerHTML += `<div class="dot" onclick="goToSlide(${i + 1})"></div>`;
             });
             
-            // Letter dot
             dots.innerHTML += `<div class="dot" onclick="goToSlide(${window.storyData.slides.length + 1})"></div>`;
-            
-            totalSlides = window.storyData.slides.length + 2; // +2 for intro and letter
-            
-            // Set letter content
+            totalSlides = window.storyData.slides.length + 2;
+            updateLetterContent();
+        }
+        
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString(currentLang === 'es' ? 'es-ES' : 'en-US', options);
+        }
+        
+        function updateLetterContent() {
             document.getElementById('letterTitle').textContent = window.storyData.letterTitle;
-            document.getElementById('letterBody').innerHTML = window.storyData.letterContent.split('\n').map(p => `<p>${p}</p>`).join('');
+            document.getElementById('letterBody').innerHTML = window.storyData.letterContent
+                .split('\n')
+                .filter(p => p.trim())
+                .map(p => `<p>${p.trim()}</p>`)
+                .join('');
             document.getElementById('letterSign').textContent = window.storyData.letterSign + ' 💙♥️';
         }
         
@@ -669,23 +937,19 @@
             goToSlide(Math.min(current, totalSlides - 1));
         }
         
-        // NAVIGATION - TRIPLE CHECKED
+        // Navigation
         function setupNavigation() {
-            // Click on slideshow
             document.getElementById('slideshow').addEventListener('click', function(e) {
-                // Don't advance if clicking letter
                 if (e.target.closest('#sealedLetter') || e.target.closest('.letter-modal')) return;
                 nextSlide();
             });
             
-            // Arrow keys
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
                 if (e.key === 'ArrowLeft') prevSlide();
                 if (e.key === 'Escape') closeLetter();
             });
             
-            // Arrow buttons
             document.getElementById('arrowLeft').addEventListener('click', (e) => {
                 e.stopPropagation();
                 prevSlide();
@@ -698,42 +962,33 @@
         }
         
         function nextSlide() {
-            if (currentSlide < totalSlides - 1) {
-                goToSlide(currentSlide + 1);
-            }
+            if (currentSlide < totalSlides - 1) goToSlide(currentSlide + 1);
         }
         
         function prevSlide() {
-            if (currentSlide > 0) {
-                goToSlide(currentSlide - 1);
-            }
+            if (currentSlide > 0) goToSlide(currentSlide - 1);
         }
         
         window.goToSlide = function(n) {
-            // Hide current
             document.querySelectorAll('.slide')[currentSlide]?.classList.remove('active');
-            
-            // Show new
             currentSlide = n;
             const slides = document.querySelectorAll('.slide');
             if (slides[n]) slides[n].classList.add('active');
             
-            // Update dots
             document.querySelectorAll('.dot').forEach((d, i) => {
                 d.classList.toggle('active', i === n);
             });
             
-            // Hide hint on last slide
             const hint = document.getElementById('clickHint');
             if (n === totalSlides - 1) {
                 hint.style.display = 'none';
             } else {
                 hint.style.display = 'block';
-                hint.textContent = n === 0 ? 'Click to begin 💙♥️' : 'Click to continue 💙♥️';
+                hint.textContent = n === 0 ? translations[currentLang].clickBegin : translations[currentLang].clickContinue;
             }
         };
         
-        // LETTER FUNCTIONALITY
+        // Letter functionality
         function setupLetter() {
             const sealed = document.getElementById('sealedLetter');
             const modal = document.getElementById('letterModal');
@@ -742,39 +997,40 @@
             sealed.addEventListener('click', (e) => {
                 e.stopPropagation();
                 modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
             });
             
             close.addEventListener('click', (e) => {
                 e.stopPropagation();
-                modal.classList.remove('active');
+                closeLetter();
             });
             
             modal.addEventListener('click', (e) => {
-                if (e.target === modal) modal.classList.remove('active');
+                if (e.target === modal) closeLetter();
             });
         }
         
         window.closeLetter = function() {
             document.getElementById('letterModal').classList.remove('active');
+            document.body.style.overflow = '';
         };
         
         // Background particles
         function createBgParticles() {
             const container = document.getElementById('bgParticles');
-            const symbols = ['💙', '♥️', '✨', '💎', '18'];
+            const symbols = ['💙', '♥️', '✨', '💎', '🌹', '💕', '🦋', '⭐'];
             
             setInterval(() => {
                 const p = document.createElement('div');
                 p.className = 'bg-particle';
                 p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
                 p.style.left = Math.random() * 100 + '%';
-                p.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                p.style.fontSize = (Math.random() * 20 + 15) + 'px';
                 p.style.animationDuration = (Math.random() * 10 + 10) + 's';
                 p.style.opacity = Math.random() * 0.4 + 0.2;
-                
                 container.appendChild(p);
                 setTimeout(() => p.remove(), 20000);
-            }, 1000);
+            }, 800);
         }
         
         // Start
