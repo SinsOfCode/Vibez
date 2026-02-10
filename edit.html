@@ -484,7 +484,7 @@
                 </div>
             </div>
             
-            <!-- TIMER FACTS - NEW SECTION -->
+            <!-- TIMER FACTS -->
             <div class="section" id="section-timerfacts">
                 <div class="form-card">
                     <h3>Intro Fact</h3>
@@ -500,7 +500,7 @@
                     <h3>Perspective Section</h3>
                     <label>Perspective Text (use {seconds}, {movies}, {songs})</label>
                     <textarea id="perspectiveText" rows="4"></textarea>
-                    <p class="helper">Available: {seconds}, {movies}, {songs}</p>
+                    <p class="helper">Available: {seconds}, {movies}, {songs}, {languages}, {cookies}</p>
                 </div>
                 
                 <div class="form-card">
@@ -515,9 +515,9 @@
                 
                 <div class="form-card">
                     <h3>Weeks Section</h3>
-                    <label>Weeks Text (use {weekends}, {brunches}, {movies})</label>
+                    <label>Weeks Text (use {weekends}, {mondays})</label>
                     <textarea id="weeksText" rows="3"></textarea>
-                    <p class="helper">Available: {weekends}, {brunches}, {movies}</p>
+                    <p class="helper">Available: {weekends}, {mondays}</p>
                 </div>
                 
                 <div class="form-card">
@@ -544,7 +544,7 @@
                     
                     <label>Final Fact Text</label>
                     <textarea id="finalFactText" rows="2"></textarea>
-                    <p class="helper">Use {highlight}text{/highlight} for colored text</p>
+                    <p class="helper">This appears at the end of the timer page</p>
                 </div>
             </div>
             
@@ -619,13 +619,13 @@
                     </div>
                     
                     <h3>Custom Colors</h3>
-                    <label>Primary Color (Blue default)</label>
+                    <label>Primary Color</label>
                     <input type="color" id="primaryColor" class="color-input">
                     
-                    <label>Secondary Color (Red default)</label>
+                    <label>Secondary Color</label>
                     <input type="color" id="secondaryColor" class="color-input">
                     
-                    <label>Accent Color (Yellow default)</label>
+                    <label>Accent Color</label>
                     <input type="color" id="accentColor" class="color-input">
                     
                     <label>Background Color</label>
@@ -636,7 +636,7 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -654,7 +654,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        // DEFAULT DATA - NOW WITH TIMER FACTS
+        // DEFAULT DATA - Updated for both pages
         const defaultData = {
             siteTitle: "Our Love Story",
             yourName: "You",
@@ -664,44 +664,47 @@
             yesText: "YES! 💙♥️",
             noText: "No...",
             orbitText: "FOREVER",
-            timerLabel: "Together For",
-            startDate: "2024-02-14T00:00",
+            timerLabel: "JUNTOS DESDE...",
+            startDate: "2023-04-15T00:00",
             
-            // NEW: Timer Facts
-            introFactTitle: "Did You Know?",
-            introFactText: "In that time, the Earth has traveled {distance} miles through space!",
-            perspectiveText: "To put that into perspective...\n\nYou have been together for {seconds} seconds.\nThat is enough time to watch {movies} movies!\nOr listen to your favorite song {songs} times!",
-            monthsFactTitle: "Fun Fact",
-            monthsFactText: "If you spent $1 every day, you would have spent ${money} by now!",
-            weeksText: "That is {weekends} weekends together!\nOr {brunches} Sunday brunches!\nOr {movies} movie nights!",
-            hoursFactTitle: "Time Well Spent?",
-            hoursFactText: "You could have binge-watched {series} TV series by now!",
-            minutesText: "In that time, you could have:\n\n• Walked {miles} miles hand-in-hand\n• Said \"I love you\" {loves} times\n• Taken {photos} photos together",
-            finalFactTitle: "And Counting...",
-            finalFactText: "Every second with you is a second well spent. Here is to {highlight}infinity{/highlight} more!",
+            // Timer Facts
+            introFactTitle: "¿Sabías Qué?",
+            introFactText: "En ese tiempo, la Tierra ha viajado aproximadamente {distance} millones de millas a través del espacio!",
+            perspectiveText: "Para ponerlo en perspectiva...\n\nNos conocemos desde hace unos {seconds} segundos.\n¡Tiempo suficiente para ver {movies} películas!\n¡Escuchar \"MAMMAMIA\" {songs} veces en repetición!\n\n¡O hornear {cookies} galletas!",
+            monthsFactTitle: "Dato Curioso",
+            monthsFactText: "Si gastaras $60 cada mes, ahora habrías gastado ${money}.",
+            weeksText: "¡Eso son {weekends} fines de semana, qué locura!\n\n¡Has sobrevivido {mondays} lunes!\n¡Felicidades, Reina del Lunes!",
+            hoursFactTitle: "¿Tiempo Bien Empleado?",
+            hoursFactText: "¡Podrías haber visto Demon Slayer de corrido unas {series} veces hasta ahora!",
+            minutesText: "En ese tiempo, podríamos haber:\n\n• Caminado {miles} kilómetros juntos\n• Dicho \"Te amo\" {loves} veces\n• Tomado {photos} fotos",
+            finalFactTitle: "Y Contando...",
+            finalFactText: "Cada segundo contigo es un segundo bien aprovechado. Me alegro de haberte conocido. ¡Brindo por infinity más!",
             
+            // Story Slides
             slides: [
-                { title: "Our First Meeting", content: "The day that changed everything...", date: "2024-02-14", color: "#0066ff", image: null },
-                { title: "Our First Date", content: "I knew you were special from the start.", date: "", color: "#ff0000", image: null },
-                { title: "Countless Memories", content: "Every moment with you is a treasure.", date: "", color: "#0066ff", image: null }
+                { title: "Nuestro Primer Encuentro", content: "El día que cambió todo...", date: "2023-04-15", color: "#667eea", image: null },
+                { title: "Nuestra Primera Cita", content: "Supe que eras especial desde el principio.", date: "", color: "#764ba2", image: null },
+                { title: "Incontables Memorias", content: "Cada momento contigo es un tesoro que guardo.", date: "", color: "#ff6b9d", image: null }
             ],
-            letterTitle: "My Dearest Love",
-            letterContent: "From the moment I met you, my world changed forever.\n\nYou bring joy to every day and love to every moment.\n\nI am so grateful to have you in my life.\n\nHappy Valentine's Day, my love.\n\nForever and always.",
-            letterSign: "Forever Yours",
+            
+            // Love Letter
+            letterTitle: "Mi Amor",
+            letterContent: "Desde el momento en que te conocí, mi mundo cambió para siempre.\n\nTraes alegría a cada día y amor a cada momento. Estoy tan agradecido de tenerte en mi vida.\n\nFeliz San Valentín, mi amor.\n\nPor siempre y para siempre.",
+            letterSign: "Tuyo para siempre",
+            
+            // Colors
             colors: {
-                primary: "#0066ff",
-                secondary: "#ff0000",
+                primary: "#667eea",
+                secondary: "#764ba2",
                 accent: "#ffd93d",
                 bg: "#0a0a1a"
             }
         };
         
-        // State
         let data = JSON.parse(JSON.stringify(defaultData));
         let editingIndex = null;
         let isSyncing = false;
         
-        // Initialize
         async function init() {
             showStatus('Loading...');
             
@@ -761,7 +764,6 @@
             renderSlides();
         }
         
-        // Fill all form fields - NOW WITH TIMER FACTS
         function fillAllFields() {
             // General
             document.getElementById('siteTitle').value = data.siteTitle || '';
@@ -779,7 +781,7 @@
             document.getElementById('timerLabel').value = data.timerLabel || '';
             document.getElementById('startDate').value = data.startDate || '';
             
-            // NEW: Timer Facts
+            // Timer Facts
             document.getElementById('introFactTitle').value = data.introFactTitle || '';
             document.getElementById('introFactText').value = data.introFactText || '';
             document.getElementById('perspectiveText').value = data.perspectiveText || '';
@@ -798,13 +800,12 @@
             document.getElementById('letterSign').value = data.letterSign || '';
             
             // Colors
-            document.getElementById('primaryColor').value = data.colors?.primary || '#0066ff';
-            document.getElementById('secondaryColor').value = data.colors?.secondary || '#ff0000';
+            document.getElementById('primaryColor').value = data.colors?.primary || '#667eea';
+            document.getElementById('secondaryColor').value = data.colors?.secondary || '#764ba2';
             document.getElementById('accentColor').value = data.colors?.accent || '#ffd93d';
             document.getElementById('bgColor').value = data.colors?.bg || '#0a0a1a';
         }
         
-        // Read form data - NOW WITH TIMER FACTS
         function readFormData() {
             data.siteTitle = document.getElementById('siteTitle').value;
             data.yourName = document.getElementById('yourName').value;
@@ -817,7 +818,7 @@
             data.timerLabel = document.getElementById('timerLabel').value;
             data.startDate = document.getElementById('startDate').value;
             
-            // NEW: Timer Facts
+            // Timer Facts
             data.introFactTitle = document.getElementById('introFactTitle').value;
             data.introFactText = document.getElementById('introFactText').value;
             data.perspectiveText = document.getElementById('perspectiveText').value;
@@ -830,10 +831,12 @@
             data.finalFactTitle = document.getElementById('finalFactTitle').value;
             data.finalFactText = document.getElementById('finalFactText').value;
             
+            // Letter
             data.letterTitle = document.getElementById('letterTitle').value;
             data.letterContent = document.getElementById('letterContent').value;
             data.letterSign = document.getElementById('letterSign').value;
             
+            // Colors
             if (!data.colors) data.colors = {};
             data.colors.primary = document.getElementById('primaryColor').value;
             data.colors.secondary = document.getElementById('secondaryColor').value;
@@ -841,7 +844,6 @@
             data.colors.bg = document.getElementById('bgColor').value;
         }
         
-        // Navigation - NOW WITH TIMER FACTS
         window.showSection = function(name) {
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -865,7 +867,6 @@
             document.getElementById('sectionTitle').textContent = titles[name] || 'Settings';
         };
         
-        // Save to Firebase
         window.saveToFirebase = async function() {
             readFormData();
             
@@ -895,7 +896,6 @@
             }
         };
         
-        // Export/Import
         window.exportData = function() {
             readFormData();
             const json = JSON.stringify(data, null, 2);
@@ -944,7 +944,6 @@
             showStatus('Reset - click SAVE TO CLOUD to apply');
         };
         
-        // Slides
         window.renderSlides = function() {
             const container = document.getElementById('slidesList');
             if (!container) return;
@@ -956,7 +955,7 @@
             
             container.innerHTML = data.slides.map((slide, i) => `
                 <div class="slide-item" onclick="editSlide(${i})">
-                    <div class="slide-num" style="background:linear-gradient(135deg,${slide.color || '#0066ff'},${data.colors?.secondary || '#ff0000'});">${i+1}</div>
+                    <div class="slide-num" style="background:linear-gradient(135deg,${slide.color || '#667eea'},${data.colors?.secondary || '#764ba2'});">${i+1}</div>
                     <div class="slide-info">
                         <div class="slide-title-small">${slide.title || 'Untitled'}</div>
                         <div class="slide-preview">${(slide.content || '').substring(0,50)}...</div>
@@ -973,7 +972,7 @@
                 title: "New Slide",
                 content: "Your story here...",
                 date: "",
-                color: data.colors?.primary || "#0066ff",
+                color: data.colors?.primary || "#667eea",
                 image: null
             });
             
@@ -990,7 +989,7 @@
             document.getElementById('editSlideTitle').value = slide.title || '';
             document.getElementById('editSlideContent').value = slide.content || '';
             document.getElementById('editSlideDate').value = slide.date || '';
-            document.getElementById('editSlideColor').value = slide.color || '#0066ff';
+            document.getElementById('editSlideColor').value = slide.color || '#667eea';
             
             const preview = document.getElementById('imagePreview');
             if (slide.image) {
@@ -1051,12 +1050,11 @@
             reader.readAsDataURL(file);
         };
         
-        // Theme presets
         window.applyPreset = function(name) {
             const presets = {
-                romantic: { primary: "#0066ff", secondary: "#ff0000", accent: "#ffd93d", bg: "#0a0a1a" },
+                romantic: { primary: "#667eea", secondary: "#764ba2", accent: "#ffd93d", bg: "#0a0a1a" },
                 ocean: { primary: "#667eea", secondary: "#764ba2", accent: "#ffd93d", bg: "#0f0f23" },
-                sunset: { primary: "#f093fb", secondary: "#f5576c", accent: "#ffd93d", bg: "#1a0f1f" },
+                sunset: { primary: "#ff6b9d", secondary: "#c44569", accent: "#ffd93d", bg: "#1a0f1f" },
                 forest: { primary: "#11998e", secondary: "#38ef7d", accent: "#c4e538", bg: "#0a1f15" },
                 gold: { primary: "#f5af19", secondary: "#f12711", accent: "#ffd700", bg: "#1f150a" },
                 midnight: { primary: "#232526", secondary: "#414345", accent: "#7f8c8d", bg: "#000000" }
